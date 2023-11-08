@@ -1,8 +1,8 @@
 package main
 
 import (
-	"lokasani/drivers/mysql"
-	routes "lokasani/router"
+	"lokasani/app/drivers/mysql"
+	routes "lokasani/app/router"
 )
 
 func main() {

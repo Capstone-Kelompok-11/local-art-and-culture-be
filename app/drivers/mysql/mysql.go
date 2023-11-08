@@ -2,7 +2,7 @@ package mysql
 
 import (
 	"fmt"
-	"lokasani/drivers/migrations"
+	"lokasani/app/drivers/migrations"
 
 	"os"
 
