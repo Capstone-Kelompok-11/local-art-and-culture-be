@@ -4,8 +4,8 @@ import "time"
 
 type UserRequest struct {
 	Id				uint		`json:"id"`
-	FirstName 		string		`json:"first_name" form:"first_name"`
-	LastName  		string		`json:"last_name" form:"last_name"`
+	FirstName 		string		`json:"firstName" form:"firstName"`
+	LastName  		string		`json:"lastName" form:"lastName"`
 	Email     		string		`json:"email" form:"email"`
 	Password  		string		`json:"password" form:"password"`
 	AddressID  		*uint		`json:"addressID" form:"addressID"`
