@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"lokasani/app/config"
+	"lokasani/app/drivers/config"
 	"lokasani/app/drivers/mysql"
 	routes "lokasani/app/router"
 )

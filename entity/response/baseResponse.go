@@ -1,7 +1,7 @@
 package response
 
 import (
-	errors "lokasani/helpers/error"
+	"lokasani/helpers/errors"
 	"net/http"
 
 	"github.com/labstack/echo"
