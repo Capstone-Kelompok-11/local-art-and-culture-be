@@ -1,9 +1,7 @@
 package repositories
 
 import (
-	"log"
 	"lokasani/entity/domain"
-	"lokasani/entity/models"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 
@@ -11,8 +9,8 @@ import (
 )
 
 type IUserRepository interface {
-	CreateUser(data *request.UserRequest) (error, response.UserResponse)
-	LoginUser(email string, password string) (*request.UserRequest, error)
+	CreateUser(data *request.UserRequest) (response.UserResponse, error)
+	//LoginUser(email string, password string) (*request.UserRequest, error)
 }
 
 type userRepository struct {
@@ -23,13 +21,13 @@ func NewUsersRepository(db *gorm.DB) *userRepository {
 	return &userRepository{db}
 }
 
-func (u *userRepository) CreateUser(data *request.UserRequest) (error, response.UserResponse) {
+func (u *userRepository) CreateUser(data *request.UserRequest) (response.UserResponse, error) {
 	dataUser := domain.ConvertFromUserReqToModel(*data)
 	err := u.db.Create(&dataUser).Error
 	if err != nil {
-		return err, response.UserResponse{}
+		return response.UserResponse{}, err
 	}
-	return nil, *domain.ConvertFromModelToAdminRes(*dataUser)
+	return *domain.ConvertFromModelToAdminRes(*dataUser), nil
 }
 
 // func (u *userRepository) LoginUser(email string, password string) (*request.UserRequest, error) {
