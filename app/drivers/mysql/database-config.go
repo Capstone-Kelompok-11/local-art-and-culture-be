@@ -1,11 +1,15 @@
-package config
+package mysql
 
 import (
+	"fmt"
+	"lokasani/app/drivers/migrations"
 	"os"
 	"strconv"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 type DBConfig struct {
@@ -45,4 +49,17 @@ func LoadDB() *DBConfig {
 		result.DB_NAME = v
 	}
 	return result
+}
+
+func StartDB(cfg *DBConfig) *gorm.DB {
+	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
+		cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_HOST, cfg.DB_PORT, cfg.DB_NAME)
+
+	DB, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
+
+	if err != nil {
+		panic(err)
+	}
+	migrations.InitMigrate(DB)
+	return DB
 }
