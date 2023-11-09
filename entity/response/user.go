@@ -4,10 +4,10 @@ import "time"
 
 type UserResponse struct {
 	Id		  		uint	  `json:"id"`
-	FirstName 		string    `json:"first_name"`
-	LastName  		string    `json:"last_name"`
+	FirstName 		string    `json:"firstName"`
+	LastName  		string    `json:"lastName"`
 	Email     		string    `json:"email"`
-	Password  		string    `json:"password"`
+	Token       	string 	  `json:"token"`
 	AddressID  		*uint     `json:"addressID"`
 	PhoneNumber      string   `json:"phoneNumber"`
 	BirthDate 		time.Time `json:"birthday"`

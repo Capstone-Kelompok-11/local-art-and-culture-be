@@ -1,9 +1,13 @@
 package config
 
-import "github.com/sirupsen/logrus"
+import (
+	"lokasani/app/drivers/mysql"
 
-func InitConfig() (*AppConfig, *DBConfig) {
-	db := LoadDB()
+	"github.com/sirupsen/logrus"
+)
+
+func InitConfig() (*AppConfig, *mysql.DBConfig) {
+	db := mysql.LoadDB()
 	app := LoadAPP()
 
 	if db == nil || app == nil {

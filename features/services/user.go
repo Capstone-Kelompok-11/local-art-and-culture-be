@@ -4,34 +4,78 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
-	helpers "lokasani/helpers/bcrypt"
+	"lokasani/helpers/bcrypt"
+	"lokasani/helpers/errors"
+	"lokasani/helpers/middleware"
 )
 
 type IUserService interface {
-	CreateUser(data *request.UserRequest) (response.UserResponse, error)
-	//Login(email string, password string) (domain.UsersDomain, error)
+	RegisterUser(data *request.UserRequest) (error, response.UserResponse)
+	LoginUser(data *request.UserRequest) (error, response.UserResponse)
 }
 
-type userService struct {
-	repo repositories.IUserRepository
+type UserService struct {
+	UserRepo repositories.IUserRepository
 }
 
-func NewUserService(repo repositories.IUserRepository) *userService {
-	return &userService{repo}
+func NewUserService(repo repositories.IUserRepository) *UserService {
+	return &UserService{UserRepo: repo}
 }
 
-func (u *userService) CreateUser(data *request.UserRequest) (response.UserResponse, error) {
-    hashedPassword, err := helpers.Hash(data.Password)
-    if err != nil {
-        return response.UserResponse{}, err
+func (u *UserService) RegisterUser(data *request.UserRequest) (error, response.UserResponse) {
+    if data.FirstName == "" {
+        return errors.ERR_NAME_IS_EMPTY, response.UserResponse{}
+    } else if data.LastName == "" {
+        return errors.ERR_NAME_IS_EMPTY, response.UserResponse{}
+    } else if data.Email == "" {
+        return errors.ERR_EMAIL_IS_EMPTY, response.UserResponse{}
     }
 
-    data.Password = hashedPassword
-
-    userResponse, err := u.repo.CreateUser(data)
+    hashPass, err := bcrypt.Hash(data.Password)
     if err != nil {
-        return response.UserResponse{}, err
+        return errors.ERR_BCRYPT_PASSWORD, response.UserResponse{}
     }
 
-    return userResponse, nil
+    data.Password = hashPass
+    err, res := u.UserRepo.RegisterUser(data)
+    if err != nil {
+        return errors.ERR_REGISTER_USER_DATABASE, response.UserResponse{}
+    }
+
+    token, err := middleware.CreateToken(int(data.Id), data.Email)
+    if err != nil {
+        return errors.ERR_TOKEN, response.UserResponse{}
+    }
+
+    res.Token = token
+    return nil, res
+}
+
+func (u *UserService) LoginUser(data *request.UserRequest) (error, response.UserResponse) {
+    if data.FirstName == "" {
+        return errors.ERR_NAME_IS_EMPTY, response.UserResponse{}
+    } else if data.LastName == "" {
+        return errors.ERR_NAME_IS_EMPTY, response.UserResponse{}
+    } else if data.Email == "" {
+        return errors.ERR_EMAIL_IS_EMPTY, response.UserResponse{}
+    }
+
+    hashPass, err := bcrypt.Hash(data.Password)
+    if err != nil {
+        return errors.ERR_BCRYPT_PASSWORD, response.UserResponse{}
+    }
+
+    data.Password = hashPass
+    err, res := u.UserRepo.LoginUser(data)
+    if err != nil {
+        return errors.ERR_REGISTER_USER_DATABASE, response.UserResponse{}
+    }
+
+    token, err := middleware.CreateToken(int(data.Id), data.Email)
+    if err != nil {
+        return errors.ERR_TOKEN, response.UserResponse{}
+    }
+
+    res.Token = token
+    return nil, res
 }
