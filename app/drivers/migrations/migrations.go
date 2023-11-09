@@ -7,5 +7,5 @@ import (
 )
 
 func InitMigrate(db *gorm.DB) {
-	db.AutoMigrate(&models.Admin{})
+	db.AutoMigrate(&models.SuperAdmin{})
 }

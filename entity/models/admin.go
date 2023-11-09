@@ -2,7 +2,7 @@ package models
 
 import "gorm.io/gorm"
 
-type Admin struct {
+type SuperAdmin struct {
 	gorm.Model
 	Name        string `gorm:"not null"`
 	Email       string `gorm:"unique;not null"`

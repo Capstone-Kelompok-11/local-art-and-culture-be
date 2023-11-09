@@ -1,13 +1,16 @@
 package main
 
 import (
+	"fmt"
+	"lokasani/app/config"
 	"lokasani/app/drivers/mysql"
 	routes "lokasani/app/router"
 )
 
 func main() {
-	db := mysql.InitDB()
+	appConfig, dbConfig := config.InitConfig()
+	db := mysql.StartDB(dbConfig)
 	e := routes.Route(db)
 
-	e.Start(":8081")
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", appConfig.APP_PORT)))
 }
