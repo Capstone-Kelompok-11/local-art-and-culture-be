@@ -4,43 +4,44 @@ import (
 	"log"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
+	"lokasani/entity/request"
+	"lokasani/entity/response"
 
 	"gorm.io/gorm"
 )
 
 type IUserRepository interface {
-	Create(domain.UsersDomain) (domain.UsersDomain, error)
-	Login(email string, password string) (domain.UsersDomain, error)
+	CreateUser(data *request.UserRequest) (error, response.UserResponse)
+	LoginUser(email string, password string) (*request.UserRequest, error)
 }
 
 type userRepository struct {
 	db *gorm.DB
 }
 
-func NewUsersRepository(DB *gorm.DB) *userRepository {
-	return &userRepository{db: DB}
+func NewUsersRepository(db *gorm.DB) *userRepository {
+	return &userRepository{db}
 }
 
-func (u *userRepository) Create(user domain.UsersDomain) (domain.UsersDomain, error) {
-	insert := domain.FromDomainToUserModel(user)
-	err := u.db.Create(&insert).Error
+func (u *userRepository) CreateUser(data *request.UserRequest) (error, response.UserResponse) {
+	dataUser := domain.ConvertFromUserReqToModel(*data)
+	err := u.db.Create(&dataUser).Error
 	if err != nil {
-		return user, err
+		return err, response.UserResponse{}
 	}
-	data := domain.FromModelToUser(insert)
-	return data, nil
+	return nil, *domain.ConvertFromModelToAdminRes(*dataUser)
 }
 
-func (u *userRepository) Login(email string, password string) (domain.UsersDomain, error) {
-	var user models.Users
-	var data domain.UsersDomain
+// func (u *userRepository) LoginUser(email string, password string) (*request.UserRequest, error) {
+// 	var user models.Users
+// 	var data domain.UsersDomain
 
-	err := u.db.Where("email = ?", email).First(&user).Error
-	if err != nil {
-		return data, err
-	}
+// 	err := u.db.Where("email = ?", email).First(&user).Error
+// 	if err != nil {
+// 		return data, err
+// 	}
 
-	data = domain.FromModelToUser(user)
-	log.Println(data)
-	return data, nil
-}
+// 	data = domain.FromModelToUser(user)
+// 	log.Println(data)
+// 	return data, nil
+// }

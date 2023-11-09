@@ -8,11 +8,11 @@ import (
 
 type Users struct {
 	gorm.Model
-	FirstName		string
-	LastName		string
-	Email			string
-	Password		string
-	AlamatID		*uint
-	NoHP			string
-	BirthDate		time.Time
+	FirstName		string		`gorm:"not null"`
+	LastName		string		`gorm:"not null"`
+	Email			string		`gorm:"unique;not null"`
+	Password		string		`gorm:"not null"`
+	AddressID		*uint		`gorm:"not null"`
+	PhoneNumber		string		`gorm:"unique;not null"`
+	BirthDate		time.Time	`gorm:"not null"`
 }
