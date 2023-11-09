@@ -9,7 +9,7 @@ import (
 )
 
 type IAdminRepository interface {
-	CreateAdmin(data *request.Admin) (error, response.Admin)
+	RegisterAdmin(data *request.Admin) (error, response.Admin)
 }
 
 type adminRepository struct {
@@ -20,7 +20,7 @@ func NewAdminRepository(db *gorm.DB) *adminRepository {
 	return &adminRepository{db}
 }
 
-func (ar *adminRepository) CreateAdmin(data *request.Admin) (error, response.Admin) {
+func (ar *adminRepository) RegisterAdmin(data *request.Admin) (error, response.Admin) {
 	dataAdmin := domain.ConvertFromAdminReqToModel(*data)
 	err := ar.db.Create(&dataAdmin).Error
 	if err != nil {
