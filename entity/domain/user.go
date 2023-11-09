@@ -23,7 +23,7 @@ func ConvertFromUserReqToModel(data request.UserRequest) *models.Users {
 	}
 }
 
-func ConvertFromModelToAdminRes(data models.Users) *response.UserResponse{
+func ConvertFromModelToUserRes(data models.Users) *response.UserResponse {
 	return &response.UserResponse{
 		Id: 			data.ID,
 		FirstName: 		data.FirstName,
