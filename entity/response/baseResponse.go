@@ -1,7 +1,7 @@
-package controllers
+package response
 
 import (
-	"lokasani/utils/errors"
+	"lokasani/helpers/errors"
 	"net/http"
 
 	"github.com/labstack/echo"

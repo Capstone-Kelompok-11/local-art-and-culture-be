@@ -1,13 +1,18 @@
 package main
 
 import (
-	"lokasani/drivers/mysql"
-	routes "lokasani/router"
+	"fmt"
+	"lokasani/app/drivers/config"
+	"lokasani/app/drivers/migrations"
+
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	db := mysql.InitDB()
-	e := routes.Route(db)
+	appConfig, dbConfig := config.InitConfig()
+	migrations.InitMigrate(dbConfig)
 
-	e.Start(":8081")
+	app := echo.New()
+	
+	app.Logger.Fatal(app.Start(fmt.Sprintf(":%d", appConfig.APP_PORT)))
 }

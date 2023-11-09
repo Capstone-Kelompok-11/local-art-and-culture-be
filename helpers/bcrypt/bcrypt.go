@@ -13,7 +13,6 @@ func Hash(secret string) (string, error) {
 func CheckPassword(inputPassword, password string) error {
 	hashedPasswordFromDatabase := []byte(password)
 
-	// Verifikasi password
 	err := bcrypt.CompareHashAndPassword(hashedPasswordFromDatabase, []byte(inputPassword))
 	if err != nil {
 		return err
