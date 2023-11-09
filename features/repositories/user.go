@@ -27,7 +27,7 @@ func (u *userRepository) CreateUser(data *request.UserRequest) (response.UserRes
 	if err != nil {
 		return response.UserResponse{}, err
 	}
-	return *domain.ConvertFromModelToAdminRes(*dataUser), nil
+	return *domain.ConvertFromModelToUserRes(*dataUser), nil
 }
 
 // func (u *userRepository) LoginUser(email string, password string) (*request.UserRequest, error) {
