@@ -26,3 +26,14 @@ func (ah *AdminHandler) RegisterAdmin(c echo.Context) error {
 	}
 	return response.NewSuccessResponse(c, res)
 }
+
+func (ah *AdminHandler) LoginAdmin(c echo.Context) error {
+	var input request.Admin
+	c.Bind(&input)
+
+	err, res := ah.adminService.LoginAdmin(&input)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	return response.NewSuccessResponse(c, res)
+}

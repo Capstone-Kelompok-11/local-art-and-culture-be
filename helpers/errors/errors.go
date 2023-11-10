@@ -11,6 +11,8 @@ var (
 	ERR_REGISTER_ADMIN_DATABASE  = errors.New("Failed to register new admin to database")
 	ERR_BCRYPT_PASSWORD          = errors.New("Failed to bcrypt password")
 	ERR_TOKEN                    = errors.New("Failed to create new token")
+	ERR_WRONG_PASSWORD           = errors.New("Wrong password")
+	ERR_EMAIL_NOT_FOUND          = errors.New("Email not found")
 	ERR_REGISTER_USER_DATABASE   = errors.New("Failed to register new user to database")
 	ERR_GET_DATA                 = errors.New("Database can't request any data right now")
 )

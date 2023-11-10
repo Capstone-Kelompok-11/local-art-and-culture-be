@@ -26,6 +26,10 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_TOKEN:
 		return http.StatusInternalServerError
+	case ERR_WRONG_PASSWORD:
+		return http.StatusBadRequest
+	case ERR_EMAIL_NOT_FOUND:
+		return http.StatusNotFound
 	default:
 		return http.StatusInternalServerError
 	}

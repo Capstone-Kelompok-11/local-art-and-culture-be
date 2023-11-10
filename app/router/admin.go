@@ -15,4 +15,5 @@ func AdminRoute(e *echo.Echo, db *gorm.DB) {
 	handler := handler.NewAdminHandler(service)
 
 	e.POST("/admin/register", handler.RegisterAdmin)
+	e.POST("/admin/login", handler.LoginAdmin)
 }
