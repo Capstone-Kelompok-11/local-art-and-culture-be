@@ -12,6 +12,7 @@ import (
 type IAdminService interface {
 	RegisterAdmin(data *request.Admin) (error, response.Admin)
 	LoginAdmin(data *request.Admin) (error, response.Admin)
+	GetAllAdmin() (error, []response.Admin)
 }
 
 type AdminService struct {
@@ -63,5 +64,13 @@ func (as *AdminService) LoginAdmin(data *request.Admin) (error, response.Admin) 
 		return errors.ERR_TOKEN, response.Admin{}
 	}
 	res.Token = token
+	return nil, res
+}
+
+func (as *AdminService) GetAllAdmin() (error, []response.Admin) {
+	err, res := as.adminRepository.GetAllAdmin()
+	if err != nil {
+		return err, nil
+	}
 	return nil, res
 }

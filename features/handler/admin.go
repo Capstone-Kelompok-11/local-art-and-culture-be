@@ -37,3 +37,11 @@ func (ah *AdminHandler) LoginAdmin(c echo.Context) error {
 	}
 	return response.NewSuccessResponse(c, res)
 }
+
+func (ah *AdminHandler) GetAllAdmin(c echo.Context) error {
+	err, res := ah.adminService.GetAllAdmin()
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	return response.NewSuccessResponse(c, res)
+}
