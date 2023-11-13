@@ -32,6 +32,10 @@ func GetCodeError(err error) int {
 		return http.StatusNotFound
 	case ERR_UPDATE_DATA:
 		return http.StatusInternalServerError
+	case ERR_TITLE_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_CONTENT_IS_EMPTY:
+		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError
 	}

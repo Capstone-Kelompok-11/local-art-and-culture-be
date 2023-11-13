@@ -16,5 +16,6 @@ func Route(db *gorm.DB) *echo.Echo {
 	eJwt := e.Group("/")
 	eJwt.Use(middleware.JWT([]byte(os.Getenv("SECRET_JWT"))))
 	AdminRoute(e, db)
+	ArticleRoute(e, db)
 	return e
 }
