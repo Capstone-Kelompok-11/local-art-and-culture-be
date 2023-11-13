@@ -56,7 +56,7 @@ func (ar *adminRepository) GetAllAdmin() (error, []response.Admin) {
 	var resAllAdmin []response.Admin
 	err := ar.db.Find(&allAdmin).Error
 	if err != nil {
-		return errors.ERR_GET_DATA, nil
+		return err, nil
 	}
 
 	for i := 0; i < len(allAdmin); i++ {
