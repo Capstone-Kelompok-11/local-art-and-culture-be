@@ -13,6 +13,9 @@ type IAdminService interface {
 	RegisterAdmin(data *request.Admin) (error, response.Admin)
 	LoginAdmin(data *request.Admin) (error, response.Admin)
 	GetAllAdmin() (error, []response.Admin)
+	GetAdmin(id string) (error, response.Admin)
+	UpdateAdmin(id string, input request.Admin) (error, response.Admin)
+	DeleteAdmin(id string) (error, response.Admin)
 }
 
 type AdminService struct {
@@ -72,5 +75,40 @@ func (as *AdminService) GetAllAdmin() (error, []response.Admin) {
 	if err != nil {
 		return err, nil
 	}
+	return nil, res
+}
+
+func (as *AdminService) GetAdmin(id string) (error, response.Admin) {
+	if id == "" {
+		return errors.ERR_GET_ADMIN_BAD_REQUEST_ID, response.Admin{}
+	}
+	err, res := as.adminRepository.GetAdmin(id)
+	if err != nil {
+		return err, response.Admin{}
+	}
+	return nil, res
+}
+
+func (as *AdminService) UpdateAdmin(id string, data request.Admin) (error, response.Admin) {
+	if id == "" {
+		return errors.ERR_GET_ADMIN_BAD_REQUEST_ID, response.Admin{}
+	}
+	err, res := as.adminRepository.UpdateAdmin(id, data)
+	if err != nil {
+		return errors.ERR_UPDATE_DATA, response.Admin{}
+	}
+	return nil, res
+}
+
+func (as *AdminService) DeleteAdmin(id string) (error, response.Admin) {
+	if id == "" {
+		return errors.ERR_GET_ADMIN_BAD_REQUEST_ID, response.Admin{}
+	}
+	err, res := as.adminRepository.DeleteAdmin(id)
+
+	if err != nil {
+		return errors.ERR_DELETE_ADMIN, response.Admin{}
+	}
+
 	return nil, res
 }

@@ -17,4 +17,7 @@ func AdminRoute(e *echo.Echo, db *gorm.DB) {
 	e.POST("/admin/register", handler.RegisterAdmin)
 	e.POST("/admin/login", handler.LoginAdmin)
 	e.GET("/admin", handler.GetAllAdmin)
+	e.GET("/admin/:id", handler.GetAdmin)
+	e.PUT("/admin/:id", handler.UpdateAdmin)
+	e.DELETE("/admin/:id", handler.DeleteAdmin)
 }

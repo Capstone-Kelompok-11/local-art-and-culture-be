@@ -30,6 +30,8 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_EMAIL_NOT_FOUND:
 		return http.StatusNotFound
+	case ERR_UPDATE_DATA:
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}
