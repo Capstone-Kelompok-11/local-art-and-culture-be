@@ -21,4 +21,6 @@ var (
 	ERR_ROLE_IS_EMPTY            = errors.New("Role is empty")
 	ERR_GET_ROLE_BAD_REQUEST_ID  = errors.New("Can't find any role with this id")
 	ERR_DELETE_ROLE              = errors.New("Can't delete this role")
+	ERR_TITLE_IS_EMPTY           = errors.New("Title is empty")
+	ERR_CONTENT_IS_EMPTY         = errors.New("Content is empty")
 )
