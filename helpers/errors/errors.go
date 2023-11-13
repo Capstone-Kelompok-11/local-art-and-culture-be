@@ -19,4 +19,6 @@ var (
 	ERR_EMAIL_NOT_FOUND          = errors.New("Email not found")
 	ERR_REGISTER_USER_DATABASE   = errors.New("Failed to register new user to database")
 	ERR_GET_DATA                 = errors.New("Database can't request any data right now")
-
+	ERR_TITLE_IS_EMPTY           = errors.New("Title is empty")
+	ERR_CONTENT_IS_EMPTY         = errors.New("Content is empty")
+)
