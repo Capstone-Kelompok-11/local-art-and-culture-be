@@ -36,6 +36,8 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_CONTENT_IS_EMPTY:
 		return http.StatusBadRequest
+	case ERR_CREATE_ARTICLE_DATABASE:
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}
