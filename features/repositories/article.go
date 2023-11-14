@@ -14,7 +14,7 @@ import (
 type IArticleRepository interface {
 	CreateArticle(data *request.Article) (error, response.Article)
 	GetAllArticle() (error, []response.Article)
-	GetArticle(id string) (error, response.Article)
+	GetArticle(id string) (error, response.Admin)
 	UpdateArticle(id string, input request.Article) (error, response.Article)
 	DeleteArticle(id string) (error, response.Article)
 }
@@ -52,13 +52,13 @@ func (ar *articleRepository) GetAllArticle() (error, []response.Article) {
 	return nil, resAllArticle
 }
 
-func (ar *articleRepository) GetArticle(id string) (error, response.Article) {
-	var articleData models.Article
+func (ar *articleRepository) GetArticle(id string) (error, response.Admin) {
+	var articleData models.SuperAdmin
 	err := ar.db.Preload("Articles", "id = ?", id).First(&articleData).Error
 	if err != nil {
-		return err, response.Article{}
+		return err, response.Admin{}
 	}
-	return nil, *domain.ConvertFromModelToArticleRes(articleData)
+	return nil, *domain.ConvertFromModelToAdminArticleRes(articleData)
 }
 
 func (ar *articleRepository) UpdateArticle(id string, input request.Article) (error, response.Article) {

@@ -26,6 +26,17 @@ func ConvertFromModelToAdminRes(data models.SuperAdmin) *response.Admin {
 		Name:        data.Name,
 		Email:       data.Email,
 		PhoneNumber: data.PhoneNumber,
-		Articles: *ConvertFromModelToArticleRes(data.Articles),
+	}
+}
+
+func ConvertFromModelToAdminArticleRes(data models.SuperAdmin) *response.Admin {
+	return &response.Admin{
+		Id:          data.ID,
+		Name:        data.Name,
+		Email:       data.Email,
+		PhoneNumber: data.PhoneNumber,
+		Articles: []response.Article{
+			*ConvertFromModelToArticleRes(data.Articles[0]),
+		},
 	}
 }
