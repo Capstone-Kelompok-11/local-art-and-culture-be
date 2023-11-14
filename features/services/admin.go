@@ -73,7 +73,7 @@ func (as *AdminService) LoginAdmin(data *request.Admin) (error, response.Admin) 
 func (as *AdminService) GetAllAdmin() (error, []response.Admin) {
 	err, res := as.adminRepository.GetAllAdmin()
 	if err != nil {
-		return err, nil
+		return errors.ERR_GET_DATA, nil
 	}
 	return nil, res
 }
