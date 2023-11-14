@@ -30,6 +30,7 @@ func ConvertFromModelToUserRes(data models.Users) *response.UserResponse {
 		Email:       data.Email,
 		PhoneNumber: data.PhoneNumber,
 		BirthDate:   data.BirthDate,
-		Creator:     *ConvertFromModelToCreatorRes(data.Creator),
 	}
 }
+
+

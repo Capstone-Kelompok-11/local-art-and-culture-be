@@ -33,3 +33,15 @@ func ConvertFromModelToCreatorRes(data models.Creator) *response.Creator {
 		// AddressId:   data.AddressId,
 	}
 }
+
+func ConvertFromModelToUserCreatorRes(data models.Users) *response.UserCreatorResponse {
+	return &response.UserCreatorResponse{
+		Id:          data.ID,
+		FirstName:   data.FirstName,
+		LastName:    data.LastName,
+		Email:       data.Email,
+		PhoneNumber: data.PhoneNumber,
+		BirthDate:   data.BirthDate,
+		Creator:     *ConvertFromModelToCreatorRes(data.Creator),
+	}
+}
