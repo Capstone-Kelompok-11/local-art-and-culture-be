@@ -17,7 +17,7 @@ func NewUserHandler(userService services.IUserService) *UserHandler {
 }
 
 func (u *UserHandler) RegisterUsers(e echo.Context) error {
-	var input request.UserRequest
+	var input request.User
 	e.Bind(&input)
 
 	err, res := u.userService.RegisterUser(&input)
@@ -28,7 +28,7 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 }
 
 func (u *UserHandler) LoginUsers(e echo.Context) error {
-	var input request.UserRequest
+	var input request.User
 	e.Bind(&input)
 
 	err, res := u.userService.LoginUser(&input)
@@ -57,7 +57,7 @@ func (u *UserHandler) GetUser(c echo.Context) error {
 
 func (u *UserHandler) UpdateUser(c echo.Context) error {
 	id := c.Param("id")
-	var input request.UserRequest
+	var input request.User
 	c.Bind(&input)
 	err, res := u.userService.UpdateUser(id, input)
 	if err != nil {
