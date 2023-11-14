@@ -30,6 +30,15 @@ func (as *AdminService) RegisterAdmin(data *request.Admin) (error, response.Admi
 	if data.Name == "" {
 		return errors.ERR_NAME_IS_EMPTY, response.Admin{}
 	}
+	if data.Email == "" {
+		return errors.ERR_EMAIL_IS_EMPTY, response.Admin{}
+	}
+	if data.Password == "" {
+		return errors.ERR_PASSWORD_IS_EMPTY, response.Admin{}
+	}
+	if data.PhoneNumber == "" {
+		return errors.ERR_PHONE_NUMBER_IS_EMPTY, response.Admin{}
+	}
 	hashPass, err := bcrypt.Hash(data.Password)
 	if err != nil {
 		return errors.ERR_BCRYPT_PASSWORD, response.Admin{}

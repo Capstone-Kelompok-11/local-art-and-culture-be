@@ -12,7 +12,7 @@ type IRoleService interface {
 	GetAllRole() (error, []response.Role)
 	GetRole(id string) (error, response.Role)
 	UpdateRole(id string, data request.Role) (error, response.Role)
-	DeleteRole(id string) (error, response.Role) 
+	DeleteRole(id string) (error, response.Role)
 }
 
 type RoleService struct {
@@ -25,12 +25,12 @@ func NewRoleService(repo repositories.IRoleRepository) *RoleService {
 
 func (rs *RoleService) CreateRole(data *request.Role) (error, response.Role) {
 	if data.Role == "" {
-		return errors.ERR_NAME_IS_EMPTY, response.Role{}
+		return errors.ERR_ROLE_IS_EMPTY, response.Role{}
 	}
 
 	err, res := rs.roleRepository.CreateRole(data)
 	if err != nil {
-		return errors.ERR_REGISTER_USER_DATABASE, response.Role{}
+		return errors.ERR_CREATE_ROLE, response.Role{}
 	}
 
 	return nil, res
