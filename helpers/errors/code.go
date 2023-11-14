@@ -19,13 +19,13 @@ func GetCodeError(err error) int {
 	case ERR_DELETE_USER:
 		return http.StatusInternalServerError
 	case ERR_GET_ADMIN_BAD_REQUEST_ID:
-		return http.StatusBadRequest
+		return http.StatusNotFound
 	case ERR_GET_USER_BAD_REQUEST_ID:
 		return http.StatusBadRequest
 	case ERR_GET_BAD_REQUEST_ID:
 		return http.StatusBadRequest
 	case ERR_GET_ADMIN_BAD_REQUEST_ID:
-		return http.StatusBadRequest
+		return http.StatusNotFound
 	case ERR_GET_DATA:
 		return http.StatusInternalServerError
 	case ERR_REGISTER_ADMIN_DATABASE:
@@ -41,6 +41,12 @@ func GetCodeError(err error) int {
 	case ERR_EMAIL_NOT_FOUND:
 		return http.StatusNotFound
 	case ERR_UPDATE_DATA:
+		return http.StatusInternalServerError
+	case ERR_ROLE_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_GET_ROLE_BAD_REQUEST_ID:
+		return http.StatusNotFound
+	case ERR_DELETE_ROLE:
 		return http.StatusInternalServerError
 	case ERR_TITLE_IS_EMPTY:
 		return http.StatusBadRequest
