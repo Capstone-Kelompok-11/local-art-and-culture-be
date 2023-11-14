@@ -22,4 +22,5 @@ var (
 	ERR_GET_DATA                 = errors.New("Database can't request any data right now")
 	ERR_TITLE_IS_EMPTY           = errors.New("Title is empty")
 	ERR_CONTENT_IS_EMPTY         = errors.New("Content is empty")
+	ERR_CREATE_ARTICLE_DATABASE  = errors.New("Failed to create new article to database")
 )
