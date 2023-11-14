@@ -6,4 +6,5 @@ type Admin struct {
 	Email       string `json:"email"`
 	Token       string `json:"token"`
 	PhoneNumber string `json:"phoneNumber"`
+	Articles 	[]Article
 }

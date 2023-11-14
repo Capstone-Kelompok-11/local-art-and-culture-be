@@ -39,7 +39,7 @@ func (ar *articleRepository) CreateArticle(data *request.Article) (error, respon
 func (ar *articleRepository) GetAllArticle() (error, []response.Article) {
 	var allArticle []models.Article
 	var resAllArticle []response.Article
-	err := ar.db.Find(&allArticle).Error
+	err := ar.db.Preload("Articles").Find(&allArticle).Error
 	if err != nil {
 		return errors.ERR_GET_DATA, nil
 	}
@@ -54,7 +54,7 @@ func (ar *articleRepository) GetAllArticle() (error, []response.Article) {
 
 func (ar *articleRepository) GetArticle(id string) (error, response.Article) {
 	var articleData models.Article
-	err := ar.db.First(&articleData, "id = ?", id).Error
+	err := ar.db.Preload("Articles", "id = ?", id).First(&articleData).Error
 	if err != nil {
 		return err, response.Article{}
 	}
