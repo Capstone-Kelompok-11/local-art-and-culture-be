@@ -22,8 +22,8 @@ func ConvertFromUserReqToModel(data request.User) *models.Users {
 	}
 }
 
-func ConvertFromModelToUserRes(data models.Users) *response.UserResponse {
-	return &response.UserResponse{
+func ConvertFromModelToUserRes(data models.Users) *response.User {
+	return &response.User{
 		Id:          data.ID,
 		FirstName:   data.FirstName,
 		LastName:    data.LastName,
@@ -32,5 +32,3 @@ func ConvertFromModelToUserRes(data models.Users) *response.UserResponse {
 		BirthDate:   data.BirthDate,
 	}
 }
-
-

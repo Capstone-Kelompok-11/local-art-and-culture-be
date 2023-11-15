@@ -2,7 +2,7 @@ package request
 
 import "time"
 
-type UserRequest struct {
+type User struct {
 	Id        uint   `json:"id"`
 	FirstName string `json:"firstName" form:"firstName"`
 	LastName  string `json:"lastName" form:"lastName"`
