@@ -52,6 +52,18 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_CONTENT_IS_EMPTY:
 		return http.StatusBadRequest
+	case ERR_PHONE_NUMBER_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_OUTLET_NAME_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_CREATE_ROLE:
+		return http.StatusInternalServerError
+	case ERR_GET_CREATOR_BAD_REQUEST_ID:
+		return http.StatusBadRequest
+	case ERR_DELETE_CREATOR:
+		return http.StatusInternalServerError
+	case ERR_CREATE_CREATOR_DATABASE:
+    return http.StatusInternalServerError
 	case ERR_CREATE_ARTICLE_DATABASE:
 		return http.StatusInternalServerError
 	default:

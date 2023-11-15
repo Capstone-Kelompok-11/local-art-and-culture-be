@@ -13,24 +13,24 @@ func ConvertFromUserReqToModel(data request.User) *models.Users {
 		Model: gorm.Model{
 			ID: data.Id,
 		},
-		FirstName: 		data.FirstName,
-		LastName: 		data.LastName,
-		Email: 			data.Email,
-		Password: 		data.Password,
-		AddressID: 		data.AddressID,	
-		PhoneNumber: 	data.PhoneNumber,
-		BirthDate: 		data.BirthDate,	
+		FirstName:   data.FirstName,
+		LastName:    data.LastName,
+		Email:       data.Email,
+		Password:    data.Password,
+		PhoneNumber: data.PhoneNumber,
+		BirthDate:   data.BirthDate,
 	}
 }
 
-func ConvertFromModelToUserRes(data models.Users) *response.User {
-	return &response.User{
-		Id: 			data.ID,
-		FirstName: 		data.FirstName,
-		LastName: 		data.LastName,
-		Email: 			data.Email,
-		AddressID: 		data.AddressID,
-		PhoneNumber: 	data.PhoneNumber,
-		BirthDate: 		data.BirthDate,
+func ConvertFromModelToUserRes(data models.Users) *response.UserResponse {
+	return &response.UserResponse{
+		Id:          data.ID,
+		FirstName:   data.FirstName,
+		LastName:    data.LastName,
+		Email:       data.Email,
+		PhoneNumber: data.PhoneNumber,
+		BirthDate:   data.BirthDate,
 	}
 }
+
+

@@ -11,4 +11,6 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.Role{})
 	db.AutoMigrate(&models.SuperAdmin{})
 	db.AutoMigrate(&models.Article{})
+	db.AutoMigrate(&models.Address{})
+	db.AutoMigrate(&models.Creator{})
 }
