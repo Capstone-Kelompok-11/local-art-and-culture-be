@@ -43,3 +43,25 @@ func (ch *CreatorHandler) GetCreator(c echo.Context) error {
 	}
 	return response.NewSuccessResponse(c, res)
 }
+
+func (ch *CreatorHandler) UpdateCreator(c echo.Context) error {
+	id := c.Param("id")
+	var input request.Creator
+	c.Bind(&input)
+
+	err, res := ch.creatorService.UpdateCreator(id, input)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	return response.NewSuccessResponse(c, res)
+}
+
+func (ch *CreatorHandler) DeleteCreator(c echo.Context) error {
+	id := c.Param("id")
+
+	err, res := ch.creatorService.DeleteCreator(id)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	return response.NewSuccessResponse(c, res)
+}

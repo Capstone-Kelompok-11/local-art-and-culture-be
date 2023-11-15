@@ -17,6 +17,7 @@ func CreatorRoute(e *echo.Echo, db *gorm.DB) {
 	e.POST("/creator", handler.CreateCreator)
 	e.GET("/creator", handler.GetAllCreator)
 	e.GET("/creator/:id", handler.GetCreator)
-	// e.PUT("/creator/:id", handler.UpdateRole)
-	// e.DELETE("/creator/:id", handler.DeleteRole)
+	e.PUT("/creator/:id", handler.UpdateCreator)
+	e.DELETE("/creator/:id", handler.DeleteCreator)
 }
+	

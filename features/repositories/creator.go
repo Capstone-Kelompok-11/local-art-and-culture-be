@@ -5,6 +5,7 @@ import (
 	"lokasani/entity/models"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
+	"lokasani/helpers/errors"
 
 	"gorm.io/gorm"
 )
@@ -13,8 +14,8 @@ type ICreatorRepository interface {
 	CreateCreator(data *request.Creator) (error, response.Creator)
 	GetAllCreator() (error, []response.UserCreatorResponse)
 	GetCreator(id string) (error, response.UserCreatorResponse)
-	// UpdateCreator(id string, input request.Creator) (error, response.Creator)
-	// DeleteCreator(id string) (error, response.Creator)
+	UpdateCreator(id string, input request.Creator) (error, response.Creator)
+	DeleteCreator(id string) (error, response.Creator)
 }
 
 type creatorRepository struct {
@@ -58,4 +59,49 @@ func (cr *creatorRepository) GetCreator(id string) (error, response.UserCreatorR
 	}
 
 	return nil, *domain.ConvertFromModelToUserCreatorRes(userData)
+}
+
+func (cr *creatorRepository) UpdateCreator(id string, input request.Creator) (error, response.Creator) {
+	creatorData := models.Creator{}
+	err := cr.db.First(&creatorData, "id = ?", id).Error
+
+	if err != nil {
+		return errors.ERR_GET_CREATOR_BAD_REQUEST_ID, response.Creator{}
+	}
+
+	if input.OutletName != "" {
+		creatorData.OutletName = input.OutletName
+	}
+
+	if input.Email != "" {
+		creatorData.Email = input.Email
+	}
+
+	if input.PhoneNumber != "" {
+		creatorData.PhoneNumber = input.PhoneNumber
+	}
+
+	if input.OutletName != "" {
+		creatorData.OutletName = input.OutletName
+	}
+
+	if err = cr.db.Save(&creatorData).Error; err != nil {
+		return errors.ERR_UPDATE_DATA, response.Creator{}
+	}
+	return nil, *domain.ConvertFromModelToCreatorRes(creatorData)
+}
+
+func (cr *creatorRepository) DeleteCreator(id string) (error, response.Creator) {
+	creatorData := models.Creator{}
+	res := response.Creator{}
+	find := cr.db.First(&creatorData, "id = ?", id).Error
+	if find == nil {
+		res = *domain.ConvertFromModelToCreatorRes(creatorData)
+	}
+	err := cr.db.Delete(&creatorData, "id = ?", id).Error
+	if err != nil {
+		return err, response.Creator{}
+	}
+
+	return nil, res
 }

@@ -56,6 +56,10 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_GET_CREATOR_BAD_REQUEST_ID:
 		return http.StatusBadRequest
+	case ERR_DELETE_CREATOR:
+		return http.StatusInternalServerError
+	case ERR_CREATE_CREATOR_DATABASE:
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}

@@ -27,4 +27,6 @@ var (
 	ERR_TITLE_IS_EMPTY             = errors.New("Title is empty")
 	ERR_CONTENT_IS_EMPTY           = errors.New("Content is empty")
 	ERR_CREATE_ROLE                = errors.New("Failed to create new role to database")
+	ERR_DELETE_CREATOR                = errors.New("Can't delete this creator")
+	ERR_CREATE_CREATOR_DATABASE    = errors.New("Failed to register new creator to database")
 )
