@@ -1,0 +1,13 @@
+name: test, build, development
+on: 
+  push:
+    branches:
+      - development
+jobs:
+  build_docker:
+    name: build and push to dockerhub
+    runs-on: ubuntu-latest
+    steps: 
+    - uses: actions/checkout@v2
+    - name: docker build
+      run: docker build -t peacechopath/lokasani:1.1.0
