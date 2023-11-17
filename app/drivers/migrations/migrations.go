@@ -14,4 +14,5 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.Address{})
 	db.AutoMigrate(&models.Creator{})
 	db.AutoMigrate(&models.Category{})
+	db.AutoMigrate(&models.Product{})
 }
