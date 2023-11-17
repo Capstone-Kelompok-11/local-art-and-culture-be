@@ -4,6 +4,9 @@ import "errors"
 
 var (
 	ERR_EMAIL_IS_EMPTY             = errors.New("email is empty")
+	ERR_PRICE_IS_EMPTY             = errors.New("price is empty")
+	ERR_DESCRIPTION_IS_EMPTY       = errors.New("description is empty")
+	ERR_STATUS_IS_EMPTY            = errors.New("status is empty")
 	ERR_NAME_IS_EMPTY              = errors.New("name is empty")
 	ERR_OUTLET_NAME_IS_EMPTY       = errors.New("outlet name is empty")
 	ERR_CATEGORY_IS_EMPTY          = errors.New("category is empty")
@@ -25,6 +28,7 @@ var (
 	ERR_ROLE_IS_EMPTY              = errors.New("role is empty")
 	ERR_GET_ROLE_BAD_REQUEST_ID    = errors.New("can't find any role with this id")
 	ERR_GET_CREATOR_BAD_REQUEST_ID = errors.New("can't find any creator with this id")
+	ERR_GET_PRODUCT_BAD_REQUEST_ID = errors.New("can't find any product with this id")
 	ERR_GET_CATEGORY_BAD_REQUEST_ID = errors.New("can't find any category with this id")
 	ERR_DELETE_ROLE                = errors.New("can't delete this role")
 	ERR_DELETE_CATEGORY            = errors.New("can't delete this category")
@@ -37,4 +41,5 @@ var (
 	ERR_GET_BAD_REQUEST_ID         = errors.New("can't find any data with this id")
 	ERR_CREATE_ARTICLE_DATABASE    = errors.New("failed to create new article")
 	ERR_CREATE_CATEGORY_DATABASE   = errors.New("failed to create new category")
+	ERR_CREATE_PRODUCT_DATABASE   = errors.New("failed to create new product")
 )
