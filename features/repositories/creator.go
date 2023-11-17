@@ -11,11 +11,11 @@ import (
 )
 
 type ICreatorRepository interface {
-	CreateCreator(data *request.Creator) (error, response.Creator)
-	GetAllCreator() (error, []response.UserCreatorResponse)
-	GetCreator(id string) (error, response.UserCreatorResponse)
-	UpdateCreator(id string, input request.Creator) (error, response.Creator)
-	DeleteCreator(id string) (error, response.Creator)
+	CreateCreator(data *request.Creator) (response.Creator, error)
+	GetAllCreator() ([]response.UserCreatorResponse, error)
+	GetCreator(id string) (response.UserCreatorResponse, error)
+	UpdateCreator(id string, input request.Creator) (response.Creator, error)
+	DeleteCreator(id string) (response.Creator, error)
 }
 
 type creatorRepository struct {
@@ -26,47 +26,47 @@ func NewCreatorRepository(db *gorm.DB) *creatorRepository {
 	return &creatorRepository{db}
 }
 
-func (cr *creatorRepository) CreateCreator(data *request.Creator) (error, response.Creator) {
+func (cr *creatorRepository) CreateCreator(data *request.Creator) (response.Creator, error) {
 	dataCreator := domain.ConvertFromCreatorReqToModel(*data)
 	err := cr.db.Create(&dataCreator).Error
 	if err != nil {
-		return err, response.Creator{}
+		return response.Creator{}, err
 	}
-	return nil, *domain.ConvertFromModelToCreatorRes(*dataCreator)
+	return *domain.ConvertFromModelToCreatorRes(*dataCreator), nil
 }
 
-func (cr *creatorRepository) GetAllCreator() (error, []response.UserCreatorResponse) {
+func (cr *creatorRepository) GetAllCreator() ([]response.UserCreatorResponse, error) {
 	var allCreator []models.Users
 	var resAllCreator []response.UserCreatorResponse
 	err := cr.db.Preload("Creator").Find(&allCreator).Error
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 
 	for i := 0; i < len(allCreator); i++ {
 		creatorVm := domain.ConvertFromModelToUserCreatorRes(allCreator[i])
 		resAllCreator = append(resAllCreator, *creatorVm)
 	}
-	return nil, resAllCreator
+	return resAllCreator, nil
 }
 
-func (cr *creatorRepository) GetCreator(id string) (error, response.UserCreatorResponse) {
+func (cr *creatorRepository) GetCreator(id string) (response.UserCreatorResponse, error) {
 	var userData models.Users
 	err := cr.db.Preload("Creator", "id = ?", id).First(&userData).Error
 
 	if err != nil {
-		return err, response.UserCreatorResponse{}
+		return response.UserCreatorResponse{}, err
 	}
 
-	return nil, *domain.ConvertFromModelToUserCreatorRes(userData)
+	return *domain.ConvertFromModelToUserCreatorRes(userData), nil
 }
 
-func (cr *creatorRepository) UpdateCreator(id string, input request.Creator) (error, response.Creator) {
+func (cr *creatorRepository) UpdateCreator(id string, input request.Creator) (response.Creator, error) {
 	creatorData := models.Creator{}
 	err := cr.db.First(&creatorData, "id = ?", id).Error
 
 	if err != nil {
-		return errors.ERR_GET_CREATOR_BAD_REQUEST_ID, response.Creator{}
+		return response.Creator{}, errors.ERR_GET_CREATOR_BAD_REQUEST_ID
 	}
 
 	if input.OutletName != "" {
@@ -86,12 +86,12 @@ func (cr *creatorRepository) UpdateCreator(id string, input request.Creator) (er
 	}
 
 	if err = cr.db.Save(&creatorData).Error; err != nil {
-		return errors.ERR_UPDATE_DATA, response.Creator{}
+		return response.Creator{}, errors.ERR_UPDATE_DATA
 	}
-	return nil, *domain.ConvertFromModelToCreatorRes(creatorData)
+	return *domain.ConvertFromModelToCreatorRes(creatorData), nil
 }
 
-func (cr *creatorRepository) DeleteCreator(id string) (error, response.Creator) {
+func (cr *creatorRepository) DeleteCreator(id string) (response.Creator, error) {
 	creatorData := models.Creator{}
 	res := response.Creator{}
 	find := cr.db.First(&creatorData, "id = ?", id).Error
@@ -100,8 +100,8 @@ func (cr *creatorRepository) DeleteCreator(id string) (error, response.Creator) 
 	}
 	err := cr.db.Delete(&creatorData, "id = ?", id).Error
 	if err != nil {
-		return err, response.Creator{}
+		return response.Creator{}, err
 	}
 
-	return nil, res
+	return res, nil
 }

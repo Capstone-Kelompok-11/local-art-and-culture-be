@@ -10,12 +10,12 @@ import (
 )
 
 type IUserService interface {
-	RegisterUser(data *request.User) (error, response.User)
-	LoginUser(data *request.User) (error, response.User)
-	GetAllUser() (error, []response.User)
-	GetUser(id string) (error, response.User)
-	UpdateUser(id string, input request.User) (error, response.User)
-	DeleteUser(id string) (error, response.User)
+	RegisterUser(data *request.User) (response.User, error)
+	LoginUser(data *request.User) (response.User, error)
+	GetAllUser() ([]response.User, error)
+	GetUser(id string) (response.User, error)
+	UpdateUser(id string, input request.User) (response.User, error)
+	DeleteUser(id string) (response.User, error)
 }
 
 type UserService struct {
@@ -26,59 +26,59 @@ func NewUserService(repo repositories.IUserRepository) *UserService {
 	return &UserService{UserRepo: repo}
 }
 
-func (u *UserService) RegisterUser(data *request.User) (error, response.User) {
+func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
 	if data.FirstName == "" {
-		return errors.ERR_NAME_IS_EMPTY, response.User{}
+		return response.User{}, errors.ERR_NAME_IS_EMPTY
 	} else if data.LastName == "" {
-		return errors.ERR_NAME_IS_EMPTY, response.User{}
+		return response.User{}, errors.ERR_NAME_IS_EMPTY
 	} else if data.Email == "" {
-		return errors.ERR_EMAIL_IS_EMPTY, response.User{}
+		return response.User{}, errors.ERR_EMAIL_IS_EMPTY
 	} else if data.PhoneNumber == "" {
-		return errors.ERR_PHONE_NUMBER_IS_EMPTY, response.User{}
+		return response.User{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
 	}
 
 	hashPass, err := bcrypt.Hash(data.Password)
 	if err != nil {
-		return errors.ERR_BCRYPT_PASSWORD, response.User{}
+		return response.User{}, errors.ERR_BCRYPT_PASSWORD
 	}
 
 	data.Password = hashPass
-	err, res := u.UserRepo.RegisterUser(data)
+	res, err := u.UserRepo.RegisterUser(data)
 	if err != nil {
-		return errors.ERR_REGISTER_USER_DATABASE, response.User{}
+		return response.User{}, errors.ERR_REGISTER_USER_DATABASE
 	}
 
 	token, err := middleware.CreateToken(int(data.Id), data.Email)
 	if err != nil {
-		return errors.ERR_TOKEN, response.User{}
+		return response.User{}, errors.ERR_TOKEN
 	}
 
 	res.Token = token
-	return nil, res
+	return res, nil
 }
 
-func (u *UserService) LoginUser(data *request.User) (error, response.User) {
+func (u *UserService) LoginUser(data *request.User) (response.User, error) {
 	if data.Email == "" {
-		return errors.ERR_EMAIL_IS_EMPTY, response.User{}
+		return response.User{}, errors.ERR_EMAIL_IS_EMPTY
 	} else if data.Password == "" {
-		return errors.ERR_PASSWORD_IS_EMPTY, response.User{}
+		return response.User{}, errors.ERR_PASSWORD_IS_EMPTY
 	}
 
-	err, res := u.UserRepo.LoginUser(data)
+	res, err := u.UserRepo.LoginUser(data)
 	if err != nil {
-		return err, response.User{}
+		return response.User{}, err
 	}
 
 	token, err := middleware.CreateToken(int(data.Id), data.Email)
 	if err != nil {
-		return errors.ERR_TOKEN, response.User{}
+		return response.User{}, errors.ERR_TOKEN
 	}
 
 	res.Token = token
-	return nil, res
+	return res, nil
 }
 
-func (u *UserService) GetAllUser() (error, []response.User) {
+func (u *UserService) GetAllUser() ([]response.User, error) {
 	err, res := u.UserRepo.GetAllUser()
 	if err != nil {
 		return err, nil
@@ -86,38 +86,38 @@ func (u *UserService) GetAllUser() (error, []response.User) {
 	return nil, res
 }
 
-func (u *UserService) GetUser(id string) (error, response.User) {
+func (u *UserService) GetUser(id string) (response.User, error) {
 	if id == "" {
-		return errors.ERR_GET_USER_BAD_REQUEST_ID, response.User{}
+		return response.User{}, errors.ERR_GET_USER_BAD_REQUEST_ID
 	}
 
-	err, res := u.UserRepo.GetUser(id)
+	res, err := u.UserRepo.GetUser(id)
 	if err != nil {
-		return err, response.User{}
+		return response.User{}, err
 	}
-	return nil, res
+	return res, nil
 }
 
-func (u *UserService) UpdateUser(id string, data request.User) (error, response.User) {
+func (u *UserService) UpdateUser(id string, data request.User) (response.User, error) {
 	if id == "" {
-		return errors.ERR_GET_USER_BAD_REQUEST_ID, response.User{}
+		return response.User{}, errors.ERR_GET_USER_BAD_REQUEST_ID
 	}
 
-	err, res := u.UserRepo.UpdateUser(id, data)
+	res, err := u.UserRepo.UpdateUser(id, data)
 	if err != nil {
-		return errors.ERR_UPDATE_DATA, response.User{}
+		return response.User{}, errors.ERR_UPDATE_DATA
 	}
-	return nil, res
+	return res, nil
 }
 
-func (u *UserService) DeleteUser(id string) (error, response.User) {
+func (u *UserService) DeleteUser(id string) (response.User, error) {
 	if id == "" {
-		return errors.ERR_GET_USER_BAD_REQUEST_ID, response.User{}
+		return response.User{}, errors.ERR_GET_USER_BAD_REQUEST_ID
 	}
 
-	err, res := u.UserRepo.DeleteUser(id)
+	res, err := u.UserRepo.DeleteUser(id)
 	if err != nil {
-		return errors.ERR_DELETE_USER, response.User{}
+		return response.User{}, errors.ERR_DELETE_USER
 	}
-	return nil, res
+	return res, nil
 }

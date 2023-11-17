@@ -8,11 +8,11 @@ import (
 )
 
 type IRoleService interface {
-	CreateRole(data *request.Role) (error, response.Role)
-	GetAllRole() (error, []response.Role)
-	GetRole(id string) (error, response.Role)
-	UpdateRole(id string, data request.Role) (error, response.Role)
-	DeleteRole(id string) (error, response.Role)
+	CreateRole(data *request.Role) (response.Role, error)
+	GetAllRole() ([]response.Role, error)
+	GetRole(id string) (response.Role, error)
+	UpdateRole(id string, data request.Role) (response.Role, error)
+	DeleteRole(id string) (response.Role, error)
 }
 
 type RoleService struct {
@@ -23,58 +23,58 @@ func NewRoleService(repo repositories.IRoleRepository) *RoleService {
 	return &RoleService{roleRepository: repo}
 }
 
-func (rs *RoleService) CreateRole(data *request.Role) (error, response.Role) {
+func (rs *RoleService) CreateRole(data *request.Role) (response.Role, error) {
 	if data.Role == "" {
-		return errors.ERR_ROLE_IS_EMPTY, response.Role{}
+		return response.Role{}, errors.ERR_ROLE_IS_EMPTY
 	}
 
-	err, res := rs.roleRepository.CreateRole(data)
+	res, err := rs.roleRepository.CreateRole(data)
 	if err != nil {
-		return errors.ERR_CREATE_ROLE, response.Role{}
+		return response.Role{}, errors.ERR_CREATE_ROLE
 	}
 
-	return nil, res
+	return res, nil
 }
 
-func (rs *RoleService) GetAllRole() (error, []response.Role) {
+func (rs *RoleService) GetAllRole() ([]response.Role, error) {
 	err, res := rs.roleRepository.GetAllRole()
 	if err != nil {
-		return errors.ERR_GET_DATA, nil
+		return nil, errors.ERR_GET_DATA
 	}
 	return nil, res
 }
 
-func (rs *RoleService) GetRole(id string) (error, response.Role) {
+func (rs *RoleService) GetRole(id string) (response.Role, error) {
 	if id == "" {
-		return errors.ERR_GET_ROLE_BAD_REQUEST_ID, response.Role{}
+		return response.Role{}, errors.ERR_GET_ROLE_BAD_REQUEST_ID
 	}
-	err, res := rs.roleRepository.GetRole(id)
+	res, err := rs.roleRepository.GetRole(id)
 	if err != nil {
-		return errors.ERR_GET_DATA, response.Role{}
+		return response.Role{}, errors.ERR_GET_DATA
 	}
-	return nil, res
+	return res, nil
 }
 
-func (rs *RoleService) UpdateRole(id string, data request.Role) (error, response.Role) {
+func (rs *RoleService) UpdateRole(id string, data request.Role) (response.Role, error) {
 	if id == "" {
-		return errors.ERR_GET_ROLE_BAD_REQUEST_ID, response.Role{}
+		return response.Role{}, errors.ERR_GET_ROLE_BAD_REQUEST_ID
 	}
-	err, res := rs.roleRepository.UpdateRole(id, data)
+	res, err := rs.roleRepository.UpdateRole(id, data)
 	if err != nil {
-		return errors.ERR_UPDATE_DATA, response.Role{}
+		return response.Role{}, errors.ERR_UPDATE_DATA
 	}
-	return nil, res
+	return res, nil
 }
 
-func (rs *RoleService) DeleteRole(id string) (error, response.Role) {
+func (rs *RoleService) DeleteRole(id string) (response.Role, error) {
 	if id == "" {
-		return errors.ERR_GET_ROLE_BAD_REQUEST_ID, response.Role{}
+		return response.Role{}, errors.ERR_GET_ROLE_BAD_REQUEST_ID
 	}
-	err, res := rs.roleRepository.DeleteRole(id)
+	res, err := rs.roleRepository.DeleteRole(id)
 
 	if err != nil {
-		return errors.ERR_DELETE_ROLE, response.Role{}
+		return response.Role{}, errors.ERR_DELETE_ROLE
 	}
 
-	return nil, res
+	return res, nil
 }

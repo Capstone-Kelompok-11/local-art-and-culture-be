@@ -10,12 +10,12 @@ import (
 )
 
 type IAdminService interface {
-	RegisterAdmin(data *request.Admin) (error, response.Admin)
-	LoginAdmin(data *request.Admin) (error, response.Admin)
-	GetAllAdmin() (error, []response.Admin)
-	GetAdmin(id string) (error, response.Admin)
-	UpdateAdmin(id string, input request.Admin) (error, response.Admin)
-	DeleteAdmin(id string) (error, response.Admin)
+	RegisterAdmin(data *request.Admin) (response.Admin, error)
+	LoginAdmin(data *request.Admin) (response.Admin, error)
+	GetAllAdmin() ([]response.Admin, error)
+	GetAdmin(id string) (response.Admin, error)
+	UpdateAdmin(id string, input request.Admin) (response.Admin, error)
+	DeleteAdmin(id string) (response.Admin, error)
 }
 
 type AdminService struct {
@@ -26,98 +26,98 @@ func NewAdminService(repo repositories.IAdminRepository) *AdminService {
 	return &AdminService{adminRepository: repo}
 }
 
-func (as *AdminService) RegisterAdmin(data *request.Admin) (error, response.Admin) {
+func (as *AdminService) RegisterAdmin(data *request.Admin) (response.Admin, error) {
 	if data.Name == "" {
-		return errors.ERR_NAME_IS_EMPTY, response.Admin{}
+		return response.Admin{}, errors.ERR_NAME_IS_EMPTY
 	}
 	if data.Email == "" {
-		return errors.ERR_EMAIL_IS_EMPTY, response.Admin{}
+		return response.Admin{}, errors.ERR_EMAIL_IS_EMPTY
 	}
 	if data.Password == "" {
-		return errors.ERR_PASSWORD_IS_EMPTY, response.Admin{}
+		return response.Admin{}, errors.ERR_PASSWORD_IS_EMPTY
 	}
 	if data.PhoneNumber == "" {
-		return errors.ERR_PHONE_NUMBER_IS_EMPTY, response.Admin{}
+		return response.Admin{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
 	}
 	hashPass, err := bcrypt.Hash(data.Password)
 	if err != nil {
-		return errors.ERR_BCRYPT_PASSWORD, response.Admin{}
+		return response.Admin{}, errors.ERR_BCRYPT_PASSWORD
 	}
 
 	data.Password = hashPass
-	err, res := as.adminRepository.RegisterAdmin(data)
+	res, err := as.adminRepository.RegisterAdmin(data)
 	if err != nil {
-		return errors.ERR_REGISTER_USER_DATABASE, response.Admin{}
+		return response.Admin{}, errors.ERR_REGISTER_USER_DATABASE
 	}
 	token, err := middleware.CreateToken(int(data.Id), data.Name)
 
 	if err != nil {
-		return errors.ERR_TOKEN, response.Admin{}
+		return response.Admin{}, errors.ERR_TOKEN
 	}
 	res.Token = token
-	return nil, res
+	return res, nil
 }
 
-func (as *AdminService) LoginAdmin(data *request.Admin) (error, response.Admin) {
+func (as *AdminService) LoginAdmin(data *request.Admin) (response.Admin, error) {
 	if data.Email == "" {
-		return errors.ERR_EMAIL_IS_EMPTY, response.Admin{}
+		return response.Admin{}, errors.ERR_EMAIL_IS_EMPTY
 	} else if data.Password == "" {
-		return errors.ERR_PASSWORD_IS_EMPTY, response.Admin{}
+		return response.Admin{}, errors.ERR_PASSWORD_IS_EMPTY
 	}
 
-	err, res := as.adminRepository.LoginAdmin(data)
+	res, err := as.adminRepository.LoginAdmin(data)
 	if err != nil {
-		return err, response.Admin{}
+		return response.Admin{}, err
 	}
 
 	token, err := middleware.CreateToken(int(data.Id), data.Name)
 
 	if err != nil {
-		return errors.ERR_TOKEN, response.Admin{}
+		return response.Admin{}, errors.ERR_TOKEN
 	}
 	res.Token = token
-	return nil, res
+	return res, nil
 }
 
-func (as *AdminService) GetAllAdmin() (error, []response.Admin) {
+func (as *AdminService) GetAllAdmin() ([]response.Admin, error) {
 	err, res := as.adminRepository.GetAllAdmin()
 	if err != nil {
-		return errors.ERR_GET_DATA, nil
+		return nil, errors.ERR_GET_DATA
 	}
 	return nil, res
 }
 
-func (as *AdminService) GetAdmin(id string) (error, response.Admin) {
+func (as *AdminService) GetAdmin(id string) (response.Admin, error) {
 	if id == "" {
-		return errors.ERR_GET_ADMIN_BAD_REQUEST_ID, response.Admin{}
+		return response.Admin{}, errors.ERR_GET_ADMIN_BAD_REQUEST_ID
 	}
-	err, res := as.adminRepository.GetAdmin(id)
+	res, err := as.adminRepository.GetAdmin(id)
 	if err != nil {
-		return err, response.Admin{}
+		return response.Admin{}, err
 	}
-	return nil, res
+	return res, nil
 }
 
-func (as *AdminService) UpdateAdmin(id string, data request.Admin) (error, response.Admin) {
+func (as *AdminService) UpdateAdmin(id string, data request.Admin) (response.Admin, error) {
 	if id == "" {
-		return errors.ERR_GET_ADMIN_BAD_REQUEST_ID, response.Admin{}
+		return response.Admin{}, errors.ERR_GET_ADMIN_BAD_REQUEST_ID
 	}
-	err, res := as.adminRepository.UpdateAdmin(id, data)
+	res, err := as.adminRepository.UpdateAdmin(id, data)
 	if err != nil {
-		return errors.ERR_UPDATE_DATA, response.Admin{}
+		return response.Admin{}, errors.ERR_UPDATE_DATA
 	}
-	return nil, res
+	return res, nil
 }
 
-func (as *AdminService) DeleteAdmin(id string) (error, response.Admin) {
+func (as *AdminService) DeleteAdmin(id string) (response.Admin, error) {
 	if id == "" {
-		return errors.ERR_GET_ADMIN_BAD_REQUEST_ID, response.Admin{}
+		return response.Admin{}, errors.ERR_GET_ADMIN_BAD_REQUEST_ID
 	}
-	err, res := as.adminRepository.DeleteAdmin(id)
+	res, err := as.adminRepository.DeleteAdmin(id)
 
 	if err != nil {
-		return errors.ERR_DELETE_ADMIN, response.Admin{}
+		return response.Admin{}, errors.ERR_DELETE_ADMIN
 	}
 
-	return nil, res
+	return res, nil
 }

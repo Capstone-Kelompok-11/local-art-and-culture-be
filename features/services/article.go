@@ -8,11 +8,11 @@ import (
 )
 
 type IArticleService interface {
-	CreateArticle(data *request.Article) (error, response.Article)
-	GetAllArticle() (error, []response.Article)
-	GetArticle(id string) (error, response.Article)
-	UpdateArticle(id string, input request.Article) (error, response.Article)
-	DeleteArticle(id string) (error, response.Article)
+	CreateArticle(data *request.Article) (response.Article, error)
+	GetAllArticle() ([]response.Article, error)
+	GetArticle(id string) (response.Article, error)
+	UpdateArticle(id string, input request.Article) (response.Article, error)
+	DeleteArticle(id string) (response.Article, error)
 }
 
 type ArticleService struct {
@@ -23,63 +23,63 @@ func NewArticleService(repo repositories.IArticleRepository) *ArticleService {
 	return &ArticleService{articleRepository: repo}
 }
 
-func (as *ArticleService) CreateArticle(data *request.Article) (error, response.Article) {
+func (as *ArticleService) CreateArticle(data *request.Article) (response.Article, error) {
 	if data.Title == "" {
-		return errors.ERR_TITLE_IS_EMPTY, response.Article{}
+		return response.Article{}, errors.ERR_TITLE_IS_EMPTY
 	}
 
 	if data.Content == "" {
-		return errors.ERR_CONTENT_IS_EMPTY, response.Article{}
+		return response.Article{}, errors.ERR_CONTENT_IS_EMPTY
 	}
 
-	err, res := as.articleRepository.CreateArticle(data)
+	res, err := as.articleRepository.CreateArticle(data)
 	if err != nil {
-		return errors.ERR_CREATE_ARTICLE_DATABASE, response.Article{}
+		return response.Article{}, errors.ERR_CREATE_ARTICLE_DATABASE
 	}
 
-	return nil, res
+	return res, nil
 }
 
-func (as *ArticleService) GetAllArticle() (error, []response.Article) {
-	err, res := as.articleRepository.GetAllArticle()
+func (as *ArticleService) GetAllArticle() ([]response.Article, error) {
+	res, err := as.articleRepository.GetAllArticle()
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
-	return nil, res
+	return res, nil
 }
 
-func (as *ArticleService) GetArticle(id string) (error, response.Article) {
+func (as *ArticleService) GetArticle(id string) (response.Article, error) {
 	if id == "" {
-		return errors.ERR_GET_BAD_REQUEST_ID, response.Article{}
+		return response.Article{}, errors.ERR_GET_BAD_REQUEST_ID
 	}
 
-	err, res := as.articleRepository.GetArticle(id)
+	res, err := as.articleRepository.GetArticle(id)
 	if err != nil {
-		return err, response.Article{}
+		return response.Article{}, err
 	}
-	return nil, res
+	return res, nil
 }
 
-func (as *ArticleService) UpdateArticle(id string, input request.Article) (error, response.Article) {
+func (as *ArticleService) UpdateArticle(id string, input request.Article) (response.Article, error) {
 	if id == "" {
-		return errors.ERR_GET_BAD_REQUEST_ID, response.Article{}
+		return response.Article{}, errors.ERR_GET_BAD_REQUEST_ID
 	}
 
-	err, res := as.articleRepository.UpdateArticle(id, input)
+	res, err := as.articleRepository.UpdateArticle(id, input)
 	if err != nil {
-		return errors.ERR_UPDATE_DATA, response.Article{}
+		return response.Article{}, errors.ERR_UPDATE_DATA
 	}
-	return nil, res
+	return res, nil
 }
 
-func (as *ArticleService) DeleteArticle(id string) (error, response.Article) {
+func (as *ArticleService) DeleteArticle(id string) (response.Article, error) {
 	if id == "" {
-		return errors.ERR_GET_BAD_REQUEST_ID, response.Article{}
+		return response.Article{}, errors.ERR_GET_BAD_REQUEST_ID
 	}
 
-	err, res := as.articleRepository.DeleteArticle(id)
+	res, err := as.articleRepository.DeleteArticle(id)
 	if err != nil {
-		return errors.ERR_DELETE, response.Article{}
+		return response.Article{}, errors.ERR_DELETE
 	}
-	return nil, res
+	return res, nil
 }

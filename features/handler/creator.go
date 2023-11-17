@@ -20,7 +20,7 @@ func (ch *CreatorHandler) CreateCreator(c echo.Context) error {
 	var input request.Creator
 	c.Bind(&input)
 
-	err, res := ch.creatorService.CreateCreator(&input)
+	res, err := ch.creatorService.CreateCreator(&input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -28,7 +28,7 @@ func (ch *CreatorHandler) CreateCreator(c echo.Context) error {
 }
 
 func (ch *CreatorHandler) GetAllCreator(c echo.Context) error {
-	err, res := ch.creatorService.GetAllCreator()
+	res, err := ch.creatorService.GetAllCreator()
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -37,7 +37,7 @@ func (ch *CreatorHandler) GetAllCreator(c echo.Context) error {
 
 func (ch *CreatorHandler) GetCreator(c echo.Context) error {
 	id := c.Param("id")
-	err, res := ch.creatorService.GetCreator(id)
+	res, err := ch.creatorService.GetCreator(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -49,7 +49,7 @@ func (ch *CreatorHandler) UpdateCreator(c echo.Context) error {
 	var input request.Creator
 	c.Bind(&input)
 
-	err, res := ch.creatorService.UpdateCreator(id, input)
+	res, err := ch.creatorService.UpdateCreator(id, input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -59,7 +59,7 @@ func (ch *CreatorHandler) UpdateCreator(c echo.Context) error {
 func (ch *CreatorHandler) DeleteCreator(c echo.Context) error {
 	id := c.Param("id")
 
-	err, res := ch.creatorService.DeleteCreator(id)
+	res, err := ch.creatorService.DeleteCreator(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
