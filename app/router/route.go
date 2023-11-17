@@ -20,5 +20,6 @@ func Route(db *gorm.DB) *echo.Echo {
 	ArticleRoute(e, db)
 	UserRoute(e, db)
 	CreatorRoute(e, db)
+	CategoryRoute(e, db)
 	return e
 }

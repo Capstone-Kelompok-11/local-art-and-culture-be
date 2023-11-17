@@ -12,12 +12,12 @@ import (
 )
 
 type IAdminRepository interface {
-	RegisterAdmin(data *request.Admin) (error, response.Admin)
-	LoginAdmin(data *request.Admin) (error, response.Admin)
-	GetAllAdmin() (error, []response.Admin)
-	GetAdmin(id string) (error, response.Admin)
-	UpdateAdmin(id string, input request.Admin) (error, response.Admin)
-	DeleteAdmin(id string) (error, response.Admin)
+	RegisterAdmin(data *request.Admin) (response.Admin, error)
+	LoginAdmin(data *request.Admin) (response.Admin, error)
+	GetAllAdmin() ([]response.Admin, error)
+	GetAdmin(id string) (response.Admin, error)
+	UpdateAdmin(id string, input request.Admin) (response.Admin, error)
+	DeleteAdmin(id string) (response.Admin, error)
 }
 
 type adminRepository struct {
@@ -28,61 +28,61 @@ func NewAdminRepository(db *gorm.DB) *adminRepository {
 	return &adminRepository{db}
 }
 
-func (ar *adminRepository) RegisterAdmin(data *request.Admin) (error, response.Admin) {
+func (ar *adminRepository) RegisterAdmin(data *request.Admin) (response.Admin, error) {
 	dataAdmin := domain.ConvertFromAdminReqToModel(*data)
 	err := ar.db.Create(&dataAdmin).Error
 	if err != nil {
-		return err, response.Admin{}
+		return response.Admin{}, err
 	}
-	return nil, *domain.ConvertFromModelToAdminRes(*dataAdmin)
+	return *domain.ConvertFromModelToAdminRes(*dataAdmin), nil
 }
 
-func (ar *adminRepository) LoginAdmin(data *request.Admin) (error, response.Admin) {
+func (ar *adminRepository) LoginAdmin(data *request.Admin) (response.Admin, error) {
 	dataAdmin := domain.ConvertFromAdminReqToModel(*data)
 	err := ar.db.Where("email = ? ", dataAdmin.Email).First(&dataAdmin).Error
 	if err != nil {
-		return errors.ERR_EMAIL_NOT_FOUND, response.Admin{}
+		return response.Admin{}, errors.ERR_EMAIL_NOT_FOUND
 	}
 
 	err = bcrypt.CheckPassword(data.Password, dataAdmin.Password)
 	if err != nil {
-		return errors.ERR_WRONG_PASSWORD, response.Admin{}
+		return response.Admin{}, errors.ERR_WRONG_PASSWORD
 	}
-	return nil, *domain.ConvertFromModelToAdminRes(*dataAdmin)
+	return *domain.ConvertFromModelToAdminRes(*dataAdmin), nil
 }
 
-func (ar *adminRepository) GetAllAdmin() (error, []response.Admin) {
+func (ar *adminRepository) GetAllAdmin() ([]response.Admin, error) {
 	var allAdmin []models.SuperAdmin
 	var resAllAdmin []response.Admin
 	err := ar.db.Find(&allAdmin).Error
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 
 	for i := 0; i < len(allAdmin); i++ {
 		adminVm := domain.ConvertFromModelToAdminRes(allAdmin[i])
 		resAllAdmin = append(resAllAdmin, *adminVm)
 	}
-	return nil, resAllAdmin
+	return resAllAdmin, nil
 }
 
-func (ar *adminRepository) GetAdmin(id string) (error, response.Admin) {
+func (ar *adminRepository) GetAdmin(id string) (response.Admin, error) {
 	var adminData models.SuperAdmin
 	err := ar.db.First(&adminData, "id = ?", id).Error
 
 	if err != nil {
-		return err, response.Admin{}
+		return response.Admin{}, err
 	}
 
-	return nil, *domain.ConvertFromModelToAdminRes(adminData)
+	return *domain.ConvertFromModelToAdminRes(adminData), nil
 }
 
-func (ar *adminRepository) UpdateAdmin(id string, input request.Admin) (error, response.Admin) {
+func (ar *adminRepository) UpdateAdmin(id string, input request.Admin) (response.Admin, error) {
 	adminData := models.SuperAdmin{}
 	err := ar.db.First(&adminData, "id = ?", id).Error
 
 	if err != nil {
-		return err, response.Admin{}
+		return response.Admin{}, err
 	}
 
 	if input.Email != "" {
@@ -101,12 +101,12 @@ func (ar *adminRepository) UpdateAdmin(id string, input request.Admin) (error, r
 		adminData.Password = input.Password
 	}
 	if err = ar.db.Save(&adminData).Error; err != nil {
-		return err, response.Admin{}
+		return response.Admin{}, err
 	}
-	return nil, *domain.ConvertFromModelToAdminRes(adminData)
+	return *domain.ConvertFromModelToAdminRes(adminData), nil
 }
 
-func (ar *adminRepository) DeleteAdmin(id string) (error, response.Admin) {
+func (ar *adminRepository) DeleteAdmin(id string) (response.Admin, error) {
 	adminData := models.SuperAdmin{}
 	res := response.Admin{}
 	find := ar.db.First(&adminData, "id = ?", id).Error
@@ -115,8 +115,8 @@ func (ar *adminRepository) DeleteAdmin(id string) (error, response.Admin) {
 	}
 	err := ar.db.Delete(&adminData, "id = ?", id).Error
 	if err != nil {
-		return err, response.Admin{}
+		return response.Admin{}, err
 	}
 
-	return nil, res
+	return res, nil
 }

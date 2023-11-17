@@ -12,12 +12,12 @@ import (
 )
 
 type IUserRepository interface {
-	RegisterUser(data *request.User) (error, response.User)
-	LoginUser(data *request.User) (error, response.User)
-	GetAllUser() (error, []response.User)
-	GetUser(id string) (error, response.User)
-	UpdateUser(id string, input request.User) (error, response.User)
-	DeleteUser(id string) (error, response.User)
+	RegisterUser(data *request.User) (response.User, error)
+	LoginUser(data *request.User) (response.User, error)
+	GetAllUser() ([]response.User, error)
+	GetUser(id string) (response.User, error)
+	UpdateUser(id string, input request.User) (response.User, error)
+	DeleteUser(id string) (response.User, error)
 }
 
 type userRepository struct {
@@ -28,35 +28,35 @@ func NewUsersRepository(db *gorm.DB) *userRepository {
 	return &userRepository{db}
 }
 
-func (u *userRepository) RegisterUser(data *request.User) (error, response.User) {
+func (u *userRepository) RegisterUser(data *request.User) (response.User, error) {
 	dataUser := domain.ConvertFromUserReqToModel(*data)
 	err := u.db.Create(&dataUser).Error
 	if err != nil {
-		return err, response.User{}
+		return response.User{}, err
 	}
-	return nil, *domain.ConvertFromModelToUserRes(*dataUser)
+	return *domain.ConvertFromModelToUserRes(*dataUser), nil
 }
 
-func (u *userRepository) LoginUser(data *request.User) (error, response.User) {
+func (u *userRepository) LoginUser(data *request.User) (response.User, error) {
 	dataUser := domain.ConvertFromUserReqToModel(*data)
 	err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
 	if err != nil {
-		return errors.ERR_EMAIL_NOT_FOUND, response.User{}
+		return response.User{}, errors.ERR_EMAIL_NOT_FOUND
 	}
 
 	err = bcrypt.CheckPassword(data.Password, dataUser.Password)
 	if err != nil {
-		return errors.ERR_WRONG_PASSWORD, response.User{}
+		return response.User{}, errors.ERR_WRONG_PASSWORD
 	}
-	return nil, *domain.ConvertFromModelToUserRes(*dataUser)
+	return *domain.ConvertFromModelToUserRes(*dataUser), nil
 }
 
-func (u *userRepository) GetAllUser() (error, []response.User) {
+func (u *userRepository) GetAllUser() ([]response.User, error) {
 	var allUser []models.Users
 	var resAllUser []response.User
 	err := u.db.Find(&allUser).Error
 	if err != nil {
-		return errors.ERR_GET_DATA, nil
+		return nil, errors.ERR_GET_DATA
 	}
 
 	for i := 0; i < len(allUser); i++ {
@@ -64,24 +64,24 @@ func (u *userRepository) GetAllUser() (error, []response.User) {
 		resAllUser = append(resAllUser, *userVm)
 	}
 
-	return nil, resAllUser
+	return resAllUser, nil
 }
 
-func (u *userRepository) GetUser(id string) (error, response.User) {
+func (u *userRepository) GetUser(id string) (response.User, error) {
 	var userData models.Users
 	err := u.db.First(&userData, "id = ?", id).Error
 	if err != nil {
-		return err, response.User{}
+		return response.User{}, err
 	}
-	return nil, *domain.ConvertFromModelToUserRes(userData)
+	return *domain.ConvertFromModelToUserRes(userData), nil
 }
 
-func (u *userRepository) UpdateUser(id string, input request.User) (error, response.User) {
+func (u *userRepository) UpdateUser(id string, input request.User) (response.User, error) {
 	userData := models.Users{}
 	err := u.db.First(&userData, "id = ?", id).Error
 
 	if err != nil {
-		return err, response.User{}
+		return response.User{}, err
 	}
 	
 	if input.FirstName != "" {
@@ -97,12 +97,12 @@ func (u *userRepository) UpdateUser(id string, input request.User) (error, respo
 	}
 
 	if err = u.db.Save(&userData).Error; err != nil {
-		return err, response.User{}
+		return response.User{}, err
 	}
-	return nil, *domain.ConvertFromModelToUserRes(userData)
+	return *domain.ConvertFromModelToUserRes(userData), nil
 }
 
-func (u *userRepository) DeleteUser(id string) (error, response.User) {
+func (u *userRepository) DeleteUser(id string) (response.User, error) {
 	userData := models.Users{}
 	res := response.User{}
 	find := u.db.First(&userData, "id = ?", id).Error
@@ -111,7 +111,7 @@ func (u *userRepository) DeleteUser(id string) (error, response.User) {
 	}
 	err := u.db.Delete(&userData, "id = ?", id).Error
 	if err != nil {
-		return err, response.User{}
+		return response.User{}, err
 	}
-	return nil, res
+	return res, nil
 }

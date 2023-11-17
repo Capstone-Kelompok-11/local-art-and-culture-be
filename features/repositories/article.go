@@ -12,11 +12,11 @@ import (
 )
 
 type IArticleRepository interface {
-	CreateArticle(data *request.Article) (error, response.Article)
-	GetAllArticle() (error, []response.Article)
-	GetArticle(id string) (error, response.Article)
-	UpdateArticle(id string, input request.Article) (error, response.Article)
-	DeleteArticle(id string) (error, response.Article)
+	CreateArticle(data *request.Article) (response.Article, error)
+	GetAllArticle() ([]response.Article, error)
+	GetArticle(id string) (response.Article, error)
+	UpdateArticle(id string, input request.Article) (response.Article, error)
+	DeleteArticle(id string) (response.Article, error)
 }
 
 type articleRepository struct {
@@ -27,21 +27,21 @@ func NewArticleRepository(db *gorm.DB) *articleRepository {
 	return &articleRepository{db}
 }
 
-func (ar *articleRepository) CreateArticle(data *request.Article) (error, response.Article) {
+func (ar *articleRepository) CreateArticle(data *request.Article) (response.Article, error){
 	dataArticle := domain.ConvertFromArticleReqToModel(*data)
 	err := ar.db.Create(&dataArticle).Error
 	if err != nil {
-		return err, response.Article{}
+		return response.Article{}, err
 	}
-	return nil, *domain.ConvertFromModelToArticleRes(*dataArticle)
+	return *domain.ConvertFromModelToArticleRes(*dataArticle), nil
 }
 
-func (ar *articleRepository) GetAllArticle() (error, []response.Article) {
+func (ar *articleRepository) GetAllArticle() ([]response.Article, error) {
 	var allArticle []models.Article
 	var resAllArticle []response.Article
 	err := ar.db.Find(&allArticle).Error
 	if err != nil {
-		return errors.ERR_GET_DATA, nil
+		return nil, errors.ERR_GET_DATA
 	}
 
 	fmt.Println(allArticle)
@@ -49,23 +49,23 @@ func (ar *articleRepository) GetAllArticle() (error, []response.Article) {
 		articleVm := domain.ConvertFromModelToArticleRes(allArticle[i])
 		resAllArticle = append(resAllArticle, *articleVm)
 	}
-	return nil, resAllArticle
+	return resAllArticle, nil
 }
 
-func (ar *articleRepository) GetArticle(id string) (error, response.Article) {
+func (ar *articleRepository) GetArticle(id string) (response.Article, error) {
 	var articleData models.Article
 	err := ar.db.First(&articleData, "id = ?", id).Error
 	if err != nil {
-		return err, response.Article{}
+		return response.Article{}, err
 	}
-	return nil, *domain.ConvertFromModelToArticleRes(articleData)
+	return *domain.ConvertFromModelToArticleRes(articleData), nil
 }
 
-func (ar *articleRepository) UpdateArticle(id string, input request.Article) (error, response.Article) {
+func (ar *articleRepository) UpdateArticle(id string, input request.Article) (response.Article, error) {
 	articleData := models.Article{}
 	err := ar.db.First(&articleData, "id = ?", id).Error
 	if err != nil {
-		return err, response.Article{}
+		return response.Article{}, err
 	}
 
 	if input.Title != "" {
@@ -75,12 +75,12 @@ func (ar *articleRepository) UpdateArticle(id string, input request.Article) (er
 	}
 
 	if err = ar.db.Save(&articleData).Error; err != nil {
-		return err, response.Article{}
+		return response.Article{}, err
 	}
-	return nil, *domain.ConvertFromModelToArticleRes(articleData)
+	return *domain.ConvertFromModelToArticleRes(articleData), nil
 }
 
-func (ar *articleRepository) DeleteArticle(id string) (error, response.Article) {
+func (ar *articleRepository) DeleteArticle(id string) (response.Article, error) {
 	articleData := models.Article{}
 	res := response.Article{}
 	find := ar.db.First(&articleData, "id = ?", id).Error
@@ -89,7 +89,7 @@ func (ar *articleRepository) DeleteArticle(id string) (error, response.Article) 
 	}
 	err := ar.db.Delete(&articleData, "id = ?", id).Error
 	if err != nil {
-		return err, response.Article{}
+		return response.Article{}, err
 	}
-	return nil, res
+	return res, nil
 }
