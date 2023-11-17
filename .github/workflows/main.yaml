@@ -40,10 +40,8 @@ jobs:
           IdentityFile ~/.ssh/nicholas_key.pem
           StrictHostKeyChecking=no
         END
-    - name: install docker
-      run: sudo apt update && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && sudo apt install -y docker-ce docker-ce-cli containerd.io
     - name: login ec2, docker pull and running container
-      run: ssh staging 'docker rm -f $(docker ps -a -q) && docker pull peacechopath/lokasani:1.1.0 && docker run -d -p 8000:8000 --name lokasani peacechopath/lokasani:1.1.0'
+      run: sudo yum install docker -y && sudo service docker start docker ssh staging 'rm -f $(docker ps -a -q) && docker pull peacechopath/lokasani:1.1.0 && docker run -d -p 8000:8000 --name lokasani peacechopath/lokasani:1.1.0'
 
 
 
