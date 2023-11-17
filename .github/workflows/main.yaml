@@ -40,7 +40,6 @@ jobs:
             IdentityFile ~/.ssh/nicholas_key.pem
             StrictHostKeyChecking=no
           END
-          ssh 
       - name: login ec2, docker pull and running container
         run: ssh staging 'docker rm -f $(docker ps -a -q) && docker pull peacechopath/lokasani:1.1.0 && docker run -d -p 8000:8000 --name lokasani peacechopath/lokasani:1.1.0'
 
