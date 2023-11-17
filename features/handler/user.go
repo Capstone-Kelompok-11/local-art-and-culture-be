@@ -20,7 +20,7 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 	var input request.User
 	e.Bind(&input)
 
-	err, res := u.userService.RegisterUser(&input)
+	res, err := u.userService.RegisterUser(&input)
 	if err != nil {
 		return response.NewErrorResponse(e, err)
 	}
@@ -31,7 +31,7 @@ func (u *UserHandler) LoginUsers(e echo.Context) error {
 	var input request.User
 	e.Bind(&input)
 
-	err, res := u.userService.LoginUser(&input)
+	res, err := u.userService.LoginUser(&input)
 	if err != nil {
 		return response.NewErrorResponse(e, err)
 	}
@@ -39,7 +39,7 @@ func (u *UserHandler) LoginUsers(e echo.Context) error {
 }
 
 func (u *UserHandler) GetAllUser(c echo.Context) error {
-	err, res := u.userService.GetAllUser()
+	res, err := u.userService.GetAllUser()
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -48,7 +48,7 @@ func (u *UserHandler) GetAllUser(c echo.Context) error {
 
 func (u *UserHandler) GetUser(c echo.Context) error {
 	id := c.Param("id")
-	err, res := u.userService.GetUser(id)
+	res, err := u.userService.GetUser(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -59,7 +59,7 @@ func (u *UserHandler) UpdateUser(c echo.Context) error {
 	id := c.Param("id")
 	var input request.User
 	c.Bind(&input)
-	err, res := u.userService.UpdateUser(id, input)
+	res, err := u.userService.UpdateUser(id, input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -68,7 +68,7 @@ func (u *UserHandler) UpdateUser(c echo.Context) error {
 
 func (u *UserHandler) DeleteUser(c echo.Context) error {
 	id := c.Param("id")
-	err, res := u.userService.DeleteUser(id)
+	res, err := u.userService.DeleteUser(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

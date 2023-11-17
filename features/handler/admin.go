@@ -20,7 +20,7 @@ func (ah *AdminHandler) RegisterAdmin(c echo.Context) error {
 	var input request.Admin
 	c.Bind(&input)
 
-	err, res := ah.adminService.RegisterAdmin(&input)
+	res, err := ah.adminService.RegisterAdmin(&input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -31,7 +31,7 @@ func (ah *AdminHandler) LoginAdmin(c echo.Context) error {
 	var input request.Admin
 	c.Bind(&input)
 
-	err, res := ah.adminService.LoginAdmin(&input)
+	res, err := ah.adminService.LoginAdmin(&input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -39,7 +39,7 @@ func (ah *AdminHandler) LoginAdmin(c echo.Context) error {
 }
 
 func (ah *AdminHandler) GetAllAdmin(c echo.Context) error {
-	err, res := ah.adminService.GetAllAdmin()
+	res, err := ah.adminService.GetAllAdmin()
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -48,7 +48,7 @@ func (ah *AdminHandler) GetAllAdmin(c echo.Context) error {
 
 func (ah *AdminHandler) GetAdmin(c echo.Context) error {
 	id := c.Param("id")
-	err, res := ah.adminService.GetAdmin(id)
+	res, err := ah.adminService.GetAdmin(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -59,7 +59,7 @@ func (ah *AdminHandler) UpdateAdmin(c echo.Context) error {
 	id := c.Param("id")
 	var input request.Admin
 	c.Bind(&input)
-	err, res := ah.adminService.UpdateAdmin(id, input)
+	res, err := ah.adminService.UpdateAdmin(id, input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -68,7 +68,7 @@ func (ah *AdminHandler) UpdateAdmin(c echo.Context) error {
 
 func (ah *AdminHandler) DeleteAdmin(c echo.Context) error {
 	id := c.Param("id")
-	err, res := ah.adminService.DeleteAdmin(id)
+	res, err := ah.adminService.DeleteAdmin(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

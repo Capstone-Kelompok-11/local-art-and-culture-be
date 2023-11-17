@@ -12,7 +12,13 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_NAME_IS_EMPTY:
 		return http.StatusBadRequest
+	case ERR_CATEGORY_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_TYPE_IS_EMPTY:
+		return http.StatusBadRequest
 	case ERR_DELETE_ADMIN:
+		return http.StatusInternalServerError
+	case ERR_DELETE_CATEGORY:
 		return http.StatusInternalServerError
 	case ERR_DELETE:
 		return http.StatusInternalServerError
@@ -46,6 +52,8 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_GET_ROLE_BAD_REQUEST_ID:
 		return http.StatusNotFound
+	case ERR_GET_CATEGORY_BAD_REQUEST_ID:
+		return http.StatusNotFound
 	case ERR_DELETE_ROLE:
 		return http.StatusInternalServerError
 	case ERR_TITLE_IS_EMPTY:
@@ -65,6 +73,8 @@ func GetCodeError(err error) int {
 	case ERR_CREATE_CREATOR_DATABASE:
     return http.StatusInternalServerError
 	case ERR_CREATE_ARTICLE_DATABASE:
+		return http.StatusInternalServerError
+	case ERR_CREATE_CATEGORY_DATABASE:
 		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError

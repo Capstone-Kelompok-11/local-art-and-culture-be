@@ -20,7 +20,7 @@ func (rh *RoleHandler) CreateRole(c echo.Context) error {
 	var input request.Role
 	c.Bind(&input)
 
-	err, res := rh.roleService.CreateRole(&input)
+	res, err := rh.roleService.CreateRole(&input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -28,7 +28,7 @@ func (rh *RoleHandler) CreateRole(c echo.Context) error {
 }
 
 func (rh *RoleHandler) GetAllRole(c echo.Context) error {
-	err, res := rh.roleService.GetAllRole()
+	res, err := rh.roleService.GetAllRole()
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -37,7 +37,7 @@ func (rh *RoleHandler) GetAllRole(c echo.Context) error {
 
 func (rh *RoleHandler) GetRole(c echo.Context) error {
 	id := c.Param("id")
-	err, res := rh.roleService.GetRole(id)
+	res, err := rh.roleService.GetRole(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -48,7 +48,7 @@ func (rh *RoleHandler) UpdateRole(c echo.Context) error {
 	id := c.Param("id")
 	var input request.Role
 	c.Bind(&input)
-	err, res := rh.roleService.UpdateRole(id, input)
+	res, err := rh.roleService.UpdateRole(id, input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -57,7 +57,7 @@ func (rh *RoleHandler) UpdateRole(c echo.Context) error {
 
 func (rh *RoleHandler) DeleteRole(c echo.Context) error {
 	id := c.Param("id")
-	err, res := rh.roleService.DeleteRole(id)
+	res, err := rh.roleService.DeleteRole(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
