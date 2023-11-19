@@ -8,7 +8,6 @@ type Product struct {
 	Price       float64 `gorm:"not null"`
 	Description string  `gorm:"not null"`
 	Status      string  `gorm:"not null"`
-	//AddressId	uint   	`gorm:"not null"`
 	CategoryId uint `gorm:"not null"`
 	CreatorId  uint `gorm:"not null"`
 }

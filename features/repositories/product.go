@@ -53,12 +53,13 @@ func (pr *productRepository) GetAllProduct() ([]response.Product, error) {
 }
 
 func (pr *productRepository) GetProduct(id string) (response.Product, error) {
-	var productData models.Product
-	err := pr.db.First(&productData, "id = ?", id).Error
+	var productData models.Creator
+	err := pr.db.Preload("Products").Preload("Products.Category").Where("id = ?", id).First(&productData).Error
+	fmt.Println(productData)
 	if err != nil {
 		return response.Product{}, err
 	}
-	return *domain.ConvertFromModelToProductRes(productData), nil
+	return response.Product{}, nil
 }
 
 func (pr *productRepository) UpdateProduct(id string, input request.Product) (response.Product, error) {
