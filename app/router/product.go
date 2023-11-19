@@ -17,6 +17,6 @@ func ProductRoute(e *echo.Echo, db *gorm.DB) {
 	e.POST("/product", handler.CreateProduct)
 	e.GET("/product", handler.GetAllProduct)
 	e.GET("/product/:id", handler.GetProduct)
-	e.PUT("/product:id", handler.UpdateProduct)
-	e.DELETE("/product:id", handler.DeleteProduct)
+	e.PUT("/product/:id", handler.UpdateProduct)
+	e.DELETE("/product/:id", handler.DeleteProduct)
 }

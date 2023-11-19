@@ -19,7 +19,6 @@ func NewProductHandler(iProductService services.IProductService) *ProductHandler
 func (pr *ProductHandler) CreateProduct(c echo.Context) error {
 	var input request.Product
 	c.Bind(&input)
-
 	res, err := pr.productService.CreateProduct(&input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)

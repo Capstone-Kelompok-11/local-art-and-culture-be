@@ -3,7 +3,7 @@ package request
 type Product struct {
 	Id			uint	`json:"id"`
 	Name		string	`json:"name"`
-	Price		string	`json:"price"`
+	Price		float64	`json:"price"`
 	Description	string	`json:"description"`
 	Status		string	`json:"status"`
 	//AddressId	uint	`json:"addressId"``

@@ -53,12 +53,13 @@ func (pr *productRepository) GetAllProduct() ([]response.Product, error) {
 }
 
 func (pr *productRepository) GetProduct(id string) (response.Product, error) {
-	var productData models.Product
-	err := pr.db.First(&productData, "id = ?", id).Error
+	var productData models.Creator
+	err := pr.db.Preload("Products").Preload("Products.Category").Where("id = ?", id).First(&productData).Error
+	fmt.Println(productData)
 	if err != nil {
 		return response.Product{}, err
 	}
-	return *domain.ConvertFromModelToProductRes(productData), nil
+	return response.Product{}, nil
 }
 
 func (pr *productRepository) UpdateProduct(id string, input request.Product) (response.Product, error) {
@@ -68,9 +69,9 @@ func (pr *productRepository) UpdateProduct(id string, input request.Product) (re
 		return response.Product{}, err
 	}
 
-	if input.Name != ""{
+	if input.Name != "" {
 		productData.Name = input.Name
-	} else if input.Price != "" {
+	} else if input.Price != 0 {
 		productData.Price = input.Price
 	} else if input.Description != "" {
 		productData.Description = input.Description
@@ -91,7 +92,7 @@ func (pr *productRepository) DeleteProduct(id string) (response.Product, error) 
 	if find == nil {
 		res = *domain.ConvertFromModelToProductRes(productData)
 	}
-	
+
 	err := pr.db.Delete(&productData, "id = ?", id).Error
 	if err != nil {
 		return response.Product{}, err

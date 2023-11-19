@@ -79,13 +79,15 @@ func GetCodeError(err error) int {
 	case ERR_DELETE_CREATOR:
 		return http.StatusInternalServerError
 	case ERR_CREATE_CREATOR_DATABASE:
-    return http.StatusInternalServerError
+		return http.StatusInternalServerError
 	case ERR_CREATE_ARTICLE_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_CREATE_CATEGORY_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_CREATE_PRODUCT_DATABASE:
 		return http.StatusInternalServerError
+	case ERR_GET_SHIPPING_BAD_REQUEST_ID:
+		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError
 	}
