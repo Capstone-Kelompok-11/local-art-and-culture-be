@@ -41,7 +41,7 @@ jobs:
           StrictHostKeyChecking=no
         END
     - name: login ec2, docker pull and running container
-      run: ssh staging 'rm -f $(docker ps -a -q) && docker pull peacechopath/lokasani:1.1.0 && docker run -d -p 8080:8080 --name lokasani-development peacechopath/lokasani:1.1.0'
+      run: ssh staging 'rm -f $(docker ps -a -q) && docker pull peacechopath/lokasani:1.1.0 && docker run -d -p 8080:8080 --name development peacechopath/lokasani:1.1.0'
 
 
 
