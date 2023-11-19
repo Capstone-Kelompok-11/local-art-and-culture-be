@@ -10,4 +10,5 @@ type Creator struct {
 	UserId      uint   `gorm:"not null"`
 	RoleId      uint   `gorm:"not null"`
 	AddressId   *uint
+	Products    []Product `gorm:"foreignKey:CreatorId"`
 }

@@ -68,9 +68,9 @@ func (pr *productRepository) UpdateProduct(id string, input request.Product) (re
 		return response.Product{}, err
 	}
 
-	if input.Name != ""{
+	if input.Name != "" {
 		productData.Name = input.Name
-	} else if input.Price != "" {
+	} else if input.Price != 0 {
 		productData.Price = input.Price
 	} else if input.Description != "" {
 		productData.Description = input.Description
@@ -91,7 +91,7 @@ func (pr *productRepository) DeleteProduct(id string) (response.Product, error) 
 	if find == nil {
 		res = *domain.ConvertFromModelToProductRes(productData)
 	}
-	
+
 	err := pr.db.Delete(&productData, "id = ?", id).Error
 	if err != nil {
 		return response.Product{}, err
