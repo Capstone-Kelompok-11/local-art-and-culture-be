@@ -53,7 +53,7 @@ func (pr *ProductService) GetProduct(id string) (response.Product, error) {
 	if id == "" {
 		return response.Product{}, errors.ERR_GET_PRODUCT_BAD_REQUEST_ID
 	}
-	res, err := pr.GetProduct(id)
+	res, err := pr.productRepository.GetProduct(id)
 	if err != nil {
 		return response.Product{}, err
 	}
