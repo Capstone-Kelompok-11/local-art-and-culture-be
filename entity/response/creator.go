@@ -8,4 +8,6 @@ type Creator struct {
 	UserId      uint   `json:"userId"`
 	RoleId      uint   `json:"roleId"`
 	AddressId   *uint  `json:"addressId"`
+	Users       User   `json:"users"`
+	Roles       Role   `json:"role"`
 }
