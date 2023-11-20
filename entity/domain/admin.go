@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func ConvertFromAdminReqToModel(data request.Admin) *models.SuperAdmin {
+func ConvertFromAdminReqToModel(data request.SuperAdmin) *models.SuperAdmin {
 	return &models.SuperAdmin{
 		Model: gorm.Model{
 			ID: data.Id,
@@ -20,8 +20,8 @@ func ConvertFromAdminReqToModel(data request.Admin) *models.SuperAdmin {
 	}
 }
 
-func ConvertFromModelToAdminRes(data models.SuperAdmin) *response.Admin {
-	return &response.Admin{
+func ConvertFromModelToAdminRes(data models.SuperAdmin) *response.SuperAdmin {
+	return &response.SuperAdmin{
 		Id:          data.ID,
 		Name:        data.Name,
 		Email:       data.Email,

@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
@@ -33,18 +32,18 @@ func (pr *productRepository) CreateProduct(data *request.Product) (response.Prod
 	if err != nil {
 		return response.Product{}, err
 	}
+	err = pr.db.Preload("Category").Preload("Creator").First(&dataProduct, "id = ?", dataProduct.ID).Error
 	return *domain.ConvertFromModelToProductRes(*dataProduct), nil
 }
 
 func (pr *productRepository) GetAllProduct() ([]response.Product, error) {
 	var allProduct []models.Product
 	var resAllProduct []response.Product
-	err := pr.db.Find(&allProduct).Error
+	err := pr.db.Preload("Category").Preload("Creator").Find(&allProduct).Error
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
 
-	fmt.Println(allProduct)
 	for i := 0; i < len(allProduct); i++ {
 		productVm := domain.ConvertFromModelToProductRes(allProduct[i])
 		resAllProduct = append(resAllProduct, *productVm)
@@ -53,13 +52,13 @@ func (pr *productRepository) GetAllProduct() ([]response.Product, error) {
 }
 
 func (pr *productRepository) GetProduct(id string) (response.Product, error) {
-	var productData models.Creator
-	err := pr.db.Preload("Products").Preload("Products.Category").Where("id = ?", id).First(&productData).Error
-	fmt.Println(productData)
+	var productData models.Product
+	err := pr.db.Preload("Category").Preload("Creator").First(&productData, "id = ?", id).Error
+
 	if err != nil {
 		return response.Product{}, err
 	}
-	return response.Product{}, nil
+	return *domain.ConvertFromModelToProductRes(productData), nil
 }
 
 func (pr *productRepository) UpdateProduct(id string, input request.Product) (response.Product, error) {
@@ -71,11 +70,14 @@ func (pr *productRepository) UpdateProduct(id string, input request.Product) (re
 
 	if input.Name != "" {
 		productData.Name = input.Name
-	} else if input.Price != 0 {
+	}
+	if input.Price != 0 {
 		productData.Price = input.Price
-	} else if input.Description != "" {
+	}
+	if input.Description != "" {
 		productData.Description = input.Description
-	} else if input.Status != "" {
+	}
+	if input.Status != "" {
 		productData.Status = input.Status
 	}
 
@@ -88,7 +90,7 @@ func (pr *productRepository) UpdateProduct(id string, input request.Product) (re
 func (pr *productRepository) DeleteProduct(id string) (response.Product, error) {
 	productData := models.Product{}
 	res := response.Product{}
-	find := pr.db.First(&productData, "id = ?", id).Error
+	find := pr.db.Preload("Category").Preload("Creator").First(&productData, "id = ?", id).Error
 	if find == nil {
 		res = *domain.ConvertFromModelToProductRes(productData)
 	}

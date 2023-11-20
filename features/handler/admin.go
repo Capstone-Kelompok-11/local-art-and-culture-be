@@ -17,7 +17,7 @@ func NewAdminHandler(iAdminService services.IAdminService) *AdminHandler {
 }
 
 func (ah *AdminHandler) RegisterAdmin(c echo.Context) error {
-	var input request.Admin
+	var input request.SuperAdmin
 	c.Bind(&input)
 
 	res, err := ah.adminService.RegisterAdmin(&input)
@@ -28,7 +28,7 @@ func (ah *AdminHandler) RegisterAdmin(c echo.Context) error {
 }
 
 func (ah *AdminHandler) LoginAdmin(c echo.Context) error {
-	var input request.Admin
+	var input request.SuperAdmin
 	c.Bind(&input)
 
 	res, err := ah.adminService.LoginAdmin(&input)
@@ -57,7 +57,7 @@ func (ah *AdminHandler) GetAdmin(c echo.Context) error {
 
 func (ah *AdminHandler) UpdateAdmin(c echo.Context) error {
 	id := c.Param("id")
-	var input request.Admin
+	var input request.SuperAdmin
 	c.Bind(&input)
 	res, err := ah.adminService.UpdateAdmin(id, input)
 	if err != nil {
