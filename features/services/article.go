@@ -10,7 +10,7 @@ import (
 type IArticleService interface {
 	CreateArticle(data *request.Article) (error, response.Article)
 	GetAllArticle() (error, []response.Article)
-	GetArticle(id string) (error, response.Admin)
+	GetArticle(id string) (error, response.Article)
 	UpdateArticle(id string, input request.Article) (error, response.Article)
 	DeleteArticle(id string) (error, response.Article)
 }
@@ -44,14 +44,14 @@ func (as *ArticleService) GetAllArticle() (error, []response.Article) {
 	return nil, res
 }
 
-func (as *ArticleService) GetArticle(id string) (error, response.Admin) {
+func (as *ArticleService) GetArticle(id string) (error, response.Article) {
 	if id == "" {
-		return errors.ERR_GET_BAD_REQUEST_ID, response.Admin{}
+		return errors.ERR_GET_BAD_REQUEST_ID, response.Article{}
 	}
 
 	err, res := as.articleRepository.GetArticle(id)
 	if err != nil {
-		return err, response.Admin{}
+		return err, response.Article{}
 	}
 	return nil, res
 }

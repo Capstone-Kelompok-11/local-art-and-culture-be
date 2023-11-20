@@ -14,7 +14,7 @@ import (
 type IArticleRepository interface {
 	CreateArticle(data *request.Article) (error, response.Article)
 	GetAllArticle() (error, []response.Article)
-	GetArticle(id string) (error, response.Admin)
+	GetArticle(id string) (error, response.Article)
 	UpdateArticle(id string, input request.Article) (error, response.Article)
 	DeleteArticle(id string) (error, response.Article)
 }
@@ -33,13 +33,14 @@ func (ar *articleRepository) CreateArticle(data *request.Article) (error, respon
 	if err != nil {
 		return err, response.Article{}
 	}
+	err = ar.db.Preload("Admin").First(&dataArticle, "id = ? ", dataArticle.ID).Error
 	return nil, *domain.ConvertFromModelToArticleRes(*dataArticle)
 }
 
 func (ar *articleRepository) GetAllArticle() (error, []response.Article) {
 	var allArticle []models.Article
 	var resAllArticle []response.Article
-	err := ar.db.Preload("Articles").Find(&allArticle).Error
+	err := ar.db.Preload("Admin").Find(&allArticle).Error
 	if err != nil {
 		return errors.ERR_GET_DATA, nil
 	}
@@ -52,13 +53,13 @@ func (ar *articleRepository) GetAllArticle() (error, []response.Article) {
 	return nil, resAllArticle
 }
 
-func (ar *articleRepository) GetArticle(id string) (error, response.Admin) {
-	var articleData models.SuperAdmin
-	err := ar.db.Preload("Articles", "id = ?", id).First(&articleData).Error
+func (ar *articleRepository) GetArticle(id string) (error, response.Article) {
+	var articleData models.Article
+	err := ar.db.Preload("Admin").First(&articleData, "id = ?", id).Error
 	if err != nil {
-		return err, response.Admin{}
+		return err, response.Article{}
 	}
-	return nil, *domain.ConvertFromModelToAdminArticleRes(articleData)
+	return nil, *domain.ConvertFromModelToArticleRes(articleData)
 }
 
 func (ar *articleRepository) UpdateArticle(id string, input request.Article) (error, response.Article) {
@@ -83,7 +84,7 @@ func (ar *articleRepository) UpdateArticle(id string, input request.Article) (er
 func (ar *articleRepository) DeleteArticle(id string) (error, response.Article) {
 	articleData := models.Article{}
 	res := response.Article{}
-	find := ar.db.First(&articleData, "id = ?", id).Error
+	find := ar.db.Preload("Admin").First(&articleData, "id = ?", id).Error
 	if find == nil {
 		res = *domain.ConvertFromModelToArticleRes(articleData)
 	}
