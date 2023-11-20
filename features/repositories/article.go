@@ -28,19 +28,20 @@ func NewArticleRepository(db *gorm.DB) *articleRepository {
 	return &articleRepository{db}
 }
 
-func (ar *articleRepository) CreateArticle(data *request.Article) (response.Article, error){
+func (ar *articleRepository) CreateArticle(data *request.Article) (response.Article, error) {
 	dataArticle := domain.ConvertFromArticleReqToModel(*data)
 	err := ar.db.Create(&dataArticle).Error
 	if err != nil {
 		return response.Article{}, err
 	}
+	err = ar.db.Preload("Admin").First(&dataArticle, "id = ? ", dataArticle.ID).Error
 	return *domain.ConvertFromModelToArticleRes(*dataArticle), nil
 }
 
 func (ar *articleRepository) GetAllArticle() ([]response.Article, error) {
 	var allArticle []models.Article
 	var resAllArticle []response.Article
-	err := ar.db.Preload("SuperAdmin").Find(&allArticle).Error
+	err := ar.db.Preload("Admin").Find(&allArticle).Error
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
@@ -55,7 +56,7 @@ func (ar *articleRepository) GetAllArticle() ([]response.Article, error) {
 
 func (ar *articleRepository) GetArticle(id string) (response.Article, error) {
 	var articleData models.Article
-	err := ar.db.Preload("SuperAdmin").First(&articleData, "id = ?", id).Error
+	err := ar.db.Preload("Admin").First(&articleData, "id = ?", id).Error
 	if err != nil {
 		return response.Article{}, err
 	}
@@ -64,7 +65,7 @@ func (ar *articleRepository) GetArticle(id string) (response.Article, error) {
 
 func (ar *articleRepository) UpdateArticle(id string, input request.Article) (response.Article, error) {
 	articleData := models.Article{}
-	err := ar.db.First(&articleData, "id = ?", id).Error
+	err := ar.db.Preload("Admin").First(&articleData, "id = ?", id).Error
 	if err != nil {
 		return response.Article{}, err
 	}
@@ -84,7 +85,7 @@ func (ar *articleRepository) UpdateArticle(id string, input request.Article) (re
 func (ar *articleRepository) DeleteArticle(id string) (response.Article, error) {
 	articleData := models.Article{}
 	res := response.Article{}
-	find := ar.db.First(&articleData, "id = ?", id).Error
+	find := ar.db.Preload("Admin").First(&articleData, "id = ?", id).Error
 	if find == nil {
 		res = *domain.ConvertFromModelToArticleRes(articleData)
 	}
@@ -94,22 +95,3 @@ func (ar *articleRepository) DeleteArticle(id string) (response.Article, error) 
 	}
 	return res, nil
 }
-
-// func (ar *articleRepository) GetAdminWithArticles(adminID uint) (*response.Article, error) {
-//     var admin models.SuperAdmin
-//     //var articles []models.Article
-
-//     if err := ar.db.Preload("Article").First(&admin, admin.ID).Error; err != nil {
-//         return nil, err
-//     }
-
-//     adminRes := domain.ConvertFromModelToAdminRes(admin)
-//     articlesRes := make([]response.Article, len(admin.Articles))
-//     for i, article := range admin.Articles {
-//         articlesRes[i] = *domain.ConvertFromModelToArticleRes(article)
-//     }
-
-//     return &response.Article{
-//         Id: adminRes.Id,
-//     }, nil
-// }

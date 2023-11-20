@@ -28,3 +28,12 @@ func ConvertFromModelToAdminRes(data models.SuperAdmin) *response.SuperAdmin {
 		PhoneNumber: data.PhoneNumber,
 	}
 }
+
+// func ConvertFromModelToAdminArticleRes(data models.SuperAdmin) *response.Admin {
+// 	return &response.Admin{
+// 		Id:          data.ID,
+// 		Name:        data.Name,
+// 		Email:       data.Email,
+// 		PhoneNumber: data.PhoneNumber,
+// 	}
+// }

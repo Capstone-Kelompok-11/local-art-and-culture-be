@@ -26,16 +26,12 @@ func NewArticleService(repo repositories.IArticleRepository) *ArticleService {
 
 func (as *ArticleService) CreateArticle(data *request.Article) (response.Article, error) {
 	if data.Title == "" {
-		return response.Article{}, errors.ERR_TITLE_IS_EMPTY
-	}
-
-	if data.Content == "" {
-		return response.Article{}, errors.ERR_CONTENT_IS_EMPTY
+		return response.Article{}, errors.ERR_NAME_IS_EMPTY
 	}
 
 	res, err := as.articleRepository.CreateArticle(data)
 	if err != nil {
-		return response.Article{}, errors.ERR_CREATE_ARTICLE_DATABASE
+		return response.Article{}, errors.ERR_REGISTER_USER_DATABASE
 	}
 
 	return res, nil
@@ -44,7 +40,7 @@ func (as *ArticleService) CreateArticle(data *request.Article) (response.Article
 func (as *ArticleService) GetAllArticle() ([]response.Article, error) {
 	res, err := as.articleRepository.GetAllArticle()
 	if err != nil {
-		return nil, err
+		return nil, errors.ERR_GET_DATA
 	}
 	return res, nil
 }
@@ -84,8 +80,3 @@ func (as *ArticleService) DeleteArticle(id string) (response.Article, error) {
 	}
 	return res, nil
 }
-
-// func (as *ArticleService) GetAdminWithArticles(adminID uint) (*response.Article, error) {
-//     // Panggil metode GetAdminWithArticles dari repository
-//     return as.articleRepository.GetAdminWithArticles(adminID)
-// }

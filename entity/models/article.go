@@ -6,7 +6,8 @@ import (
 
 type Article struct {
 	gorm.Model
-	Title   string	`gorm:"not null"`
-	AdminId uint	`gorm:"not null"`
-	Content string	`gorm:"not null"`
+	Title   string
+	AdminId uint
+	Content string
+	Admin   SuperAdmin
 }
