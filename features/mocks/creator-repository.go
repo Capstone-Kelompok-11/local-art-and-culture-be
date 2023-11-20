@@ -62,10 +62,10 @@ func (mr *MockICreatorRepositoryMockRecorder) DeleteCreator(arg0 interface{}) *g
 }
 
 // GetAllCreator mocks base method.
-func (m *MockICreatorRepository) GetAllCreator() ([]response.UserCreatorResponse, error) {
+func (m *MockICreatorRepository) GetAllCreator() ([]response.Creator, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllCreator")
-	ret0, _ := ret[0].([]response.UserCreatorResponse)
+	ret0, _ := ret[0].([]response.Creator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -77,10 +77,10 @@ func (mr *MockICreatorRepositoryMockRecorder) GetAllCreator() *gomock.Call {
 }
 
 // GetCreator mocks base method.
-func (m *MockICreatorRepository) GetCreator(arg0 string) (response.UserCreatorResponse, error) {
+func (m *MockICreatorRepository) GetCreator(arg0 string) (response.Creator, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCreator", arg0)
-	ret0, _ := ret[0].(response.UserCreatorResponse)
+	ret0, _ := ret[0].(response.Creator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

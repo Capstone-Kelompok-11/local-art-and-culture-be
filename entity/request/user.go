@@ -11,5 +11,4 @@ type User struct {
 	// AddressID   *uint     `json:"addressID" form:"addressID"`
 	PhoneNumber string    `json:"phoneNumber" form:"phoneNumber"`
 	BirthDate   time.Time `json:"birthday" form:"birthday"`
-	Creator     Creator
 }

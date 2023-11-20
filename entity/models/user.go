@@ -14,5 +14,4 @@ type Users struct {
 	Password    string    `gorm:"not null"`
 	PhoneNumber string    `gorm:"unique;not null"`
 	BirthDate   time.Time `gorm:"not null"`
-	Creator     Creator   `gorm:"foreignKey:UserId"`
 }

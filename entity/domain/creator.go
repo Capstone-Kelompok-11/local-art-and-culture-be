@@ -30,18 +30,20 @@ func ConvertFromModelToCreatorRes(data models.Creator) *response.Creator {
 		PhoneNumber: data.PhoneNumber,
 		UserId:      data.UserId,
 		RoleId:      data.RoleId,
+		Users:       *ConvertFromModelToUserRes(data.Users),
+		Roles:       *ConvertFromModelToRoleRes(data.Roles),
 		// AddressId:   data.AddressId,
 	}
 }
 
-func ConvertFromModelToUserCreatorRes(data models.Users) *response.UserCreatorResponse {
-	return &response.UserCreatorResponse{
-		Id:          data.ID,
-		FirstName:   data.FirstName,
-		LastName:    data.LastName,
-		Email:       data.Email,
-		PhoneNumber: data.PhoneNumber,
-		BirthDate:   data.BirthDate,
-		Creator:     *ConvertFromModelToCreatorRes(data.Creator),
-	}
-}
+// func ConvertFromModelToUserCreatorRes(data models.Users) *response.UserCreatorResponse {
+// 	return &response.UserCreatorResponse{
+// 		Id:          data.ID,
+// 		FirstName:   data.FirstName,
+// 		LastName:    data.LastName,
+// 		Email:       data.Email,
+// 		PhoneNumber: data.PhoneNumber,
+// 		BirthDate:   data.BirthDate,
+// 		Creator:     *ConvertFromModelToCreatorRes(data.Creator),
+// 	}
+// }

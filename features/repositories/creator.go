@@ -12,8 +12,8 @@ import (
 
 type ICreatorRepository interface {
 	CreateCreator(data *request.Creator) (response.Creator, error)
-	GetAllCreator() ([]response.UserCreatorResponse, error)
-	GetCreator(id string) (response.UserCreatorResponse, error)
+	GetAllCreator() ([]response.Creator, error)
+	GetCreator(id string) (response.Creator, error)
 	UpdateCreator(id string, input request.Creator) (response.Creator, error)
 	DeleteCreator(id string) (response.Creator, error)
 }
@@ -32,38 +32,39 @@ func (cr *creatorRepository) CreateCreator(data *request.Creator) (response.Crea
 	if err != nil {
 		return response.Creator{}, err
 	}
+	err = cr.db.Preload("Users").Preload("Roles").First(&dataCreator, "id = ?", dataCreator.ID).Error
 	return *domain.ConvertFromModelToCreatorRes(*dataCreator), nil
 }
 
-func (cr *creatorRepository) GetAllCreator() ([]response.UserCreatorResponse, error) {
-	var allCreator []models.Users
-	var resAllCreator []response.UserCreatorResponse
-	err := cr.db.Preload("Creator").Find(&allCreator).Error
+func (cr *creatorRepository) GetAllCreator() ([]response.Creator, error) {
+	var allCreator []models.Creator
+	var resAllCreator []response.Creator
+	err := cr.db.Preload("Users").Preload("Roles").Find(&allCreator).Error
 	if err != nil {
 		return nil, err
 	}
 
 	for i := 0; i < len(allCreator); i++ {
-		creatorVm := domain.ConvertFromModelToUserCreatorRes(allCreator[i])
+		creatorVm := domain.ConvertFromModelToCreatorRes(allCreator[i])
 		resAllCreator = append(resAllCreator, *creatorVm)
 	}
 	return resAllCreator, nil
 }
 
-func (cr *creatorRepository) GetCreator(id string) (response.UserCreatorResponse, error) {
-	var userData models.Users
-	err := cr.db.Preload("Creator", "id = ?", id).First(&userData).Error
+func (cr *creatorRepository) GetCreator(id string) (response.Creator, error) {
+	var userData models.Creator
+	err := cr.db.Preload("Users").Preload("Roles").First(&userData, "id = ?", id).Error
 
 	if err != nil {
-		return response.UserCreatorResponse{}, err
+		return response.Creator{}, err
 	}
 
-	return *domain.ConvertFromModelToUserCreatorRes(userData), nil
+	return *domain.ConvertFromModelToCreatorRes(userData), nil
 }
 
 func (cr *creatorRepository) UpdateCreator(id string, input request.Creator) (response.Creator, error) {
 	creatorData := models.Creator{}
-	err := cr.db.First(&creatorData, "id = ?", id).Error
+	err := cr.db.Preload("Users").Preload("Roles").First(&creatorData, "id = ?", id).Error
 
 	if err != nil {
 		return response.Creator{}, errors.ERR_GET_CREATOR_BAD_REQUEST_ID
@@ -94,7 +95,7 @@ func (cr *creatorRepository) UpdateCreator(id string, input request.Creator) (re
 func (cr *creatorRepository) DeleteCreator(id string) (response.Creator, error) {
 	creatorData := models.Creator{}
 	res := response.Creator{}
-	find := cr.db.First(&creatorData, "id = ?", id).Error
+	find := cr.db.Preload("Users").Preload("Roles").First(&creatorData, "id = ?", id).Error
 	if find == nil {
 		res = *domain.ConvertFromModelToCreatorRes(creatorData)
 	}

@@ -37,11 +37,11 @@ func (rs *RoleService) CreateRole(data *request.Role) (response.Role, error) {
 }
 
 func (rs *RoleService) GetAllRole() ([]response.Role, error) {
-	err, res := rs.roleRepository.GetAllRole()
+	res, err := rs.roleRepository.GetAllRole()
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
-	return nil, res
+	return res, nil
 }
 
 func (rs *RoleService) GetRole(id string) (response.Role, error) {
