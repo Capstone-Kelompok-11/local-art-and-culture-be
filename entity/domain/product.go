@@ -31,6 +31,8 @@ func ConvertFromModelToProductRes(data models.Product) *response.Product {
 		Status:      data.Status,
 		CategoryId:  data.CategoryId,
 		CreatorId:   data.CreatorId,
+		Category: *ConvertFromModelToCategoryRes(data.Category),
+		Creator: * ConvertFromModelToCreatorRes(data.Creator),
 	}
 }
 

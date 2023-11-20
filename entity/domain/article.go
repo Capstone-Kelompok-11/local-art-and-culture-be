@@ -27,3 +27,13 @@ func ConvertFromModelToArticleRes(data models.Article) *response.Article {
 		AdminId: data.AdminId,
 	}
 }
+
+// func ConvertFromModelToAdminArticleRes(data models.SuperAdmin) *response.SuperAdminArticle {
+//     return &response.SuperAdminArticle{
+//         Id:          data.ID,
+//         Name:        data.Name,
+//         Email:       data.Email,
+//         PhoneNumber: data.PhoneNumber,
+//         Article:    *ConvertFromModelToArticleRes(data.Article), 
+//     }
+// }

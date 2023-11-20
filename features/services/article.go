@@ -13,6 +13,7 @@ type IArticleService interface {
 	GetArticle(id string) (response.Article, error)
 	UpdateArticle(id string, input request.Article) (response.Article, error)
 	DeleteArticle(id string) (response.Article, error)
+	//GetAdminWithArticles(adminID uint) (*response.Article, error)
 }
 
 type ArticleService struct {
@@ -83,3 +84,8 @@ func (as *ArticleService) DeleteArticle(id string) (response.Article, error) {
 	}
 	return res, nil
 }
+
+// func (as *ArticleService) GetAdminWithArticles(adminID uint) (*response.Article, error) {
+//     // Panggil metode GetAdminWithArticles dari repository
+//     return as.articleRepository.GetAdminWithArticles(adminID)
+// }

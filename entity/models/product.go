@@ -10,4 +10,6 @@ type Product struct {
 	Status      string  `gorm:"not null"`
 	CategoryId uint `gorm:"not null"`
 	CreatorId  uint `gorm:"not null"`
+	Creator Creator
+	Category Category
 }

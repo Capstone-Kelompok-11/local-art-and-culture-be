@@ -32,10 +32,10 @@ func (m *MockIAdminRepository) EXPECT() *MockIAdminRepositoryMockRecorder {
 }
 
 // DeleteAdmin mocks base method.
-func (m *MockIAdminRepository) DeleteAdmin(arg0 string) (response.Admin, error) {
+func (m *MockIAdminRepository) DeleteAdmin(arg0 string) (response.SuperAdmin, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteAdmin", arg0)
-	ret0, _ := ret[0].(response.Admin)
+	ret0, _ := ret[0].(response.SuperAdmin)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -47,10 +47,10 @@ func (mr *MockIAdminRepositoryMockRecorder) DeleteAdmin(arg0 interface{}) *gomoc
 }
 
 // GetAdmin mocks base method.
-func (m *MockIAdminRepository) GetAdmin(arg0 string) (response.Admin, error) {
+func (m *MockIAdminRepository) GetAdmin(arg0 string) (response.SuperAdmin, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAdmin", arg0)
-	ret0, _ := ret[0].(response.Admin)
+	ret0, _ := ret[0].(response.SuperAdmin)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -62,10 +62,10 @@ func (mr *MockIAdminRepositoryMockRecorder) GetAdmin(arg0 interface{}) *gomock.C
 }
 
 // GetAllAdmin mocks base method.
-func (m *MockIAdminRepository) GetAllAdmin() ([]response.Admin, error) {
+func (m *MockIAdminRepository) GetAllAdmin() ([]response.SuperAdmin, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllAdmin")
-	ret0, _ := ret[0].([]response.Admin)
+	ret0, _ := ret[0].([]response.SuperAdmin)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -77,10 +77,10 @@ func (mr *MockIAdminRepositoryMockRecorder) GetAllAdmin() *gomock.Call {
 }
 
 // LoginAdmin mocks base method.
-func (m *MockIAdminRepository) LoginAdmin(arg0 *request.Admin) (response.Admin, error) {
+func (m *MockIAdminRepository) LoginAdmin(arg0 *request.SuperAdmin) (response.SuperAdmin, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LoginAdmin", arg0)
-	ret0, _ := ret[0].(response.Admin)
+	ret0, _ := ret[0].(response.SuperAdmin)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -92,10 +92,10 @@ func (mr *MockIAdminRepositoryMockRecorder) LoginAdmin(arg0 interface{}) *gomock
 }
 
 // RegisterAdmin mocks base method.
-func (m *MockIAdminRepository) RegisterAdmin(arg0 *request.Admin) (response.Admin, error) {
+func (m *MockIAdminRepository) RegisterAdmin(arg0 *request.SuperAdmin) (response.SuperAdmin, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RegisterAdmin", arg0)
-	ret0, _ := ret[0].(response.Admin)
+	ret0, _ := ret[0].(response.SuperAdmin)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -107,10 +107,10 @@ func (mr *MockIAdminRepositoryMockRecorder) RegisterAdmin(arg0 interface{}) *gom
 }
 
 // UpdateAdmin mocks base method.
-func (m *MockIAdminRepository) UpdateAdmin(arg0 string, arg1 request.Admin) (response.Admin, error) {
+func (m *MockIAdminRepository) UpdateAdmin(arg0 string, arg1 request.SuperAdmin) (response.SuperAdmin, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateAdmin", arg0, arg1)
-	ret0, _ := ret[0].(response.Admin)
+	ret0, _ := ret[0].(response.SuperAdmin)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

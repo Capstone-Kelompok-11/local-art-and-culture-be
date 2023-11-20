@@ -18,12 +18,12 @@ func TestDeleteAdmin_Success(t *testing.T) {
 
 	adminService := NewAdminService(mockAdminRepo)
 
-	mockAdminRepo.EXPECT().DeleteAdmin(gomock.Any()).Return(response.Admin{}, nil)
+	mockAdminRepo.EXPECT().DeleteAdmin(gomock.Any()).Return(response.SuperAdmin{}, nil)
 
 	result, err := adminService.DeleteAdmin("pudu")
 
 	assert.NoError(t, err)
-	assert.Equal(t, response.Admin{}, result)
+	assert.Equal(t, response.SuperAdmin{}, result)
 }
 
 func TestDeleteAdmin_Failure(t *testing.T) {
@@ -34,12 +34,12 @@ func TestDeleteAdmin_Failure(t *testing.T) {
 
 	adminService := NewAdminService(mockAdminRepo)
 
-	mockAdminRepo.EXPECT().DeleteAdmin(gomock.Any()).Return(response.Admin{}, someError)
+	mockAdminRepo.EXPECT().DeleteAdmin(gomock.Any()).Return(response.SuperAdmin{}, someError)
 
 	result, err := adminService.DeleteAdmin("pudu")
 
 	assert.Error(t, err)
-	assert.Equal(t, response.Admin{}, result)
+	assert.Equal(t, response.SuperAdmin{}, result)
 }
 
 func TestGetAdmin_Success(t *testing.T) {
@@ -50,12 +50,12 @@ func TestGetAdmin_Success(t *testing.T) {
 
 	adminService := NewAdminService(mockAdminRepo)
 
-	mockAdminRepo.EXPECT().GetAdmin(gomock.Any()).Return(response.Admin{}, nil)
+	mockAdminRepo.EXPECT().GetAdmin(gomock.Any()).Return(response.SuperAdmin{}, nil)
 
 	result, err := adminService.GetAdmin("pudu")
 
 	assert.NoError(t, err)
-	assert.Equal(t, response.Admin{}, result)
+	assert.Equal(t, response.SuperAdmin{}, result)
 }
 
 func TestGetAdmin_Failure(t *testing.T) {
@@ -66,12 +66,12 @@ func TestGetAdmin_Failure(t *testing.T) {
 
 	adminService := NewAdminService(mockAdminRepo)
 
-	mockAdminRepo.EXPECT().GetAdmin(gomock.Any()).Return(response.Admin{}, someError)
+	mockAdminRepo.EXPECT().GetAdmin(gomock.Any()).Return(response.SuperAdmin{}, someError)
 
 	result, err := adminService.GetAdmin("pudu")
 
 	assert.Error(t, err)
-	assert.Equal(t, response.Admin{}, result)
+	assert.Equal(t, response.SuperAdmin{}, result)
 }	
 
 func TestGetAllAdmin_Success(t *testing.T) {
@@ -82,7 +82,7 @@ func TestGetAllAdmin_Success(t *testing.T) {
 
 	adminService := NewAdminService(mockAdminRepo)
 
-	mockAdminRepo.EXPECT().GetAllAdmin().Return([]response.Admin{
+	mockAdminRepo.EXPECT().GetAllAdmin().Return([]response.SuperAdmin{
 		{
 			Id: 1, 
 			Name: "pudu",
@@ -120,9 +120,9 @@ func TestLoginAdmin_Success(t *testing.T) {
 
 	adminService := NewAdminService(mockAdminRepo)
 
-	mockAdminRepo.EXPECT().LoginAdmin(gomock.Any()).Return(response.Admin{}, nil)
+	mockAdminRepo.EXPECT().LoginAdmin(gomock.Any()).Return(response.SuperAdmin{}, nil)
 
-	result, err := adminService.LoginAdmin(&request.Admin{
+	result, err := adminService.LoginAdmin(&request.SuperAdmin{
 		Id:          1,
 		Name:   "pudu",
 		Email:       "pudu@gmail.com",
@@ -140,9 +140,9 @@ func TestLoginAdmin_Failure(t *testing.T) {
 	mockAdminRepo := mocks.NewMockIAdminRepository(ctrl)
 
 	adminService := NewAdminService(mockAdminRepo)
-	mockAdminRepo.EXPECT().LoginAdmin(gomock.Any()).Return(response.Admin{}, someError)
+	mockAdminRepo.EXPECT().LoginAdmin(gomock.Any()).Return(response.SuperAdmin{}, someError)
 
-	result, err := adminService.LoginAdmin(&request.Admin{
+	result, err := adminService.LoginAdmin(&request.SuperAdmin{
 		Id:          1,
 		Name:   	"pudu",
 		Email:       "pudu@gmail.com",
@@ -151,7 +151,7 @@ func TestLoginAdmin_Failure(t *testing.T) {
 	})
 
 	assert.Error(t, err)
-	assert.Equal(t, response.Admin{}, result)
+	assert.Equal(t, response.SuperAdmin{}, result)
 }
 
 func TestRegisterAdmin_Success(t *testing.T) {
@@ -162,9 +162,9 @@ func TestRegisterAdmin_Success(t *testing.T) {
 
 	adminService := NewAdminService(mockAdminRepo)
 
-	mockAdminRepo.EXPECT().RegisterAdmin(gomock.Any()).Return(response.Admin{}, nil)
+	mockAdminRepo.EXPECT().RegisterAdmin(gomock.Any()).Return(response.SuperAdmin{}, nil)
 
-	result, err := adminService.RegisterAdmin(&request.Admin{
+	result, err := adminService.RegisterAdmin(&request.SuperAdmin{
 		Id:          1,
 		Name:   "pudu",
 		Email:       "pudu@gmail.com",
@@ -183,9 +183,9 @@ func TestRegisterAdmin_Failure(t *testing.T) {
 
 	adminService := NewAdminService(mockAdminRepo)
 
-	mockAdminRepo.EXPECT().RegisterAdmin(gomock.Any()).Return(response.Admin{}, someError)
+	mockAdminRepo.EXPECT().RegisterAdmin(gomock.Any()).Return(response.SuperAdmin{}, someError)
 
-	result, err := adminService.RegisterAdmin(&request.Admin{
+	result, err := adminService.RegisterAdmin(&request.SuperAdmin{
 		Id:          1,
 		Name:   "pudu",
 		Email:       "pudu@gmail.com",
@@ -194,7 +194,7 @@ func TestRegisterAdmin_Failure(t *testing.T) {
 	})
 
 	assert.Error(t, err)
-	assert.Equal(t, response.Admin{}, result)
+	assert.Equal(t, response.SuperAdmin{}, result)
 }
 
 func TestUpdateAdmin_Success(t *testing.T) {
@@ -205,12 +205,12 @@ func TestUpdateAdmin_Success(t *testing.T) {
 
 	adminService := NewAdminService(mockAdminRepo)
 
-	mockAdminRepo.EXPECT().UpdateAdmin(gomock.Any(), gomock.Any()).Return(response.Admin{}, nil)
+	mockAdminRepo.EXPECT().UpdateAdmin(gomock.Any(), gomock.Any()).Return(response.SuperAdmin{}, nil)
 
-	result, err := adminService.UpdateAdmin("pudu", request.Admin{})
+	result, err := adminService.UpdateAdmin("pudu", request.SuperAdmin{})
 
 	assert.NoError(t, err)
-	assert.Equal(t, response.Admin{}, result)
+	assert.Equal(t, response.SuperAdmin{}, result)
 }
 
 func TestUpdateAdmin_Failure(t *testing.T) {
@@ -221,10 +221,10 @@ func TestUpdateAdmin_Failure(t *testing.T) {
 
 	adminService := NewAdminService(mockAdminRepo)
 
-	mockAdminRepo.EXPECT().UpdateAdmin(gomock.Any(), gomock.Any()).Return(response.Admin{}, someError)
+	mockAdminRepo.EXPECT().UpdateAdmin(gomock.Any(), gomock.Any()).Return(response.SuperAdmin{}, someError)
 
-	result, err := adminService.UpdateAdmin("pudu", request.Admin{})
+	result, err := adminService.UpdateAdmin("pudu", request.SuperAdmin{})
 
 	assert.Error(t, err)
-	assert.Equal(t, response.Admin{}, result)
+	assert.Equal(t, response.SuperAdmin{}, result)
 }

@@ -39,7 +39,7 @@ func (pr *productRepository) CreateProduct(data *request.Product) (response.Prod
 func (pr *productRepository) GetAllProduct() ([]response.Product, error) {
 	var allProduct []models.Product
 	var resAllProduct []response.Product
-	err := pr.db.Find(&allProduct).Error
+	err := pr.db.Preload("Category").Preload("Creator").Find(&allProduct).Error
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
@@ -53,8 +53,8 @@ func (pr *productRepository) GetAllProduct() ([]response.Product, error) {
 }
 
 func (pr *productRepository) GetProduct(id string) (response.Product, error) {
-	var productData models.Creator
-	err := pr.db.Preload("Products").Preload("Products.Category").Where("id = ?", id).First(&productData).Error
+	var productData models.Product
+	err := pr.db.Preload("Category").Preload("Creator").First(&productData, "id = ?", id).Error
 	fmt.Println(productData)
 	if err != nil {
 		return response.Product{}, err

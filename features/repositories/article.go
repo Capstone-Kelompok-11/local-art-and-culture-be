@@ -17,6 +17,7 @@ type IArticleRepository interface {
 	GetArticle(id string) (response.Article, error)
 	UpdateArticle(id string, input request.Article) (response.Article, error)
 	DeleteArticle(id string) (response.Article, error)
+	//GetAdminWithArticles(adminID uint) (*response.Article, error)
 }
 
 type articleRepository struct {
@@ -39,7 +40,7 @@ func (ar *articleRepository) CreateArticle(data *request.Article) (response.Arti
 func (ar *articleRepository) GetAllArticle() ([]response.Article, error) {
 	var allArticle []models.Article
 	var resAllArticle []response.Article
-	err := ar.db.Find(&allArticle).Error
+	err := ar.db.Preload("SuperAdmin").Find(&allArticle).Error
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
@@ -54,7 +55,7 @@ func (ar *articleRepository) GetAllArticle() ([]response.Article, error) {
 
 func (ar *articleRepository) GetArticle(id string) (response.Article, error) {
 	var articleData models.Article
-	err := ar.db.First(&articleData, "id = ?", id).Error
+	err := ar.db.Preload("SuperAdmin").First(&articleData, "id = ?", id).Error
 	if err != nil {
 		return response.Article{}, err
 	}
@@ -93,3 +94,22 @@ func (ar *articleRepository) DeleteArticle(id string) (response.Article, error) 
 	}
 	return res, nil
 }
+
+// func (ar *articleRepository) GetAdminWithArticles(adminID uint) (*response.Article, error) {
+//     var admin models.SuperAdmin
+//     //var articles []models.Article
+
+//     if err := ar.db.Preload("Article").First(&admin, admin.ID).Error; err != nil {
+//         return nil, err
+//     }
+
+//     adminRes := domain.ConvertFromModelToAdminRes(admin)
+//     articlesRes := make([]response.Article, len(admin.Articles))
+//     for i, article := range admin.Articles {
+//         articlesRes[i] = *domain.ConvertFromModelToArticleRes(article)
+//     }
+
+//     return &response.Article{
+//         Id: adminRes.Id,
+//     }, nil
+// }

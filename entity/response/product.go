@@ -9,4 +9,6 @@ type Product struct {
 	//AddressId	uint	`json:"addressId"``
 	CategoryId uint `json:"categoryId"`
 	CreatorId  uint `json:"creatorId"`
+	Creator Creator
+	Category Category
 }
