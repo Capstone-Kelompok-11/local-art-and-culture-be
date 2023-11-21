@@ -8,6 +8,8 @@ func GetCodeError(err error) int {
 	switch err {
 	case ERR_EMAIL_IS_EMPTY:
 		return http.StatusBadRequest
+	case ERR_COMMENT_IS_EMPTY:
+		return http.StatusBadRequest
 	case ERR_PRICE_IS_EMPTY:
 		return http.StatusBadRequest
 	case ERR_DESCRIPTION_IS_EMPTY:
@@ -62,6 +64,8 @@ func GetCodeError(err error) int {
 		return http.StatusNotFound
 	case ERR_GET_PRODUCT_BAD_REQUEST_ID:
 		return http.StatusNotFound
+	case ERR_GET_COMMENT_BAD_REQUEST_ID:
+		return http.StatusNotFound
 	case ERR_DELETE_ROLE:
 		return http.StatusInternalServerError
 	case ERR_TITLE_IS_EMPTY:
@@ -85,6 +89,8 @@ func GetCodeError(err error) int {
 	case ERR_CREATE_CATEGORY_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_CREATE_PRODUCT_DATABASE:
+		return http.StatusInternalServerError
+	case ERR_CREATE_COMMENT_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_GET_SHIPPING_BAD_REQUEST_ID:
 		return http.StatusBadRequest
