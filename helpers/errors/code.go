@@ -36,6 +36,8 @@ func GetCodeError(err error) int {
 		return http.StatusNotFound
 	case ERR_GET_USER_BAD_REQUEST_ID:
 		return http.StatusBadRequest
+	case ERR_GET_PAYMENT_BAD_REQUEST_ID:
+		return http.StatusBadRequest
 	case ERR_GET_BAD_REQUEST_ID:
 		return http.StatusBadRequest
 	case ERR_GET_ADMIN_BAD_REQUEST_ID:
@@ -78,6 +80,8 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_CREATE_ROLE:
 		return http.StatusInternalServerError
+	case ERR_CREATE_PAYMENT:
+		return http.StatusInternalServerError
 	case ERR_GET_CREATOR_BAD_REQUEST_ID:
 		return http.StatusBadRequest
 	case ERR_DELETE_CREATOR:
@@ -94,6 +98,8 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_GET_SHIPPING_BAD_REQUEST_ID:
 		return http.StatusBadRequest
+	// case ERR_GET_PAYMENT_BAD_REQUEST_ID:
+	// 	return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError
 	}
