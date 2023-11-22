@@ -7,5 +7,4 @@ type Comment struct {
 	Comment 	string 	`gorm:"not null"`
 	ArticleId	uint	`gorm:"not null"`
 	LikeId		*uint	`gorm:"not null"`
-	Article Article
 }
