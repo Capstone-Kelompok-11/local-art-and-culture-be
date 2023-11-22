@@ -36,11 +36,11 @@ func (pa *PaymentService) CreatePayment(data *request.Payment) (response.Payment
 }
 
 func (pa *PaymentService) GetAllPayment() ([]response.Payment, error) {
-	err, res := pa.paymentRepository.GetAllPayment()
+	res, err := pa.paymentRepository.GetAllPayment()
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
-	return nil, res
+	return res, nil
 }
 
 func (pa *PaymentService) GetPayment(id string) (response.Payment, error) {

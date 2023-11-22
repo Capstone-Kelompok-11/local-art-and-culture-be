@@ -25,6 +25,5 @@ func ConvertFromModelToCommentRes(data models.Comment) *response.Comment{
 		Comment: 	data.Comment,
 		ArticleId: 	data.ArticleId,
 		LikeId: 	data.LikeId,
-		Article: *ConvertFromModelToArticleRes(data.Article),
 	}
 }
