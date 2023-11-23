@@ -17,7 +17,6 @@ type IArticleRepository interface {
 	GetArticle(id string) (response.Article, error)
 	UpdateArticle(id string, input request.Article) (response.Article, error)
 	DeleteArticle(id string) (response.Article, error)
-	//GetAdminWithArticles(adminID uint) (*response.Article, error)
 }
 
 type articleRepository struct {
