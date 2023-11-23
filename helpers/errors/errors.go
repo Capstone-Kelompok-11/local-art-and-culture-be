@@ -44,4 +44,8 @@ var (
 	ERR_CREATE_PRODUCT_DATABASE     = errors.New("failed to create new product")
 	ERR_GET_SHIPPING_BAD_REQUEST_ID = errors.New("can't find any shipping method with this id")
 	ERR_DELETE_SHIPPING             = errors.New("can't delete this shipping method")
+	ERR_GET_EVENT_BAD_REQUEST_ID    = errors.New("can't find any Event with this id")
+	ERR_EVENT_DATE_IS_EMPTY         = errors.New("event date is empty")
+	ERR_EVENT_SCHEDULE_IS_EMPTY     = errors.New("event schedule is empty")
+	ERR_CREATE_EVENT_DATABASE       = errors.New("failed to create new event to database")
 )

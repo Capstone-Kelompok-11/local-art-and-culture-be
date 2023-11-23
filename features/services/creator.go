@@ -33,9 +33,6 @@ func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator
 	if data.OutletName == "" {
 		return response.Creator{}, errors.ERR_OUTLET_NAME_IS_EMPTY
 	}
-	if data.OutletName == "" {
-		return response.Creator{}, errors.ERR_OUTLET_NAME_IS_EMPTY
-	}
 
 	res, err := cs.creatorRepository.CreateCreator(data)
 	if err != nil {
