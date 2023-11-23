@@ -98,8 +98,12 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_GET_SHIPPING_BAD_REQUEST_ID:
 		return http.StatusBadRequest
-	// case ERR_GET_PAYMENT_BAD_REQUEST_ID:
-	// 	return http.StatusBadRequest
+	case ERR_EVENT_DATE_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_EVENT_SCHEDULE_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_CREATE_EVENT_DATABASE:
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}

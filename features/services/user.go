@@ -29,11 +29,14 @@ func NewUserService(repo repositories.IUserRepository) *UserService {
 func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
 	if data.FirstName == "" {
 		return response.User{}, errors.ERR_NAME_IS_EMPTY
-	} else if data.LastName == "" {
+	}
+	if data.LastName == "" {
 		return response.User{}, errors.ERR_NAME_IS_EMPTY
-	} else if data.Email == "" {
+	}
+	if data.Email == "" {
 		return response.User{}, errors.ERR_EMAIL_IS_EMPTY
-	} else if data.PhoneNumber == "" {
+	}
+	if data.PhoneNumber == "" {
 		return response.User{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
 	}
 

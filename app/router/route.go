@@ -23,6 +23,7 @@ func Route(db *gorm.DB) *echo.Echo {
 	CategoryRoute(e, db)
 	ProductRoute(e, db)
 	ShippingRoute(e, db)
+	EventRoute(e, db)
 	CommentRoute(e, db)
 	PaymentRoute(e, db)
 	return e

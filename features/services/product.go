@@ -26,11 +26,14 @@ func NewProductService(repo repositories.IProductRepository) *ProductService {
 func (pr *ProductService) CreateProduct(data *request.Product) (response.Product, error) {
 	if data.Name == "" {
 		return response.Product{}, errors.ERR_NAME_IS_EMPTY
-	} else if data.Price == 0 {
+	} 
+	if data.Price == 0 {
 		return response.Product{}, errors.ERR_PRICE_IS_EMPTY
-	} else if data.Description == "" {
+	} 
+	if data.Description == "" {
 		return response.Product{}, errors.ERR_DESCRIPTION_IS_EMPTY
-	} else if data.Status == "" {
+	} 
+	if data.Status == "" {
 		return response.Product{}, errors.ERR_STATUS_IS_EMPTY
 	}
 
