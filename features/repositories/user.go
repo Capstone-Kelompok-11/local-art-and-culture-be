@@ -94,14 +94,24 @@ func (u *userRepository) UpdateUser(id string, input request.User) (response.Use
 	
 	if input.FirstName != "" {
 		userData.FirstName = input.FirstName
-	} else if input.LastName != "" {
+	} 
+	if input.LastName != "" {
 		userData.LastName = input.LastName
-	} else if input.Email != "" {
+	} 
+	if input.Email != "" {
 		userData.Email = input.Email
-	} else if input.Password != "" {
+	} 
+	if input.Password != "" {
 		userData.Password = input.Password
-	}else if input.PhoneNumber != "" {
+	}
+	if input.PhoneNumber != "" {
 		userData.PhoneNumber = input.PhoneNumber
+	}
+	if input.NIK != "" {
+		userData.NIK = input.NIK
+	}
+	if input.Gender != "" {
+		userData.Gender = input.Gender
 	}
 
 	if err = u.db.Save(&userData).Error; err != nil {

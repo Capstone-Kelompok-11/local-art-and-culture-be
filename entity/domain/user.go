@@ -18,6 +18,8 @@ func ConvertFromUserReqToModel(data request.User) *models.Users {
 		Email:       data.Email,
 		Password:    data.Password,
 		PhoneNumber: data.PhoneNumber,
+		NIK: 		 data.NIK,
+		Gender: 	 data.Gender,
 		BirthDate:   data.BirthDate,
 	}
 }
@@ -29,6 +31,8 @@ func ConvertFromModelToUserRes(data models.Users) *response.User {
 		LastName:    data.LastName,
 		Email:       data.Email,
 		PhoneNumber: data.PhoneNumber,
+		NIK: 		 data.NIK,
+		Gender: 	 data.Gender,
 		BirthDate:   data.BirthDate,
 	}
 }
