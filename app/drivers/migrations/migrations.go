@@ -21,4 +21,5 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.Payment{})
 	db.AutoMigrate(&models.Transaction{})
 	db.AutoMigrate(&models.TransactionDetail{})
+	db.AutoMigrate(&models.Like{})
 }

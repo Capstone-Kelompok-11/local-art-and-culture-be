@@ -104,6 +104,8 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_CREATE_EVENT_DATABASE:
 		return http.StatusInternalServerError
+	case ERR_GET_COMMENT_BAD_REQUEST_ID:
+		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError
 	}
