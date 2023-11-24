@@ -28,7 +28,8 @@ func (ca *CategoryHandler) CreateCategory(c echo.Context) error {
 }
 
 func (ca *CategoryHandler) GetAllCategory(c echo.Context) error {
-	res, err := ca.categoryService.GetAllCategory()
+	nameFilter := c.QueryParam("name")
+	res, err := ca.categoryService.GetAllCategory(nameFilter)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

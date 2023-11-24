@@ -9,7 +9,7 @@ import (
 
 type IProductService interface {
 	CreateProduct(data *request.Product) (response.Product, error)
-	GetAllProduct() ([]response.Product, error)
+	GetAllProduct(nameFilter string) ([]response.Product, error)
 	GetProduct(id string) (response.Product, error)
 	UpdateProduct(id string, input request.Product) (response.Product, error)
 	DeleteProduct(id string) (response.Product, error)
@@ -41,8 +41,8 @@ func (pr *ProductService) CreateProduct(data *request.Product) (response.Product
 	return res, nil
 }
 
-func (pr *ProductService) GetAllProduct() ([]response.Product, error) {
-	res, err := pr.productRepository.GetAllProduct()
+func (pr *ProductService) GetAllProduct(nameFilter string) ([]response.Product, error) {
+	res, err := pr.productRepository.GetAllProduct(nameFilter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}

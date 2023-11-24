@@ -9,7 +9,7 @@ import (
 
 type IRoleService interface {
 	CreateRole(data *request.Role) (response.Role, error)
-	GetAllRole() ([]response.Role, error)
+	GetAllRole(nameFilter string) ([]response.Role, error)
 	GetRole(id string) (response.Role, error)
 	UpdateRole(id string, data request.Role) (response.Role, error)
 	DeleteRole(id string) (response.Role, error)
@@ -36,12 +36,12 @@ func (rs *RoleService) CreateRole(data *request.Role) (response.Role, error) {
 	return res, nil
 }
 
-func (rs *RoleService) GetAllRole() ([]response.Role, error) {
-	err, res := rs.roleRepository.GetAllRole()
+func (rs *RoleService) GetAllRole(nameFilter string) ([]response.Role, error) {
+	res, err := rs.roleRepository.GetAllRole(nameFilter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
-	return nil, res
+	return res, nil
 }
 
 func (rs *RoleService) GetRole(id string) (response.Role, error) {

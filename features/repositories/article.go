@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
@@ -13,11 +12,10 @@ import (
 
 type IArticleRepository interface {
 	CreateArticle(data *request.Article) (response.Article, error)
-	GetAllArticle() ([]response.Article, error)
+	GetAllArticle(nameFilter string) ([]response.Article, error)
 	GetArticle(id string) (response.Article, error)
 	UpdateArticle(id string, input request.Article) (response.Article, error)
 	DeleteArticle(id string) (response.Article, error)
-	//GetAdminWithArticles(adminID uint) (*response.Article, error)
 }
 
 type articleRepository struct {
@@ -38,15 +36,20 @@ func (ar *articleRepository) CreateArticle(data *request.Article) (response.Arti
 	return *domain.ConvertFromModelToArticleRes(*dataArticle), nil
 }
 
-func (ar *articleRepository) GetAllArticle() ([]response.Article, error) {
+func (ar *articleRepository) GetAllArticle(nameFilter string) ([]response.Article, error) {
 	var allArticle []models.Article
 	var resAllArticle []response.Article
-	err := ar.db.Preload("Admin").Find(&allArticle).Error
+
+	query := ar.db.Preload("Admin")
+	if nameFilter != "" {
+		query = query.Where("title LIKE ?", "%"+nameFilter+"%")
+	}
+	
+	err := query.Find(&allArticle).Error
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
 
-	fmt.Println(allArticle)
 	for i := 0; i < len(allArticle); i++ {
 		articleVm := domain.ConvertFromModelToArticleRes(allArticle[i])
 		resAllArticle = append(resAllArticle, *articleVm)

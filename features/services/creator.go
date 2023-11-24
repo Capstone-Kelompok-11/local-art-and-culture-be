@@ -9,7 +9,7 @@ import (
 
 type ICreatorService interface {
 	CreateCreator(data *request.Creator) (response.Creator, error)
-	GetAllCreator() ([]response.UserCreatorResponse, error)
+	GetAllCreator(nameFilter string) ([]response.UserCreatorResponse, error)
 	GetCreator(id string) (response.UserCreatorResponse, error)
 	UpdateCreator(id string, data request.Creator) (response.Creator, error)
 	DeleteCreator(id string) (response.Creator, error)
@@ -45,8 +45,8 @@ func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator
 	return res, nil
 }
 
-func (cs *CreatorService) GetAllCreator() ([]response.UserCreatorResponse, error) {
-	res, err := cs.creatorRepository.GetAllCreator()
+func (cs *CreatorService) GetAllCreator(nameFilter string) ([]response.UserCreatorResponse, error) {
+	res, err := cs.creatorRepository.GetAllCreator(nameFilter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}

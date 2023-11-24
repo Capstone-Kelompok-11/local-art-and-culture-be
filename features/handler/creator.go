@@ -28,7 +28,8 @@ func (ch *CreatorHandler) CreateCreator(c echo.Context) error {
 }
 
 func (ch *CreatorHandler) GetAllCreator(c echo.Context) error {
-	res, err := ch.creatorService.GetAllCreator()
+	nameFilter := c.QueryParam("name")
+	res, err := ch.creatorService.GetAllCreator(nameFilter)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

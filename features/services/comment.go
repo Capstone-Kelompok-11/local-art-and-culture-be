@@ -37,7 +37,7 @@ func (co *CommentService) CreateComment(data *request.Comment) (response.Comment
 }
 
 func (co *CommentService) GetAllComment() ([]response.Comment, error) {
-	res, err :=co.GetAllComment()
+	res, err :=co.commentRepository.GetAllComment()
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}

@@ -12,7 +12,7 @@ import (
 
 type ICreatorRepository interface {
 	CreateCreator(data *request.Creator) (response.Creator, error)
-	GetAllCreator() ([]response.UserCreatorResponse, error)
+	GetAllCreator(nameFilter string) ([]response.UserCreatorResponse, error)
 	GetCreator(id string) (response.UserCreatorResponse, error)
 	UpdateCreator(id string, input request.Creator) (response.Creator, error)
 	DeleteCreator(id string) (response.Creator, error)
@@ -35,10 +35,16 @@ func (cr *creatorRepository) CreateCreator(data *request.Creator) (response.Crea
 	return *domain.ConvertFromModelToCreatorRes(*dataCreator), nil
 }
 
-func (cr *creatorRepository) GetAllCreator() ([]response.UserCreatorResponse, error) {
+func (cr *creatorRepository) GetAllCreator(nameFilter string) ([]response.UserCreatorResponse, error) {
 	var allCreator []models.Users
 	var resAllCreator []response.UserCreatorResponse
-	err := cr.db.Preload("Creator").Find(&allCreator).Error
+
+	query := cr.db.Preload("Creator")
+	if nameFilter != "" {
+		query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
+	}
+
+	err := query.Find(&allCreator).Error
 	if err != nil {
 		return nil, err
 	}
