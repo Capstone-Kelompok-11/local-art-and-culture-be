@@ -37,13 +37,15 @@ func (cr *creatorRepository) CreateCreator(data *request.Creator) (response.Crea
 }
 
 func (cr *creatorRepository) GetAllCreator(nameFilter string) ([]response.UserCreatorResponse, error) {
-	var allCreator []models.Users
+	var allCreator []models.Creator
 	var resAllCreator []response.UserCreatorResponse
 
-	query := cr.db.Preload("Creator").Preload("Roles")
-	if nameFilter != "" {
-		query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
-	}
+	query := cr.db.Preload("Roles").Preload("Users", func(db *gorm.DB) *gorm.DB {
+		if nameFilter != "" {
+			return db.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
+		}
+		return db
+	})
 
 	err := query.Find(&allCreator).Error
 	if err != nil {
@@ -57,15 +59,15 @@ func (cr *creatorRepository) GetAllCreator(nameFilter string) ([]response.UserCr
 	return resAllCreator, nil
 }
 
-func (cr *creatorRepository) GetCreator(id string) (response.Creator, error) {
+func (cr *creatorRepository) GetCreator(id string) (response.UserCreatorResponse, error) {
 	var userData models.Creator
 	err := cr.db.Preload("Users").Preload("Roles").First(&userData, "id = ?", id).Error
 
 	if err != nil {
-		return response.Creator{}, err
+		return response.UserCreatorResponse{}, err
 	}
 
-	return *domain.ConvertFromModelToCreatorRes(userData), nil
+	return *domain.ConvertFromModelToUserCreatorRes(userData), nil
 }
 
 func (cr *creatorRepository) UpdateCreator(id string, input request.Creator) (response.Creator, error) {

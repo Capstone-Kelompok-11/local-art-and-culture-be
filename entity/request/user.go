@@ -13,5 +13,5 @@ type User struct {
 	NIK			string 		`json:"nik"`
 	Gender		string		`json:"gender"`
 	BirthDate   time.Time 	`json:"birthday" form:"birthday"`
-	Creator     Creator
+	// Creator     Creator
 }

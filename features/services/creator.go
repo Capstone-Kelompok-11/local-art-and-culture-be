@@ -24,15 +24,15 @@ func NewCreatorService(repo repositories.ICreatorRepository) *CreatorService {
 }
 
 func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator, error) {
-	// if data.Email == "" {
-	// 	return response.Creator{}, errors.ERR_EMAIL_IS_EMPTY
-	// }
-	// if data.PhoneNumber == "" {
-	// 	return response.Creator{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
-	// }
-	// if data.OutletName == "" {
-	// 	return response.Creator{}, errors.ERR_OUTLET_NAME_IS_EMPTY
-	// }
+	if data.Email == "" {
+		return response.Creator{}, errors.ERR_EMAIL_IS_EMPTY
+	}
+	if data.PhoneNumber == "" {
+		return response.Creator{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
+	}
+	if data.OutletName == "" {
+		return response.Creator{}, errors.ERR_OUTLET_NAME_IS_EMPTY
+	}
 
 	res, err := cs.creatorRepository.CreateCreator(data)
 	if err != nil {
