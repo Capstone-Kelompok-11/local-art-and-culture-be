@@ -39,7 +39,8 @@ func (ah *AdminHandler) LoginAdmin(c echo.Context) error {
 }
 
 func (ah *AdminHandler) GetAllAdmin(c echo.Context) error {
-	res, err := ah.adminService.GetAllAdmin()
+	nameFilter := c.QueryParam("name")
+	res, err := ah.adminService.GetAllAdmin(nameFilter)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

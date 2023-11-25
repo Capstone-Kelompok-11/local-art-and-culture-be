@@ -16,6 +16,7 @@ func ConvertFromCommentReqToModel(data request.Comment) *models.Comment{
 		Comment: 	data.Comment,
 		ArticleId: 	data.ArticleId,
 		LikeId: 	data.LikeId,
+		UserId:		data.UserId,
 	}
 }
 
@@ -25,5 +26,7 @@ func ConvertFromModelToCommentRes(data models.Comment) *response.Comment{
 		Comment: 	data.Comment,
 		ArticleId: 	data.ArticleId,
 		LikeId: 	data.LikeId,
+		UserId: 	data.UserId,
+		User: *ConvertFromModelToUserRes(data.User),
 	}
 }

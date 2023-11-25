@@ -28,7 +28,8 @@ func (ah *ArticleHandler) CreateArticle(c echo.Context) error {
 }
 
 func (ah *ArticleHandler) GetAllArticle(c echo.Context) error {
-	res, err := ah.articleService.GetAllArticle()
+	nameFilter := c.QueryParam("name")
+	res, err := ah.articleService.GetAllArticle(nameFilter)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

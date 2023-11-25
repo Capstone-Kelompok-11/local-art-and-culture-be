@@ -9,8 +9,8 @@ import (
 
 type ICreatorService interface {
 	CreateCreator(data *request.Creator) (response.Creator, error)
-	GetAllCreator() ([]response.Creator, error)
-	GetCreator(id string) (response.Creator, error)
+	GetAllCreator(nameFilter string) ([]response.UserCreatorResponse, error)
+	GetCreator(id string) (response.UserCreatorResponse, error)
 	UpdateCreator(id string, data request.Creator) (response.Creator, error)
 	DeleteCreator(id string) (response.Creator, error)
 }
@@ -24,15 +24,15 @@ func NewCreatorService(repo repositories.ICreatorRepository) *CreatorService {
 }
 
 func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator, error) {
-	if data.Email == "" {
-		return response.Creator{}, errors.ERR_EMAIL_IS_EMPTY
-	}
-	if data.PhoneNumber == "" {
-		return response.Creator{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
-	}
-	if data.OutletName == "" {
-		return response.Creator{}, errors.ERR_OUTLET_NAME_IS_EMPTY
-	}
+	// if data.Email == "" {
+	// 	return response.Creator{}, errors.ERR_EMAIL_IS_EMPTY
+	// }
+	// if data.PhoneNumber == "" {
+	// 	return response.Creator{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
+	// }
+	// if data.OutletName == "" {
+	// 	return response.Creator{}, errors.ERR_OUTLET_NAME_IS_EMPTY
+	// }
 
 	res, err := cs.creatorRepository.CreateCreator(data)
 	if err != nil {
@@ -42,21 +42,21 @@ func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator
 	return res, nil
 }
 
-func (cs *CreatorService) GetAllCreator() ([]response.Creator, error) {
-	res, err := cs.creatorRepository.GetAllCreator()
+func (cs *CreatorService) GetAllCreator(nameFilter string) ([]response.UserCreatorResponse, error) {
+	res, err := cs.creatorRepository.GetAllCreator(nameFilter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
 	return res, nil
 }
 
-func (cs *CreatorService) GetCreator(id string) (response.Creator, error) {
+func (cs *CreatorService) GetCreator(id string) (response.UserCreatorResponse, error) {
 	if id == "" {
-		return response.Creator{}, errors.ERR_GET_CREATOR_BAD_REQUEST_ID
+		return response.UserCreatorResponse{}, errors.ERR_GET_CREATOR_BAD_REQUEST_ID
 	}
 	res, err := cs.creatorRepository.GetCreator(id)
 	if err != nil {
-		return response.Creator{}, err
+		return response.UserCreatorResponse{}, err
 	}
 	return res, nil
 }

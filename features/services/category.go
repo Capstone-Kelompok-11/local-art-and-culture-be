@@ -9,7 +9,7 @@ import (
 
 type ICategoryService interface {
 	CreateCategory(data *request.Category) (response.Category, error)
-	GetAllCategory() ([]response.Category, error)
+	GetAllCategory(nameFilter string) ([]response.Category, error)
 	GetCategory(id string) (response.Category, error)
 	UpdateCategory(id string, input request.Category) (response.Category, error)
 	DeleteCategory(id string) (response.Category, error)
@@ -37,8 +37,8 @@ func (ca *CategoryService) CreateCategory(data *request.Category) (response.Cate
 	return res, nil
 }
 
-func (ca *CategoryService) GetAllCategory() ([]response.Category, error) {
-	res, err := ca.categoryRepository.GetAllCategory()
+func (ca *CategoryService) GetAllCategory(nameFilter string) ([]response.Category, error) {
+	res, err := ca.categoryRepository.GetAllCategory(nameFilter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}

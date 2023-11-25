@@ -12,8 +12,8 @@ import (
 
 type ICreatorRepository interface {
 	CreateCreator(data *request.Creator) (response.Creator, error)
-	GetAllCreator() ([]response.Creator, error)
-	GetCreator(id string) (response.Creator, error)
+	GetAllCreator(nameFilter string) ([]response.UserCreatorResponse, error)
+	GetCreator(id string) (response.UserCreatorResponse, error)
 	UpdateCreator(id string, input request.Creator) (response.Creator, error)
 	DeleteCreator(id string) (response.Creator, error)
 }
@@ -36,16 +36,22 @@ func (cr *creatorRepository) CreateCreator(data *request.Creator) (response.Crea
 	return *domain.ConvertFromModelToCreatorRes(*dataCreator), nil
 }
 
-func (cr *creatorRepository) GetAllCreator() ([]response.Creator, error) {
-	var allCreator []models.Creator
-	var resAllCreator []response.Creator
-	err := cr.db.Preload("Users").Preload("Roles").Find(&allCreator).Error
+func (cr *creatorRepository) GetAllCreator(nameFilter string) ([]response.UserCreatorResponse, error) {
+	var allCreator []models.Users
+	var resAllCreator []response.UserCreatorResponse
+
+	query := cr.db.Preload("Creator").Preload("Roles")
+	if nameFilter != "" {
+		query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
+	}
+
+	err := query.Find(&allCreator).Error
 	if err != nil {
 		return nil, err
 	}
 
 	for i := 0; i < len(allCreator); i++ {
-		creatorVm := domain.ConvertFromModelToCreatorRes(allCreator[i])
+		creatorVm := domain.ConvertFromModelToUserCreatorRes(allCreator[i])
 		resAllCreator = append(resAllCreator, *creatorVm)
 	}
 	return resAllCreator, nil

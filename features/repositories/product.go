@@ -12,7 +12,7 @@ import (
 
 type IProductRepository interface {
 	CreateProduct(data *request.Product) (response.Product, error)
-	GetAllProduct() ([]response.Product, error)
+	GetAllProduct(nameFilter string) ([]response.Product, error)
 	GetProduct(id string) (response.Product, error)
 	UpdateProduct(id string, input request.Product) (response.Product, error)
 	DeleteProduct(id string) (response.Product, error)
@@ -36,10 +36,17 @@ func (pr *productRepository) CreateProduct(data *request.Product) (response.Prod
 	return *domain.ConvertFromModelToProductRes(*dataProduct), nil
 }
 
-func (pr *productRepository) GetAllProduct() ([]response.Product, error) {
+func (pr *productRepository) GetAllProduct(nameFilter string) ([]response.Product, error) {
 	var allProduct []models.Product
 	var resAllProduct []response.Product
-	err := pr.db.Preload("Category").Preload("Creator").Find(&allProduct).Error
+
+	query := pr.db.Preload("Category").Preload("Creator")
+
+	if nameFilter != "" {
+		query = query.Where("name LIKE ?", "%"+nameFilter+"%")
+	}
+
+	err := query.Find(&allProduct).Error
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
@@ -48,6 +55,7 @@ func (pr *productRepository) GetAllProduct() ([]response.Product, error) {
 		productVm := domain.ConvertFromModelToProductRes(allProduct[i])
 		resAllProduct = append(resAllProduct, *productVm)
 	}
+
 	return resAllProduct, nil
 }
 
