@@ -28,7 +28,8 @@ func (rh *RoleHandler) CreateRole(c echo.Context) error {
 }
 
 func (rh *RoleHandler) GetAllRole(c echo.Context) error {
-	res, err := rh.roleService.GetAllRole()
+	nameFilter := c.QueryParam("name")
+	res, err := rh.roleService.GetAllRole(nameFilter)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

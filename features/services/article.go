@@ -9,11 +9,10 @@ import (
 
 type IArticleService interface {
 	CreateArticle(data *request.Article) (response.Article, error)
-	GetAllArticle() ([]response.Article, error)
+	GetAllArticle(nameFilter string) ([]response.Article, error)
 	GetArticle(id string) (response.Article, error)
 	UpdateArticle(id string, input request.Article) (response.Article, error)
 	DeleteArticle(id string) (response.Article, error)
-	//GetAdminWithArticles(adminID uint) (*response.Article, error)
 }
 
 type ArticleService struct {
@@ -37,8 +36,8 @@ func (as *ArticleService) CreateArticle(data *request.Article) (response.Article
 	return res, nil
 }
 
-func (as *ArticleService) GetAllArticle() ([]response.Article, error) {
-	res, err := as.articleRepository.GetAllArticle()
+func (as *ArticleService) GetAllArticle(nameFilter string) ([]response.Article, error) {
+	res, err := as.articleRepository.GetAllArticle(nameFilter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}

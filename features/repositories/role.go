@@ -12,7 +12,7 @@ import (
 
 type IRoleRepository interface {
 	CreateRole(data *request.Role) (response.Role, error)
-	GetAllRole() ([]response.Role, error)
+	GetAllRole(nameFilter string) ([]response.Role, error)
 	GetRole(id string) (response.Role, error)
 	UpdateRole(id string, input request.Role) (response.Role, error)
 	DeleteRole(id string) (response.Role, error)
@@ -35,12 +35,18 @@ func (rr *roleRepository) CreateRole(data *request.Role) (response.Role, error) 
 	return *domain.ConvertFromModelToRoleRes(*dataRole), nil
 }
 
-func (rr *roleRepository) GetAllRole() ([]response.Role, error) {
+func (rr *roleRepository) GetAllRole(nameFilter string) ([]response.Role, error) {
 	var allRole []models.Role
 	var resAllRole []response.Role
-	err := rr.db.Find(&allRole).Error
+
+	query := rr.db.Model(&models.Role{})
+	if nameFilter != "" {
+		query = query.Where("role LIKE ?", "%"+nameFilter+"%")
+	}
+
+	err := query.Find(&allRole).Error
 	if err != nil {
-		return nil, err
+		return nil, errors.ERR_GET_DATA
 	}
 
 	for i := 0; i < len(allRole); i++ {

@@ -27,11 +27,13 @@ func (pr *ProductHandler) CreateProduct(c echo.Context) error {
 }
 
 func (pr *ProductHandler) GetAllProduct(c echo.Context) error {
-	res, err := pr.productService.GetAllProduct()
-	if err != nil {
-		return response.NewErrorResponse(c, err)
-	}
-	return response.NewSuccessResponse(c, res)
+	nameFilter := c.QueryParam("name")
+
+    res, err := pr.productService.GetAllProduct(nameFilter)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    return response.NewSuccessResponse(c, res)
 }
 
 func (pr *ProductHandler) GetProduct(c echo.Context) error {

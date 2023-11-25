@@ -32,14 +32,14 @@ func (co *commentRepository) CreateComment(data *request.Comment) (response.Comm
 	if err != nil {
 		return response.Comment{}, err
 	}
-	err = co.db.First(&dataComment, "id = ?", dataComment.ID).Error
+	err = co.db.Preload("User").First(&dataComment, "id = ?", dataComment.ID).Error
 	return *domain.ConvertFromModelToCommentRes(*dataComment), nil
 }
 
 func (co *commentRepository) GetAllComment() ([]response.Comment, error) {
 	var allComment []models.Comment
 	var resAllComment []response.Comment
-	err := co.db.Find(&allComment).Error
+	err := co.db.Preload("User").Find(&allComment).Error
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
@@ -53,7 +53,7 @@ func (co *commentRepository) GetAllComment() ([]response.Comment, error) {
 
 func (co *commentRepository) GetComment(id string) (response.Comment, error) {
 	var commentData models.Comment
-	err := co.db.First(&commentData, "id = ?", id).Error
+	err := co.db.Preload("User").First(&commentData, "id = ?", id).Error
 	if err != nil {
 		return response.Comment{}, err
 	}
@@ -83,7 +83,7 @@ func (co *commentRepository) UpdateComment(id string, input request.Comment) (re
 func (co *commentRepository) DeleteComment(id string) (response.Comment, error) {
 	commentData := models.Comment{}
 	res := response.Comment{}
-	find := co.db.First(&commentData, "id = ?", id).Error
+	find := co.db.Preload("User").First(&commentData, "id = ?", id).Error
 	if find == nil {
 		res = *domain.ConvertFromModelToCommentRes(commentData)
 	}

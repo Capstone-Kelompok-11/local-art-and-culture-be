@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"log"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
@@ -14,7 +15,7 @@ import (
 type IUserRepository interface {
 	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.User, error)
-	GetAllUser() ([]response.User, error)
+	GetAllUser(nameFilter string) ([]response.User, error)
 	GetUser(id string) (response.User, error)
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
@@ -51,11 +52,18 @@ func (u *userRepository) LoginUser(data *request.User) (response.User, error) {
 	return *domain.ConvertFromModelToUserRes(*dataUser), nil
 }
 
-func (u *userRepository) GetAllUser() ([]response.User, error) {
+func (u *userRepository) GetAllUser(nameFilter string) ([]response.User, error) {
 	var allUser []models.Users
 	var resAllUser []response.User
-	err := u.db.Find(&allUser).Error
+
+	query := u.db.Model(&models.Users{})
+	if nameFilter != "" {
+    	query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
+	}
+
+	err := query.Find(&allUser).Error
 	if err != nil {
+		log.Printf("Error fetching data from database: %v", err)
 		return nil, errors.ERR_GET_DATA
 	}
 
@@ -86,14 +94,24 @@ func (u *userRepository) UpdateUser(id string, input request.User) (response.Use
 	
 	if input.FirstName != "" {
 		userData.FirstName = input.FirstName
-	} else if input.LastName != "" {
+	} 
+	if input.LastName != "" {
 		userData.LastName = input.LastName
-	} else if input.Email != "" {
+	} 
+	if input.Email != "" {
 		userData.Email = input.Email
-	} else if input.Password != "" {
+	} 
+	if input.Password != "" {
 		userData.Password = input.Password
-	}else if input.PhoneNumber != "" {
+	}
+	if input.PhoneNumber != "" {
 		userData.PhoneNumber = input.PhoneNumber
+	}
+	if input.NIK != "" {
+		userData.NIK = input.NIK
+	}
+	if input.Gender != "" {
+		userData.Gender = input.Gender
 	}
 
 	if err = u.db.Save(&userData).Error; err != nil {
