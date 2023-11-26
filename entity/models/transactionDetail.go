@@ -13,6 +13,5 @@ type TransactionDetail struct {
 	Qty           int32
 	Status        string
 	Product       Product `gorm:"foreignKey:ID;references:ProductId"`
-	Users         Users   `gorm:"foreignKey:ID;references:UserId"`
-	// Event even `gorm:"foreignKey:ID;references:ProductId"`
+	Event         Event   `gorm:"foreignKey:ID;references:EventId"`
 }

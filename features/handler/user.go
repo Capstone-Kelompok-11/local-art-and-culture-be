@@ -39,7 +39,8 @@ func (u *UserHandler) LoginUsers(e echo.Context) error {
 }
 
 func (u *UserHandler) GetAllUser(c echo.Context) error {
-	res, err := u.userService.GetAllUser()
+	nameFilter := c.QueryParam("name")
+	res, err := u.userService.GetAllUser(nameFilter)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

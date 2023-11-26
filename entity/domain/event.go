@@ -15,11 +15,8 @@ func ConvertFromEventReqToModel(data request.Event) *models.Event {
 		},
 		EventName:        data.EventName,
 		EventDescription: data.EventDescription,
-		StartTime:        data.StartTime,
-		EndTime:          data.EndTime,
 		FromDate:         data.FromDate,
 		ToDate:           data.ToDate,
-		TicketPrice:      data.TicketPrice,
 		AddressId:        data.AddressId,
 		CategoryId:       data.CategoryId,
 		CreatorId:        data.CreatorId,
@@ -33,15 +30,25 @@ func ConvertFromModelToEventRes(data models.Event) *response.Event {
 		Id:               data.ID,
 		EventName:        data.EventName,
 		EventDescription: data.EventDescription,
-		StartTime:        data.StartTime,
-		EndTime:          data.EndTime,
 		FromDate:         data.FromDate,
 		ToDate:           data.ToDate,
-		TicketPrice:      data.TicketPrice,
 		AddressId:        data.AddressId,
 		CategoryId:       data.CategoryId,
 		CreatorId:        data.CreatorId,
 		Creator:          *ConvertFromModelToCreatorRes(data.Creator),
 		Category:         *ConvertFromModelToCategoryRes(data.Category),
+	}
+}
+
+func ConvertFromModelToEventsRes(data models.Event) *response.Events {
+	return &response.Events{
+		Id:               data.ID,
+		EventName:        data.EventName,
+		EventDescription: data.EventDescription,
+		FromDate:         data.FromDate,
+		ToDate:           data.ToDate,
+		AddressId:        data.AddressId,
+		CategoryId:       data.CategoryId,
+		CreatorId:        data.CreatorId,
 	}
 }

@@ -12,7 +12,7 @@ import (
 type IAdminService interface {
 	RegisterAdmin(data *request.SuperAdmin) (response.SuperAdmin, error)
 	LoginAdmin(data *request.SuperAdmin) (response.SuperAdmin, error)
-	GetAllAdmin() ([]response.SuperAdmin, error)
+	GetAllAdmin(nameFilter string) ([]response.SuperAdmin, error)
 	GetAdmin(id string) (response.SuperAdmin, error)
 	UpdateAdmin(id string, input request.SuperAdmin) (response.SuperAdmin, error)
 	DeleteAdmin(id string) (response.SuperAdmin, error)
@@ -79,12 +79,12 @@ func (as *AdminService) LoginAdmin(data *request.SuperAdmin) (response.SuperAdmi
 	return res, nil
 }
 
-func (as *AdminService) GetAllAdmin() ([]response.SuperAdmin, error) {
-	err, res := as.adminRepository.GetAllAdmin()
+func (as *AdminService) GetAllAdmin(nameFilter string) ([]response.SuperAdmin, error) {
+	res, err := as.adminRepository.GetAllAdmin(nameFilter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
-	return nil, res
+	return res, nil
 }
 
 func (as *AdminService) GetAdmin(id string) (response.SuperAdmin, error) {

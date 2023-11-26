@@ -12,7 +12,7 @@ import (
 type IUserService interface {
 	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.User, error)
-	GetAllUser() ([]response.User, error)
+	GetAllUser(nameFilter string) ([]response.User, error)
 	GetUser(id string) (response.User, error)
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
@@ -81,8 +81,8 @@ func (u *UserService) LoginUser(data *request.User) (response.User, error) {
 	return res, nil
 }
 
-func (u *UserService) GetAllUser() ([]response.User, error) {
-	err, res := u.UserRepo.GetAllUser()
+func (u *UserService) GetAllUser(nameFilter string) ([]response.User, error) {
+	err, res := u.UserRepo.GetAllUser(nameFilter)
 	if err != nil {
 		return err, nil
 	}

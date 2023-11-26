@@ -5,4 +5,6 @@ type Comment struct {
 	Comment		string	`json:"comment"`
 	ArticleId	uint	`json:"articleId"`
 	LikeId		*uint	`json:"likeId"`
+	UserId		uint	`json:"userId"`
+	User User
 }

@@ -64,32 +64,22 @@ func (er *eventRepository) GetEvent(id string) (response.Event, error) {
 
 func (er *eventRepository) UpdateEvent(id string, input request.Event) (response.Event, error) {
 	eventData := models.Event{}
-	err := er.db.First(&eventData, "id = ?", id).Error
+	err := er.db.Preload("Category").Preload("Creator").First(&eventData, "id = ?", id).Error
 
 	if err != nil {
 		return response.Event{}, errors.ERR_GET_EVENT_BAD_REQUEST_ID
 	}
-
 	if input.EventName != "" {
 		eventData.EventName = input.EventName
 	}
 	if input.EventDescription != "" {
 		eventData.EventDescription = input.EventDescription
 	}
-	if input.TicketPrice != 0 {
-		eventData.TicketPrice = input.TicketPrice
-	}
 	if !input.FromDate.IsZero() {
 		eventData.FromDate = input.FromDate
 	}
 	if !input.ToDate.IsZero() {
 		eventData.ToDate = input.ToDate
-	}
-	if !input.StartTime.IsZero() {
-		eventData.StartTime = input.StartTime
-	}
-	if !input.EndTime.IsZero() {
-		eventData.EndTime = input.EndTime
 	}
 
 	if err = er.db.Save(&eventData).Error; err != nil {

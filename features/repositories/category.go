@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
@@ -13,7 +12,7 @@ import (
 
 type ICategoryRepository interface {
 	CreateCategory(data *request.Category) (response.Category, error)
-	GetAllCategory() ([]response.Category, error)
+	GetAllCategory(nameFilter string) ([]response.Category, error)
 	GetCategory(id string) (response.Category, error)
 	UpdateCategory(id string, input request.Category) (response.Category, error)
 	DeleteCategory(id string) (response.Category, error)
@@ -36,15 +35,20 @@ func (ca *categoryRepository) CreateCategory(data *request.Category) (response.C
 	return *domain.ConvertFromModelToCategoryRes(*dataCategory), nil
 }
 
-func (ca *categoryRepository) GetAllCategory() ([]response.Category, error) {
+func (ca *categoryRepository) GetAllCategory(nameFilter string) ([]response.Category, error) {
 	var allCategory []models.Category
 	var resAllCategory []response.Category
-	err := ca.db.Find(&allCategory).Error
+
+	query := ca.db.Model(&models.Category{})
+	if nameFilter != "" {
+		query = query.Where("category LIKE ?", "%"+nameFilter+"%")
+	}
+
+	err := query.Find(&allCategory).Error
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
 
-	fmt.Println(allCategory)
 	for i := 0; i < len(allCategory); i++ {
 		categoryVm := domain.ConvertFromModelToCategoryRes(allCategory[i])
 		resAllCategory = append(resAllCategory, *categoryVm)
