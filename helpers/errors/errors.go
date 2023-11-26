@@ -57,4 +57,7 @@ var (
 	ERR_CREATE_TRANSACTION_DATABASE    = errors.New("failed to create new transaction to database")
 	ERR_GET_TRANSACTION_BAD_REQUEST_ID = errors.New("can't find any transaction with this id")
 	ERR_DELETE_TRANSACTION             = errors.New("can't delete this transaction")
+	ERR_GET_TICKET_BAD_REQUEST_ID      = errors.New("can't find any Ticket with this id")
+	ERR_CREATE_TICKET_DATABASE         = errors.New("failed to create new ticket")
+	ERR_GET_ARTICLE_BAD_REQUEST_ID     = errors.New("can't find any Article with this id")
 )
