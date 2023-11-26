@@ -27,6 +27,6 @@ func ConvertFromModelToTicketRes(data models.Ticket) *response.Ticket {
 		Price:   data.Price,
 		Qty:     data.Qty,
 		EventId: data.EventId,
-		Event:   *ConvertFromModelToEventRes(data.Event),
+		Event:   *ConvertFromModelToEventsRes(data.Event),
 	}
 }

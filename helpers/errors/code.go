@@ -110,6 +110,8 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_GET_COMMENT_BAD_REQUEST_ID:
 		return http.StatusBadRequest
+	case ERR_QTY_IS_EMPTY:
+		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError
 	}

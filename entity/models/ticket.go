@@ -9,6 +9,8 @@ import (
 type Ticket struct {
 	gorm.Model
 	Type      string    `gorm:"not null"`
+	Name      string    `gorm:"not null"`
+	Description      string    `gorm:"not null"`
 	Price     float64   `gorm:"not null"`
 	Qty       int       `gorm:"not null"`
 	StartTime time.Time `gorm:"not null"`

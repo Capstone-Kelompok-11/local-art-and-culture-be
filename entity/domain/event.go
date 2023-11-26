@@ -39,3 +39,16 @@ func ConvertFromModelToEventRes(data models.Event) *response.Event {
 		Category:         *ConvertFromModelToCategoryRes(data.Category),
 	}
 }
+
+func ConvertFromModelToEventsRes(data models.Event) *response.Events {
+	return &response.Events{
+		Id:               data.ID,
+		EventName:        data.EventName,
+		EventDescription: data.EventDescription,
+		FromDate:         data.FromDate,
+		ToDate:           data.ToDate,
+		AddressId:        data.AddressId,
+		CategoryId:       data.CategoryId,
+		CreatorId:        data.CreatorId,
+	}
+}
