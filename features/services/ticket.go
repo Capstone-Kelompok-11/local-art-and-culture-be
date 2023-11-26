@@ -24,13 +24,25 @@ func NewTicketService(repo repositories.ITicketRepository) *TicketService {
 }
 
 func (ti *TicketService) CreateTicket(data *request.Ticket) (response.Ticket, error) {
-	if data.Type != "" {
+	if data.Type == "" {
 		return response.Ticket{}, errors.ERR_TYPE_IS_EMPTY
 	}
-	if data.Price != 0 {
+	if data.Price == 0 {
 		return response.Ticket{}, errors.ERR_PRICE_IS_EMPTY
 	}
-	
+	if data.StartTime.IsZero() || data.EndTime.IsZero() {
+		return response.Ticket{}, errors.ERR_EVENT_DATE_IS_EMPTY
+	}
+	if data.Qty == 0 {
+		return response.Ticket{}, errors.ERR_QTY_IS_EMPTY
+	}
+	if data.Name == "" {
+		return response.Ticket{}, errors.ERR_NAME_IS_EMPTY
+	}
+	if data.Description == "" {
+		return response.Ticket{}, errors.ERR_DESCRIPTION_IS_EMPTY
+	}
+
 	res, err := ti.ticketRepository.CreateTicket(data)
 	if err != nil {
 		return response.Ticket{}, errors.ERR_CREATE_TICKET_DATABASE
@@ -68,7 +80,7 @@ func (ti *TicketService) UpdateTicket(id string, input request.Ticket) (response
 	return res, nil
 }
 
-func (ti *TicketService)DeleteTicket(id string) (response.Ticket, error) {
+func (ti *TicketService) DeleteTicket(id string) (response.Ticket, error) {
 	if id == "" {
 		return response.Ticket{}, errors.ERR_GET_TICKET_BAD_REQUEST_ID
 	}

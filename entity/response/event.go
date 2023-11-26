@@ -15,3 +15,14 @@ type Event struct {
 	Category         Category  `json:"category"`
 	Guest			 []Guest   `json:"guest"`
 }
+
+type Events struct {
+	Id               uint      `json:"id"`
+	FromDate         time.Time `json:"fromDate"`
+	ToDate           time.Time `json:"toDate"`
+	EventName        string    `json:"eventName"`
+	EventDescription string    `json:"eventDescription"`
+	AddressId        *uint     `json:"addressId"`
+	CreatorId        uint      `json:"creatorId"`
+	CategoryId       uint      `json:"categoryId"`
+}

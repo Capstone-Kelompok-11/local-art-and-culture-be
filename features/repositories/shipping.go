@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
@@ -92,6 +91,5 @@ func (ar *shippingRepository) DeleteShipping(id string) (error, response.Shippin
 	if err != nil {
 		return err, response.Shipping{}
 	}
-	fmt.Printf("2")
 	return nil, res
 }

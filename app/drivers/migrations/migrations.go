@@ -25,4 +25,5 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.Ticket{})
 	db.AutoMigrate(&models.Guest{})
 	db.AutoMigrate(&models.Rating{})
+	db.AutoMigrate(&models.Wishlist{})
 }

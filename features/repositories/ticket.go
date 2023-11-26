@@ -27,7 +27,7 @@ func NewTicketRepository(db *gorm.DB) *ticketRepository {
 }
 
 func (ti *ticketRepository) CreateTicket(data *request.Ticket) (response.Ticket, error) {
-	dataTicket:= domain.ConvertFromTicketReqToModel(*data)
+	dataTicket := domain.ConvertFromTicketReqToModel(*data)
 	err := ti.db.Create(&dataTicket).Error
 	if err != nil {
 		return response.Ticket{}, err
@@ -59,7 +59,7 @@ func (ti *ticketRepository) GetAllTicket(nameFilter string) ([]response.Ticket, 
 
 func (ti *ticketRepository) GetTicket(id string) (response.Ticket, error) {
 	var dataTicket models.Ticket
-	err := ti.db.Preload("Event").First(&dataTicket, "id = ?", dataTicket.ID).Error
+	err := ti.db.Preload("Event").First(&dataTicket, "id = ?", id).Error
 	if err != nil {
 		return response.Ticket{}, err
 	}
@@ -72,18 +72,23 @@ func (ti *ticketRepository) UpdateTicket(id string, input request.Ticket) (respo
 	if err != nil {
 		return response.Ticket{}, err
 	}
-
+	if input.Name != "" {
+		ticketData.Name = input.Name
+	}
+	if input.Description != "" {
+		ticketData.Description = input.Description
+	}
 	if input.Type != "" {
 		ticketData.Type = input.Type
 	}
 	if input.Price != 0 {
 		ticketData.Price = input.Price
 	}
-	
+
 	if err = ti.db.Save(&ticketData).Error; err != nil {
 		return response.Ticket{}, err
 	}
-	return *domain.ConvertFromModelToTicketRes(ticketData),nil
+	return *domain.ConvertFromModelToTicketRes(ticketData), nil
 }
 
 func (ti *ticketRepository) DeleteTicket(id string) (response.Ticket, error) {
