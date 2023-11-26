@@ -13,4 +13,5 @@ type Event struct {
 	CategoryId       uint      `json:"categoryId"`
 	Creator          Creator   `json:"creator"`
 	Category         Category  `json:"category"`
+	Guest			 []Guest   `json:"guest"`
 }

@@ -8,5 +8,4 @@ type Guest struct {
 	Role		string	`gorm:"not null"`
 	//PictureId	*uint	
 	EventId 	uint	`gorm:"not null"`
-	Event	Event		`gorm:"foreignKey:ID;references:EventId"`
 }

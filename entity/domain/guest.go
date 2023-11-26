@@ -27,6 +27,5 @@ func ConvertFromModelToGuestRes(data models.Guest) *response.Guest {
 		Role: 		data.Role,
 		//PictureId: 	data.PictureId,
 		EventId: 	data.EventId,
-		Event: 		*ConvertFromModelToEventRes(data.Event),
 	}
 }

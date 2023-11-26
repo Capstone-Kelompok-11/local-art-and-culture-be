@@ -6,5 +6,4 @@ type Guest struct {
 	Role		string	`json:"role"`
 	//PictureId	*uint	`json:"pictureId"`
 	EventId		uint	`json:"eventId"`
-	Event Event
 }
