@@ -92,6 +92,8 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_CREATE_TICKET_DATABASE:
 		return http.StatusInternalServerError
+	case ERR_CREATE_GUEST_DATABASE:
+		return http.StatusInternalServerError
 	case ERR_CREATE_ARTICLE_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_CREATE_CATEGORY_DATABASE:

@@ -49,6 +49,7 @@ var (
 	ERR_CREATE_COMMENT_DATABASE     = errors.New("failed to create new comment")
 	ERR_CREATE_CATEGORY_DATABASE    = errors.New("failed to create new category")
 	ERR_CREATE_TICKET_DATABASE      = errors.New("failed to create new ticket")
+	ERR_CREATE_GUEST_DATABASE      = errors.New("failed to create new guest")
 	ERR_CREATE_PRODUCT_DATABASE     = errors.New("failed to create new product")
 	ERR_GET_SHIPPING_BAD_REQUEST_ID = errors.New("can't find any shipping method with this id")
 	ERR_DELETE_SHIPPING             = errors.New("can't delete this shipping method")

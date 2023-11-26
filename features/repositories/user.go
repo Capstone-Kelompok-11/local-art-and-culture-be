@@ -35,6 +35,7 @@ func (u *userRepository) RegisterUser(data *request.User) (response.User, error)
 	if err != nil {
 		return response.User{}, err
 	}
+	err = u.db.Preload("Role").First(&dataUser, "id = ?", dataUser.ID).Error
 	return *domain.ConvertFromModelToUserRes(*dataUser), nil
 }
 
@@ -49,6 +50,7 @@ func (u *userRepository) LoginUser(data *request.User) (response.User, error) {
 	if err != nil {
 		return response.User{}, errors.ERR_WRONG_PASSWORD
 	}
+	err = u.db.Preload("Role").First(&dataUser, "id = ?", dataUser.ID).Error
 	return *domain.ConvertFromModelToUserRes(*dataUser), nil
 }
 
@@ -56,7 +58,7 @@ func (u *userRepository) GetAllUser(nameFilter string) ([]response.User, error) 
 	var allUser []models.Users
 	var resAllUser []response.User
 
-	query := u.db.Model(&models.Users{})
+	query := u.db.Preload("Role")
 	if nameFilter != "" {
     	query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
 	}
@@ -77,7 +79,7 @@ func (u *userRepository) GetAllUser(nameFilter string) ([]response.User, error) 
 
 func (u *userRepository) GetUser(id string) (response.User, error) {
 	var userData models.Users
-	err := u.db.First(&userData, "id = ?", id).Error
+	err := u.db.Preload("Role").First(&userData, "id = ?", id).Error
 	if err != nil {
 		return response.User{}, err
 	}
@@ -113,6 +115,9 @@ func (u *userRepository) UpdateUser(id string, input request.User) (response.Use
 	if input.Gender != "" {
 		userData.Gender = input.Gender
 	}
+	if input.RoleId != 0 {
+		userData.RoleId = input.RoleId
+	}
 
 	if err = u.db.Save(&userData).Error; err != nil {
 		return response.User{}, err
@@ -123,7 +128,7 @@ func (u *userRepository) UpdateUser(id string, input request.User) (response.Use
 func (u *userRepository) DeleteUser(id string) (response.User, error) {
 	userData := models.Users{}
 	res := response.User{}
-	find := u.db.First(&userData, "id = ?", id).Error
+	find := u.db.Preload("Role").First(&userData, "id = ?", id).Error
 	if find == nil {
 		res = *domain.ConvertFromModelToUserRes(userData)
 	}

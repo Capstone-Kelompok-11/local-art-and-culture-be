@@ -16,5 +16,6 @@ type Users struct {
 	NIK         string    `gorm:"not null"`
 	Gender      string    `gorm:"not null"`
 	BirthDate   time.Time `gorm:"not null"`
-	// Creator     Creator   `gorm:"foreignKey:UserId"`
+	RoleId		uint	  `gorm:"not null"`
+	Role 		Role 	  `gorm:"foreignKey:ID;references:RoleId"`
 }
