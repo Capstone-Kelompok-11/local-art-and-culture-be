@@ -16,7 +16,8 @@ type ITransactionService interface {
 }
 
 type TransactionService struct {
-	transactionRepository repositories.ITransactionRepository
+	transactionRepository       repositories.ITransactionRepository
+	transactionDetailRepository repositories.ITransactionDetailRepository
 }
 
 func NewTransactionService(repo repositories.ITransactionRepository) *TransactionService {
@@ -35,7 +36,10 @@ func (rs *TransactionService) CreateTransaction(data *request.Transaction) (resp
 	if err != nil {
 		return response.Transaction{}, errors.ERR_CREATE_TRANSACTION_DATABASE
 	}
-	
+
+	// for i := range data.TransactionDetail{
+
+	// }
 
 	return res, nil
 }
