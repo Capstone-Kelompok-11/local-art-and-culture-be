@@ -128,6 +128,8 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_DELETE_TRANSACTION:
 		return http.StatusInternalServerError
+	case ERR_CREATE_TRANSACTION_DETAIL:
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}

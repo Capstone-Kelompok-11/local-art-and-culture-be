@@ -66,4 +66,5 @@ var (
 	ERR_CREATE_RATING_DATABASE         = errors.New("failed to create new feedback to database")
 	ERR_CREATE_GUEST_DATABASE          = errors.New("failed to create new guest to database")
 	ERR_RATING_IS_EMPTY                = errors.New("rating is empty")
+	ERR_CREATE_TRANSACTION_DETAIL      = errors.New("failed to create new transaction detail")
 )

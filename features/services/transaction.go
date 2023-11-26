@@ -37,9 +37,13 @@ func (rs *TransactionService) CreateTransaction(data *request.Transaction) (resp
 		return response.Transaction{}, errors.ERR_CREATE_TRANSACTION_DATABASE
 	}
 
-	// for i := range data.TransactionDetail{
-
-	// }
+	for i := range data.TransactionDetail {
+		_, err := rs.transactionDetailRepository.CreateTransactionDetail(&data.TransactionDetail[i])
+		if err != nil {
+			return res, errors.ERR_CREATE_TRANSACTION_DETAIL
+		}
+		// res := rs.GetTransaction(res.Id)
+	}
 
 	return res, nil
 }
