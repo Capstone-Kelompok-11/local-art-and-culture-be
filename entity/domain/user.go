@@ -8,7 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func ConvertFromUserReqToModel(data request.UserRequest) *models.Users {
+func ConvertFromUserReqToModel(data request.User) *models.Users {
 	return &models.Users{
 		Model: gorm.Model{
 			ID: data.Id,
@@ -17,20 +17,17 @@ func ConvertFromUserReqToModel(data request.UserRequest) *models.Users {
 		LastName:    data.LastName,
 		Email:       data.Email,
 		Password:    data.Password,
-		AddressID:   data.AddressID,
 		PhoneNumber: data.PhoneNumber,
 		BirthDate:   data.BirthDate,
 	}
 }
 
-func ConvertFromModelToUserRes(data models.Users) *response.UserResponse {
-	return &response.UserResponse{
+func ConvertFromModelToUserRes(data models.Users) *response.User {
+	return &response.User{
 		Id:          data.ID,
 		FirstName:   data.FirstName,
 		LastName:    data.LastName,
 		Email:       data.Email,
-		Password:    data.Password,
-		AddressID:   data.AddressID,
 		PhoneNumber: data.PhoneNumber,
 		BirthDate:   data.BirthDate,
 	}

@@ -4,34 +4,123 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
-	helpers "lokasani/helpers/bcrypt"
+	"lokasani/helpers/bcrypt"
+	"lokasani/helpers/errors"
+	"lokasani/helpers/middleware"
 )
 
 type IUserService interface {
-	CreateUser(data *request.UserRequest) (response.UserResponse, error)
-	//Login(email string, password string) (domain.UsersDomain, error)
+	RegisterUser(data *request.User) (response.User, error)
+	LoginUser(data *request.User) (response.User, error)
+	GetAllUser() ([]response.User, error)
+	GetUser(id string) (response.User, error)
+	UpdateUser(id string, input request.User) (response.User, error)
+	DeleteUser(id string) (response.User, error)
 }
 
-type userService struct {
-	repo repositories.IUserRepository
+type UserService struct {
+	UserRepo repositories.IUserRepository
 }
 
-func NewUserService(repo repositories.IUserRepository) *userService {
-	return &userService{repo}
+func NewUserService(repo repositories.IUserRepository) *UserService {
+	return &UserService{UserRepo: repo}
 }
 
-func (u *userService) CreateUser(data *request.UserRequest) (response.UserResponse, error) {
-    hashedPassword, err := helpers.Hash(data.Password)
-    if err != nil {
-        return response.UserResponse{}, err
-    }
+func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
+	if data.FirstName == "" {
+		return response.User{}, errors.ERR_NAME_IS_EMPTY
+	}
+	if data.LastName == "" {
+		return response.User{}, errors.ERR_NAME_IS_EMPTY
+	}
+	if data.Email == "" {
+		return response.User{}, errors.ERR_EMAIL_IS_EMPTY
+	}
+	if data.PhoneNumber == "" {
+		return response.User{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
+	}
 
-    data.Password = hashedPassword
+	hashPass, err := bcrypt.Hash(data.Password)
+	if err != nil {
+		return response.User{}, errors.ERR_BCRYPT_PASSWORD
+	}
 
-    userResponse, err := u.repo.CreateUser(data)
-    if err != nil {
-        return response.UserResponse{}, err
-    }
+	data.Password = hashPass
+	res, err := u.UserRepo.RegisterUser(data)
+	if err != nil {
+		return response.User{}, errors.ERR_REGISTER_USER_DATABASE
+	}
 
-    return userResponse, nil
+	token, err := middleware.CreateToken(int(data.Id), data.Email)
+	if err != nil {
+		return response.User{}, errors.ERR_TOKEN
+	}
+
+	res.Token = token
+	return res, nil
+}
+
+func (u *UserService) LoginUser(data *request.User) (response.User, error) {
+	if data.Email == "" {
+		return response.User{}, errors.ERR_EMAIL_IS_EMPTY
+	} else if data.Password == "" {
+		return response.User{}, errors.ERR_PASSWORD_IS_EMPTY
+	}
+
+	res, err := u.UserRepo.LoginUser(data)
+	if err != nil {
+		return response.User{}, err
+	}
+
+	token, err := middleware.CreateToken(int(data.Id), data.Email)
+	if err != nil {
+		return response.User{}, errors.ERR_TOKEN
+	}
+
+	res.Token = token
+	return res, nil
+}
+
+func (u *UserService) GetAllUser() ([]response.User, error) {
+	err, res := u.UserRepo.GetAllUser()
+	if err != nil {
+		return err, nil
+	}
+	return nil, res
+}
+
+func (u *UserService) GetUser(id string) (response.User, error) {
+	if id == "" {
+		return response.User{}, errors.ERR_GET_USER_BAD_REQUEST_ID
+	}
+
+	res, err := u.UserRepo.GetUser(id)
+	if err != nil {
+		return response.User{}, err
+	}
+	return res, nil
+}
+
+func (u *UserService) UpdateUser(id string, data request.User) (response.User, error) {
+	if id == "" {
+		return response.User{}, errors.ERR_GET_USER_BAD_REQUEST_ID
+	}
+
+	res, err := u.UserRepo.UpdateUser(id, data)
+	if err != nil {
+		return response.User{}, errors.ERR_UPDATE_DATA
+	}
+	return res, nil
+}
+
+func (u *UserService) DeleteUser(id string) (response.User, error) {
+	if id == "" {
+		return response.User{}, errors.ERR_GET_USER_BAD_REQUEST_ID
+	}
+
+	res, err := u.UserRepo.DeleteUser(id)
+	if err != nil {
+		return response.User{}, errors.ERR_DELETE_USER
+	}
+	return res, nil
 }

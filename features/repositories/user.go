@@ -2,15 +2,22 @@ package repositories
 
 import (
 	"lokasani/entity/domain"
+	"lokasani/entity/models"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
+	"lokasani/helpers/bcrypt"
+	"lokasani/helpers/errors"
 
 	"gorm.io/gorm"
 )
 
 type IUserRepository interface {
-	CreateUser(data *request.UserRequest) (response.UserResponse, error)
-	//LoginUser(email string, password string) (*request.UserRequest, error)
+	RegisterUser(data *request.User) (response.User, error)
+	LoginUser(data *request.User) (response.User, error)
+	GetAllUser() ([]response.User, error)
+	GetUser(id string) (response.User, error)
+	UpdateUser(id string, input request.User) (response.User, error)
+	DeleteUser(id string) (response.User, error)
 }
 
 type userRepository struct {
@@ -21,25 +28,90 @@ func NewUsersRepository(db *gorm.DB) *userRepository {
 	return &userRepository{db}
 }
 
-func (u *userRepository) CreateUser(data *request.UserRequest) (response.UserResponse, error) {
+func (u *userRepository) RegisterUser(data *request.User) (response.User, error) {
 	dataUser := domain.ConvertFromUserReqToModel(*data)
 	err := u.db.Create(&dataUser).Error
 	if err != nil {
-		return response.UserResponse{}, err
+		return response.User{}, err
 	}
 	return *domain.ConvertFromModelToUserRes(*dataUser), nil
 }
 
-// func (u *userRepository) LoginUser(email string, password string) (*request.UserRequest, error) {
-// 	var user models.Users
-// 	var data domain.UsersDomain
+func (u *userRepository) LoginUser(data *request.User) (response.User, error) {
+	dataUser := domain.ConvertFromUserReqToModel(*data)
+	err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
+	if err != nil {
+		return response.User{}, errors.ERR_EMAIL_NOT_FOUND
+	}
 
-// 	err := u.db.Where("email = ?", email).First(&user).Error
-// 	if err != nil {
-// 		return data, err
-// 	}
+	err = bcrypt.CheckPassword(data.Password, dataUser.Password)
+	if err != nil {
+		return response.User{}, errors.ERR_WRONG_PASSWORD
+	}
+	return *domain.ConvertFromModelToUserRes(*dataUser), nil
+}
 
-// 	data = domain.FromModelToUser(user)
-// 	log.Println(data)
-// 	return data, nil
-// }
+func (u *userRepository) GetAllUser() ([]response.User, error) {
+	var allUser []models.Users
+	var resAllUser []response.User
+	err := u.db.Find(&allUser).Error
+	if err != nil {
+		return nil, errors.ERR_GET_DATA
+	}
+
+	for i := 0; i < len(allUser); i++ {
+		userVm := domain.ConvertFromModelToUserRes(allUser[i])
+		resAllUser = append(resAllUser, *userVm)
+	}
+
+	return resAllUser, nil
+}
+
+func (u *userRepository) GetUser(id string) (response.User, error) {
+	var userData models.Users
+	err := u.db.First(&userData, "id = ?", id).Error
+	if err != nil {
+		return response.User{}, err
+	}
+	return *domain.ConvertFromModelToUserRes(userData), nil
+}
+
+func (u *userRepository) UpdateUser(id string, input request.User) (response.User, error) {
+	userData := models.Users{}
+	err := u.db.First(&userData, "id = ?", id).Error
+
+	if err != nil {
+		return response.User{}, err
+	}
+	
+	if input.FirstName != "" {
+		userData.FirstName = input.FirstName
+	} else if input.LastName != "" {
+		userData.LastName = input.LastName
+	} else if input.Email != "" {
+		userData.Email = input.Email
+	} else if input.Password != "" {
+		userData.Password = input.Password
+	}else if input.PhoneNumber != "" {
+		userData.PhoneNumber = input.PhoneNumber
+	}
+
+	if err = u.db.Save(&userData).Error; err != nil {
+		return response.User{}, err
+	}
+	return *domain.ConvertFromModelToUserRes(userData), nil
+}
+
+func (u *userRepository) DeleteUser(id string) (response.User, error) {
+	userData := models.Users{}
+	res := response.User{}
+	find := u.db.First(&userData, "id = ?", id).Error
+	if find == nil {
+		res = *domain.ConvertFromModelToUserRes(userData)
+	}
+	err := u.db.Delete(&userData, "id = ?", id).Error
+	if err != nil {
+		return response.User{}, err
+	}
+	return res, nil
+}

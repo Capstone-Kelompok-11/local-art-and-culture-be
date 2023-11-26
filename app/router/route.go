@@ -11,9 +11,21 @@ import (
 )
 
 func Route(db *gorm.DB) *echo.Echo {
-	godotenv.Load()
+	godotenv.Load(".env")
 	e := echo.New()
 	eJwt := e.Group("/")
 	eJwt.Use(middleware.JWT([]byte(os.Getenv("SECRET_JWT"))))
+	RoleRoute(e, db)
+	AdminRoute(e, db)
+	ArticleRoute(e, db)
+	UserRoute(e, db)
+	CreatorRoute(e, db)
+	CategoryRoute(e, db)
+	ProductRoute(e, db)
+	ShippingRoute(e, db)
+	EventRoute(e, db)
+	CommentRoute(e, db)
+	PaymentRoute(e, db)
+	TransactionRoute(e, db)
 	return e
 }
