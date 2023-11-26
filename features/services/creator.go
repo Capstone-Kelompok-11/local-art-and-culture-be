@@ -9,8 +9,8 @@ import (
 
 type ICreatorService interface {
 	CreateCreator(data *request.Creator) (response.Creator, error)
-	GetAllCreator(nameFilter string) ([]response.UserCreatorResponse, error)
-	GetCreator(id string) (response.UserCreatorResponse, error)
+	GetAllCreator(nameFilter string) ([]response.Creators, error)
+	GetCreator(id string) (response.Creators, error)
 	UpdateCreator(id string, data request.Creator) (response.Creator, error)
 	DeleteCreator(id string) (response.Creator, error)
 }
@@ -42,7 +42,7 @@ func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator
 	return res, nil
 }
 
-func (cs *CreatorService) GetAllCreator(nameFilter string) ([]response.UserCreatorResponse, error) {
+func (cs *CreatorService) GetAllCreator(nameFilter string) ([]response.Creators, error) {
 	res, err := cs.creatorRepository.GetAllCreator(nameFilter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
@@ -50,13 +50,13 @@ func (cs *CreatorService) GetAllCreator(nameFilter string) ([]response.UserCreat
 	return res, nil
 }
 
-func (cs *CreatorService) GetCreator(id string) (response.UserCreatorResponse, error) {
+func (cs *CreatorService) GetCreator(id string) (response.Creators, error) {
 	if id == "" {
-		return response.UserCreatorResponse{}, errors.ERR_GET_CREATOR_BAD_REQUEST_ID
+		return response.Creators{}, errors.ERR_GET_CREATOR_BAD_REQUEST_ID
 	}
 	res, err := cs.creatorRepository.GetCreator(id)
 	if err != nil {
-		return response.UserCreatorResponse{}, err
+		return response.Creators{}, err
 	}
 	return res, nil
 }

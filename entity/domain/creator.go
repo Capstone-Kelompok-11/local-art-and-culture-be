@@ -30,8 +30,8 @@ func ConvertFromModelToCreatorsRes(data models.Creator) *response.Creators {
 		PhoneNumber: data.PhoneNumber,
 		UserId:      data.UserId,
 		RoleId:      data.RoleId,
-		Users:       *ConvertFromModelToUserRes(data.Users),
-		Roles:       *ConvertFromModelToRoleRes(data.Roles),
+		Users:       *ConvertFromModelToUsersRes(data.Users),
+		Role:       *ConvertFromModelToRoleRes(data.Role),
 		// AddressId:   data.AddressId,
 	}
 }

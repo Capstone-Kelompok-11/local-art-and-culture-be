@@ -13,5 +13,6 @@ type User struct {
 	NIK			string 		`json:"nik" form:"nik"`
 	Gender		string		`json:"gender" form:"gender"`
 	BirthDate   time.Time 	`json:"birthday" form:"birthday"`
-	// Creator     Creator
+	RoleId 		uint		`json:"roleId"`
+	Role Role
 }

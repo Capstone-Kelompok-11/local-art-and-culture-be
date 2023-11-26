@@ -9,5 +9,5 @@ type Creator struct {
 	RoleId      uint   `json:"roleId"`
 	AddressId   *uint  `json:"addressId"`
 	Users       User   `json:"users"`
-	Roles       Role   `json:"role"`
+	Role       Role   `json:"role"`
 }

@@ -61,4 +61,5 @@ var (
 	ERR_CREATE_TICKET_DATABASE         = errors.New("failed to create new ticket")
 	ERR_GET_ARTICLE_BAD_REQUEST_ID     = errors.New("can't find any Article with this id")
 	ERR_CREATE_WISHLIST_DATABASE       = errors.New("failed to create new wishlist to database")
+ERR_CREATE_LIKE_DATABASE        = errors.New("can't like this article")
 )

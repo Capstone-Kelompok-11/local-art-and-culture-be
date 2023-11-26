@@ -8,8 +8,8 @@ type Creators struct {
 	UserId      uint   `json:"userId"`
 	RoleId      uint   `json:"roleId"`
 	AddressId   *uint  `json:"addressId"`
-	Users       User   `json:"users"`
-	Roles       Role   `json:"role"`
+	Users       Users   `json:"users"`
+	Role       Role   `json:"role"`
 }
 
 type Creator struct {
