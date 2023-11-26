@@ -4,6 +4,8 @@ import "errors"
 
 var (
 	ERR_EMAIL_IS_EMPTY              = errors.New("email is empty")
+	ERR_RATING_IS_EMPTY             = errors.New("rating is empty")
+	ERR_ULASAN_IS_EMPTY             = errors.New("ulasan is empty")
 	ERR_PRICE_IS_EMPTY              = errors.New("price is empty")
 	ERR_COMMENT_IS_EMPTY            = errors.New("comment is empty")
 	ERR_DESCRIPTION_IS_EMPTY        = errors.New("description is empty")
@@ -51,6 +53,7 @@ var (
 	ERR_CREATE_TICKET_DATABASE      = errors.New("failed to create new ticket")
 	ERR_CREATE_GUEST_DATABASE      = errors.New("failed to create new guest")
 	ERR_CREATE_PRODUCT_DATABASE     = errors.New("failed to create new product")
+	ERR_CREATE_RATING_DATABASE     = errors.New("failed to create new rating")
 	ERR_GET_SHIPPING_BAD_REQUEST_ID = errors.New("can't find any shipping method with this id")
 	ERR_DELETE_SHIPPING             = errors.New("can't delete this shipping method")
 	ERR_GET_EVENT_BAD_REQUEST_ID    = errors.New("can't find any Event with this id")
