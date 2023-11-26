@@ -13,28 +13,20 @@ func ConvertFromTicketReqToModel(data request.Ticket) *models.Ticket {
 		Model: gorm.Model{
 			ID: data.Id,
 		},
-		Name: 		 data.Name,
-		Email: 		 data.Email,
-		Type: 		 data.Type,
-		Price: 		 data.Price,
-		PhoneNumber: data.PhoneNumber,
-		Gender: 	 data.Gender,
-		BirthDate: 	 data.BirthDate,
-		EventId: 	 data.EventId,
+		Type:    data.Type,
+		Price:   data.Price,
+		EventId: data.EventId,
+		Qty:     data.Qty,
 	}
 }
 
 func ConvertFromModelToTicketRes(data models.Ticket) *response.Ticket {
 	return &response.Ticket{
-		Id: 		 data.ID,
-		Name: 		 data.Name,
-		Email: 		 data.Email,
-		Type: 		 data.Type,
-		Price: 	 	 data.Price,
-		PhoneNumber: data.PhoneNumber,
-		Gender: 	 data.Gender,
-		BirthDate: 	 data.BirthDate,
-		EventId: 	 data.EventId,
-		Event: 		 *ConvertFromModelToEventRes(data.Event),
+		Id:      data.ID,
+		Type:    data.Type,
+		Price:   data.Price,
+		Qty:     data.Qty,
+		EventId: data.EventId,
+		Event:   *ConvertFromModelToEventRes(data.Event),
 	}
 }

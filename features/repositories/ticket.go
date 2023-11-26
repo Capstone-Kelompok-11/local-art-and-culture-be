@@ -73,23 +73,11 @@ func (ti *ticketRepository) UpdateTicket(id string, input request.Ticket) (respo
 		return response.Ticket{}, err
 	}
 
-	if input.Name != "" {
-		ticketData.Name = input.Name
-	}
-	if input.Email != "" {
-		ticketData.Email = input.Email
-	}
 	if input.Type != "" {
 		ticketData.Type = input.Type
 	}
 	if input.Price != 0 {
 		ticketData.Price = input.Price
-	}
-	if input.PhoneNumber != "" {
-		ticketData.PhoneNumber = input.PhoneNumber
-	}
-	if input.Gender != "" {
-		ticketData.Gender = input.Gender
 	}
 	
 	if err = ti.db.Save(&ticketData).Error; err != nil {

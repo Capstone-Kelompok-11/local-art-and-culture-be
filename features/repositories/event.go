@@ -76,20 +76,11 @@ func (er *eventRepository) UpdateEvent(id string, input request.Event) (response
 	if input.EventDescription != "" {
 		eventData.EventDescription = input.EventDescription
 	}
-	if input.TicketPrice != 0 {
-		eventData.TicketPrice = input.TicketPrice
-	}
 	if !input.FromDate.IsZero() {
 		eventData.FromDate = input.FromDate
 	}
 	if !input.ToDate.IsZero() {
 		eventData.ToDate = input.ToDate
-	}
-	if !input.StartTime.IsZero() {
-		eventData.StartTime = input.StartTime
-	}
-	if !input.EndTime.IsZero() {
-		eventData.EndTime = input.EndTime
 	}
 
 	if err = er.db.Save(&eventData).Error; err != nil {

@@ -24,12 +24,6 @@ func NewTicketService(repo repositories.ITicketRepository) *TicketService {
 }
 
 func (ti *TicketService) CreateTicket(data *request.Ticket) (response.Ticket, error) {
-	if data.Name != "" {
-		return response.Ticket{}, errors.ERR_NAME_IS_EMPTY
-	}
-	if data.Email != "" {
-		return response.Ticket{}, errors.ERR_EMAIL_IS_EMPTY
-	}
 	if data.Type != "" {
 		return response.Ticket{}, errors.ERR_TYPE_IS_EMPTY
 	}
