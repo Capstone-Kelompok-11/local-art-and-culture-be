@@ -106,6 +106,8 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_EVENT_SCHEDULE_IS_EMPTY:
 		return http.StatusBadRequest
+	case ERR_CREATE_WISHLIST_DATABASE:
+		return http.StatusInternalServerError
 	case ERR_CREATE_EVENT_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_GET_COMMENT_BAD_REQUEST_ID:
