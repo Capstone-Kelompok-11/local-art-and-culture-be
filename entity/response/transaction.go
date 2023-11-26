@@ -14,4 +14,5 @@ type Transaction struct {
 	User             User      `json:"user"`
 	Shipping         Shipping  `json:"shippingMethod"`
 	Payment          Payment   `json:"paymentMethod"`
+	Total            float64   `json:"total"`
 }
