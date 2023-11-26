@@ -8,12 +8,10 @@ type TransactionDetail struct {
 	gorm.Model
 	TransactionId uint
 	ProductId     *uint
-	EventId       *uint
-	UserId        *uint
+	TicketId      *uint
+	Fullname      *string
+	Contact       *string
 	Qty           int32
-	Status        string
 	Product       Product `gorm:"foreignKey:ID;references:ProductId"`
-	Event         Event   `gorm:"foreignKey:ID;references:EventId"`
-	Users         Users   `gorm:"foreignKey:ID;references:UserId"`
-	// Event even `gorm:"foreignKey:ID;references:ProductId"`
+	Ticket        Ticket  `gorm:"foreignKey:ID;references:TicketId"`
 }

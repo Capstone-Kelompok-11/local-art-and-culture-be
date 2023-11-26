@@ -35,6 +35,7 @@ func (rs *TransactionService) CreateTransaction(data *request.Transaction) (resp
 	if err != nil {
 		return response.Transaction{}, errors.ERR_CREATE_TRANSACTION_DATABASE
 	}
+	
 
 	return res, nil
 }
