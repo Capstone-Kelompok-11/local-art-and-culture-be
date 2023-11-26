@@ -36,4 +36,3 @@ func (co *LikeHandler) UpdateLike(c echo.Context) error {
 	}
 	return response.NewSuccessResponse(c, res)
 }
-
