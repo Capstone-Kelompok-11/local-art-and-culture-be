@@ -10,8 +10,8 @@ type User struct {
 	Password  	string 		`json:"password" form:"password"`
 	// AddressID   *uint     `json:"addressID" form:"addressID"`
 	PhoneNumber string    	`json:"phoneNumber" form:"phoneNumber"`
-	NIK			string 		`json:"nik"`
-	Gender		string		`json:"gender"`
+	NIK			string 		`json:"nik" form:"nik"`
+	Gender		string		`json:"gender" form:"gender"`
 	BirthDate   time.Time 	`json:"birthday" form:"birthday"`
 	// Creator     Creator
 }

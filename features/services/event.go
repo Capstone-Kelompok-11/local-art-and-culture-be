@@ -27,17 +27,11 @@ func (er *EventService) CreateEvent(data *request.Event) (response.Event, error)
 	if data.EventName == "" {
 		return response.Event{}, errors.ERR_NAME_IS_EMPTY
 	}
-	if data.TicketPrice == 0 {
-		return response.Event{}, errors.ERR_PRICE_IS_EMPTY
-	}
 	if data.EventDescription == "" {
 		return response.Event{}, errors.ERR_DESCRIPTION_IS_EMPTY
 	}
 	if data.FromDate.IsZero() || data.ToDate.IsZero() {
 		return response.Event{}, errors.ERR_EVENT_DATE_IS_EMPTY
-	}
-	if data.StartTime.IsZero() || data.EndTime.IsZero() {
-		return response.Event{}, errors.ERR_EVENT_SCHEDULE_IS_EMPTY
 	}
 
 	res, err := er.eventRepository.CreateEvent(data)

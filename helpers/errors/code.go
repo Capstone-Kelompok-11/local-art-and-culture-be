@@ -68,6 +68,8 @@ func GetCodeError(err error) int {
 		return http.StatusNotFound
 	case ERR_GET_COMMENT_BAD_REQUEST_ID:
 		return http.StatusNotFound
+	case ERR_GET_TICKET_BAD_REQUEST_ID:
+		return http.StatusNotFound
 	case ERR_DELETE_ROLE:
 		return http.StatusInternalServerError
 	case ERR_TITLE_IS_EMPTY:
@@ -88,6 +90,8 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_CREATE_CREATOR_DATABASE:
 		return http.StatusInternalServerError
+	case ERR_CREATE_TICKET_DATABASE:
+		return http.StatusInternalServerError
 	case ERR_CREATE_ARTICLE_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_CREATE_CATEGORY_DATABASE:
@@ -105,6 +109,8 @@ func GetCodeError(err error) int {
 	case ERR_CREATE_EVENT_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_GET_COMMENT_BAD_REQUEST_ID:
+		return http.StatusBadRequest
+	case ERR_QTY_IS_EMPTY:
 		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError

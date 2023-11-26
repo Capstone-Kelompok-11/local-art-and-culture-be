@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	ERR_EMAIL_IS_EMPTY              = errors.New("email is empty")
+	ERR_QTY_IS_EMPTY                = errors.New("qty is empty")
 	ERR_PRICE_IS_EMPTY              = errors.New("price is empty")
 	ERR_COMMENT_IS_EMPTY            = errors.New("comment is empty")
 	ERR_DESCRIPTION_IS_EMPTY        = errors.New("description is empty")
@@ -34,6 +35,7 @@ var (
 	ERR_GET_COMMENT_BAD_REQUEST_ID  = errors.New("can't find any comment with this id")
 	ERR_GET_ARTICLE_BAD_REQUEST_ID  = errors.New("can't find any article with this id")
 	ERR_GET_CATEGORY_BAD_REQUEST_ID = errors.New("can't find any category with this id")
+	ERR_GET_TICKET_BAD_REQUEST_ID   = errors.New("can't find any ticket with this id")
 	ERR_DELETE_ROLE                 = errors.New("can't delete this role")
 	ERR_DELETE_CATEGORY             = errors.New("can't delete this category")
 	ERR_TITLE_IS_EMPTY              = errors.New("title is empty")
@@ -47,6 +49,7 @@ var (
 	ERR_CREATE_ARTICLE_DATABASE     = errors.New("failed to create new article")
 	ERR_CREATE_COMMENT_DATABASE     = errors.New("failed to create new comment")
 	ERR_CREATE_CATEGORY_DATABASE    = errors.New("failed to create new category")
+	ERR_CREATE_TICKET_DATABASE      = errors.New("failed to create new ticket")
 	ERR_CREATE_PRODUCT_DATABASE     = errors.New("failed to create new product")
 	ERR_GET_SHIPPING_BAD_REQUEST_ID = errors.New("can't find any shipping method with this id")
 	ERR_DELETE_SHIPPING             = errors.New("can't delete this shipping method")
