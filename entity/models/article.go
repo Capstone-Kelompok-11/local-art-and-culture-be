@@ -9,5 +9,5 @@ type Article struct {
 	Title   string
 	AdminId uint
 	Content string
-	Admin   SuperAdmin
+	Admin   SuperAdmin `gorm:"foreignKey:ID;references:AdminId"`
 }
