@@ -30,5 +30,6 @@ func Route(db *gorm.DB) *echo.Echo {
 	CommentRoute(e, db)
 	TicketRoute(e, db)
 	WishlistRoute(e, db)
+	TransactionRoute(e, db)
 	return e
 }

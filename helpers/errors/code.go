@@ -114,6 +114,12 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_QTY_IS_EMPTY:
 		return http.StatusBadRequest
+	case ERR_CREATE_TRANSACTION_DATABASE:
+		return http.StatusInternalServerError
+	case ERR_GET_TRANSACTION_BAD_REQUEST_ID:
+		return http.StatusBadRequest
+	case ERR_DELETE_TRANSACTION:
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}
