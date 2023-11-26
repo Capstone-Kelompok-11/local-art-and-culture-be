@@ -15,7 +15,7 @@ func ConvertFromGuestReqToModel(data request.Guest) *models.Guest {
 		},
 		Name: 		data.Name,
 		Role: 		data.Role,
-		PictureId: 	data.PictureId,
+		//PictureId: 	data.PictureId,
 		EventId: 	data.EventId,
 	}
 }
@@ -25,7 +25,7 @@ func ConvertFromModelToGuestRes(data models.Guest) *response.Guest {
 		Id: 		data.ID,
 		Name: 		data.Name,
 		Role: 		data.Role,
-		PictureId: 	data.PictureId,
+		//PictureId: 	data.PictureId,
 		EventId: 	data.EventId,
 		Event: 		*ConvertFromModelToEventRes(data.Event),
 	}
