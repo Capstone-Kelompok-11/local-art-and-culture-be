@@ -51,6 +51,7 @@ var (
 	ERR_CREATE_CATEGORY_DATABASE    = errors.New("failed to create new category")
 	ERR_CREATE_TICKET_DATABASE      = errors.New("failed to create new ticket")
 	ERR_CREATE_PRODUCT_DATABASE     = errors.New("failed to create new product")
+	ERR_CREATE_WISHLIST_DATABASE     = errors.New("failed to create new wishlist")
 	ERR_GET_SHIPPING_BAD_REQUEST_ID = errors.New("can't find any shipping method with this id")
 	ERR_DELETE_SHIPPING             = errors.New("can't delete this shipping method")
 	ERR_GET_EVENT_BAD_REQUEST_ID    = errors.New("can't find any Event with this id")
