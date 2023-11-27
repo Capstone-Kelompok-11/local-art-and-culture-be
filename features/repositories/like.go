@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
@@ -31,7 +30,6 @@ func (co *likeRepository) GetAllLike(sourceId string) ([]response.Like, error) {
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
-	fmt.Println(allLike)
 
 	for i := 0; i < len(allLike); i++ {
 		likeVm := domain.ConvertFromModelToLikeRes(allLike[i])
