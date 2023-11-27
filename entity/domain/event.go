@@ -37,7 +37,7 @@ func ConvertFromModelToEventRes(data models.Event) *response.Event {
 		CreatorId:        data.CreatorId,
 		Creator:          *ConvertFromModelToCreatorRes(data.Creator),
 		Category:         *ConvertFromModelToCategoryRes(data.Category),
-		//Guest: 			  *ConvertFromModelToGuestRes(data.Guest[]),
+		Guest: 			  *ConvertFromModelsToGuestRes(data.Guest),
 	}
 }
 

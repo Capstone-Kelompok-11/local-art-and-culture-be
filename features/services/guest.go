@@ -9,8 +9,8 @@ import (
 
 type IGuestService interface {
 	CreateGuest(data *request.Guest) (response.Guest, error)
-	GetAllGuest(nameFilter string) ([]response.Guest, error)
-	GetGuest(id string) (response.Guest, error)
+	GetAllGuest(nameFilter string) ([]response.Event, error)
+	GetGuest(id string) (response.Event, error)
 	UpdateGuest(id string, input request.Guest) (response.Guest, error)
 	DeleteGuest(id string) (response.Guest, error)
 }
@@ -38,7 +38,7 @@ func (gu *GuestService) CreateGuest(data *request.Guest) (response.Guest, error)
 	return res, nil
 }
 
-func (gu *GuestService) GetAllGuest(nameFilter string) ([]response.Guest, error) {
+func (gu *GuestService) GetAllGuest(nameFilter string) ([]response.Event, error) {
 	res, err := gu.guestRepository.GetAllGuest(nameFilter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
@@ -46,13 +46,13 @@ func (gu *GuestService) GetAllGuest(nameFilter string) ([]response.Guest, error)
 	return res, nil
 }
 
-func (gu *GuestService) GetGuest(id string) (response.Guest, error) {
+func (gu *GuestService) GetGuest(id string) (response.Event, error) {
 	if id == "" {
-		return response.Guest{}, errors.ERR_GET_BAD_REQUEST_ID
+		return response.Event{}, errors.ERR_GET_BAD_REQUEST_ID
 	}
 	res, err := gu.guestRepository.GetGuest(id)
 	if err != nil {
-		return response.Guest{}, err
+		return response.Event{}, err
 	}
 	return res, nil
 }
