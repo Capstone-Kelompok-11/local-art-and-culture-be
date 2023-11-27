@@ -4,8 +4,9 @@ import "github.com/jinzhu/gorm"
 
 type Like struct {
 	gorm.Model
-	UserId    	uint `gorm:"not null"`
-	SourceId  	uint `gorm:"not null"`
-	SourceStr	string
-	Active    	bool
+	UserId    uint `gorm:"not null"`
+	SourceId  uint `gorm:"not null"`
+	SourceStr string
+	Active    bool
+	Users     Users `gorm:"foreignKey:UserId"`
 }
