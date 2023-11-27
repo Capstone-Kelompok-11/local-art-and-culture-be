@@ -23,4 +23,5 @@ type Products struct {
 	CategoryId uint `json:"categoryId"`
 	CreatorId  uint `json:"creatorId"`
 	Category Category
+	Like	[]Like
 }

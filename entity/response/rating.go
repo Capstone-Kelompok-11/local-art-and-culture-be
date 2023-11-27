@@ -7,5 +7,5 @@ type Rating struct {
 	UserId		uint	`json:"userId"`
 	ProductId 	uint	`json:"productId"`
 	Users Users
-	Product Product
+	Product Products
 }

@@ -9,5 +9,6 @@ type Article struct {
 	Title   string
 	AdminId uint
 	Content string
+	Like	[]Like	 `gorm:"foreignKey:SourceId"`
 	Admin   SuperAdmin `gorm:"foreignKey:ID;references:AdminId"`
 }
