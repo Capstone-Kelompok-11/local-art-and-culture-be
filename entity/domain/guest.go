@@ -29,3 +29,29 @@ func ConvertFromModelToGuestRes(data models.Guest) *response.Guest {
 		EventId: 	data.EventId,
 	}
 }
+
+func ConvertFromGuestReqToModels(data []request.Guest) *[]models.Guest {
+	var result []models.Guest
+	var temp models.Guest
+	for i := range data {
+		temp.ID = data[i].Id
+		temp.Name = data[i].Name
+		temp.Role = data[i].Role
+		temp.EventId = data[i].EventId
+		result = append(result, temp)
+	}
+	return &result
+}
+
+func ConvertFromModelsToGuestRes(data []models.Guest) *[]response.Guest {
+	var result []response.Guest
+	var temp response.Guest
+	for i := range data {
+		temp.Id = data[i].ID
+		temp.Name = data[i].Name
+		temp.Role = data[i].Role
+		temp.EventId = data[i].EventId
+		result = append(result, temp)
+	}
+	return &result
+}

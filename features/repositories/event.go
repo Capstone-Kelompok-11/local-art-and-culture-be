@@ -39,7 +39,7 @@ func (er *eventRepository) CreateEvent(data *request.Event) (response.Event, err
 func (er *eventRepository) GetAllEvent() ([]response.Event, error) {
 	var allEvent []models.Event
 	var resAllEvent []response.Event
-	err := er.db.Preload("Category").Preload("Creator").Find(&allEvent).Error
+	err := er.db.Preload("Category").Preload("Creator").Preload("Guest").Find(&allEvent).Error
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (er *eventRepository) GetAllEvent() ([]response.Event, error) {
 
 func (er *eventRepository) GetEvent(id string) (response.Event, error) {
 	var eventData models.Event
-	err := er.db.Preload("Category").Preload("Creator").First(&eventData, "id = ?", id).Error
+	err := er.db.Preload("Category").Preload("Creator").Preload("Guest").First(&eventData, "id = ?", id).Error
 
 	if err != nil {
 		return response.Event{}, err

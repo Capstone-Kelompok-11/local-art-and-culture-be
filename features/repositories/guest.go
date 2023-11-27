@@ -12,8 +12,8 @@ import (
 
 type IGuestRepository interface {
 	CreateGuest(data *request.Guest) (response.Guest, error)
-	GetAllGuest(nameFilter string) ([]response.Guest, error)
-	GetGuest(id string) (response.Guest, error)
+	GetAllGuest(nameFilter string) ([]response.Event, error)
+	GetGuest(id string) (response.Event, error)
 	UpdateGuest(id string, input request.Guest) (response.Guest, error)
 	DeleteGuest(id string) (response.Guest, error)
 }
@@ -32,19 +32,20 @@ func (gu *guestRepository) CreateGuest(data *request.Guest) (response.Guest, err
 	if err != nil {
 		return response.Guest{}, err
 	}
-	err = gu.db.Preload("Event").First(&dataGuest, "id = ?", dataGuest.ID).Error
+	err = gu.db.Preload("Guest").First(&dataGuest, "id = ?", dataGuest.ID).Error
 	return *domain.ConvertFromModelToGuestRes(*dataGuest), nil
 }
 
-func (gu *guestRepository) GetAllGuest(nameFilter string) ([]response.Guest, error) {
-	var allGuest []models.Guest
-	var resAllGuest []response.Guest
+func (gu *guestRepository) GetAllGuest(nameFilter string) ([]response.Event, error) {
+	var allGuest []models.Event
+	var resAllGuest []response.Event
 
-	query := gu.db.Preload("Event")
-
-	if nameFilter != "" {
-		query = query.Where("name LIKE ?", "%"+nameFilter+"%")
-	}
+	query := gu.db.Preload("Creator").Preload("Category").Preload("Guest", func(db *gorm.DB) *gorm.DB {
+		if nameFilter != "" {
+			return db.Where("name LIKE ?", "%"+nameFilter+"%")
+		}
+		return db
+	})
 
 	err := query.Find(&allGuest).Error
 	if err != nil {
@@ -52,21 +53,21 @@ func (gu *guestRepository) GetAllGuest(nameFilter string) ([]response.Guest, err
 	}
 
 	for i := 0; i < len(allGuest); i++ {
-		GuestVm := domain.ConvertFromModelToGuestRes(allGuest[i])
+		GuestVm := domain.ConvertFromModelToEventRes(allGuest[i])
 		resAllGuest = append(resAllGuest, *GuestVm)
 	}
 
 	return resAllGuest, nil
 }
 
-func (gu *guestRepository) GetGuest(id string) (response.Guest, error) {
-	var guestData models.Guest
-	err := gu.db.Preload("Event").First(&guestData, "id = ?", id).Error
+func (gu *guestRepository) GetGuest(id string) (response.Event, error) {
+	var guestData models.Event
+	err := gu.db.Preload("Creator").Preload("Category").Preload("Guest").First(&guestData, "id = ?", id).Error
 
 	if err != nil {
-		return response.Guest{}, err
+		return response.Event{}, err
 	}
-	return *domain.ConvertFromModelToGuestRes(guestData), nil
+	return *domain.ConvertFromModelToEventRes(guestData), nil
 }
 
 func (gu *guestRepository) UpdateGuest(id string, input request.Guest) (response.Guest, error) {
@@ -95,7 +96,7 @@ func (gu *guestRepository) UpdateGuest(id string, input request.Guest) (response
 func (gu *guestRepository) DeleteGuest(id string) (response.Guest, error) {
 	guestData := models.Guest{}
 	res := response.Guest{}
-	find := gu.db.Preload("Event").First(&guestData, "id = ?", id).Error
+	find := gu.db.Preload("Guest").First(&guestData, "id = ?", id).Error
 	if find == nil {
 		res = *domain.ConvertFromModelToGuestRes(guestData)
 	}
