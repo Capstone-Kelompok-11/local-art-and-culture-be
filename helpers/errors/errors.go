@@ -67,4 +67,5 @@ var (
 	ERR_CREATE_GUEST_DATABASE          = errors.New("failed to create new guest to database")
 	ERR_RATING_IS_EMPTY                = errors.New("rating is empty")
 	ERR_CREATE_TRANSACTION_DETAIL      = errors.New("failed to create new transaction detail")
+	ERR_GET_TRANSACTION_DETAIL_BAD_REQUEST_ID = errors.New("can't find any Transaction Detail with this id")
 )
