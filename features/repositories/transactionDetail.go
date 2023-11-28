@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"fmt"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
@@ -33,6 +34,7 @@ func (ar *transactionDetailRepository) CreateTransactionDetail(data *request.Tra
 	if err != nil {
 		return response.TransactionDetail{}, err
 	}
+	fmt.Println(data)
 	return *domain.ConvertFromModelToTransactionDetailRes(*dataTransactionDetail), nil
 }
 
@@ -65,6 +67,22 @@ func (ar *transactionDetailRepository) GetTransactionDetail(id string) (error, r
 func (ar *transactionDetailRepository) UpdateTransactionDetail(id string, input request.TransactionDetail) (error, response.TransactionDetail) {
 	transactionDetailData := models.TransactionDetail{}
 	err := ar.db.First(&transactionDetailData, "id = ?", id).Error
+
+	if input.Qty != 0 {
+		transactionDetailData.Qty = input.Qty
+	}
+	if input.ProductId != nil{
+		transactionDetailData.ProductId = input.ProductId
+	}
+	if input.TicketId != nil {
+		transactionDetailData.TicketId = input.TicketId
+	}
+	if input.Fullname != nil {
+		transactionDetailData.Fullname = input.Fullname
+	}
+	if input.Contact != nil {
+		transactionDetailData.Contact = input.Contact
+	}
 
 	if err != nil {
 		return err, response.TransactionDetail{}

@@ -11,7 +11,8 @@ type TransactionDetail struct {
 	TicketId      *uint
 	Fullname      *string
 	Contact       *string
+	Nik           *string
 	Qty           int32
-	Product       Product `gorm:"foreignKey:ID;references:ProductId"`
-	Ticket        Ticket  `gorm:"foreignKey:ID;references:TicketId"`
+	Product       Product `gorm:"foreignKey:ProductId"`
+	Ticket        Ticket  `gorm:"foreignKey:TicketId"`
 }
