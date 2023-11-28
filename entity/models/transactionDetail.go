@@ -12,6 +12,7 @@ type TransactionDetail struct {
 	Fullname      *string
 	Contact       *string
 	Nik           *string
+	Email         *string
 	Qty           int32
 	Product       Product `gorm:"foreignKey:ProductId"`
 	Ticket        Ticket  `gorm:"foreignKey:TicketId"`

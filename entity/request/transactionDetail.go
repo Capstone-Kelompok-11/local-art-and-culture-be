@@ -8,6 +8,7 @@ type TransactionDetail struct {
 	Fullname      *string `json:"fullname"`
 	Contact       *string `json:"contact"`
 	Nik           *string `json:"nik"`
+	Email         *string `json:"email"`
 	Qty           int32   `json:"qty"`
 	Product       Product `json:"product"`
 	Ticket        Ticket  `json:"ticket"`

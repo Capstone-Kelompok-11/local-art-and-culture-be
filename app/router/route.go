@@ -34,5 +34,6 @@ func Route(db *gorm.DB) *echo.Echo {
 	WishlistRoute(e, db)
 	TransactionRoute(e, db)
 	TransactionDetailRoute(e, db)
+	FilesRoute(e, db)
 	return e
 }

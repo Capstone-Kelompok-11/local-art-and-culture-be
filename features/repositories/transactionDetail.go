@@ -71,7 +71,7 @@ func (ar *transactionDetailRepository) UpdateTransactionDetail(id string, input 
 	if input.Qty != 0 {
 		transactionDetailData.Qty = input.Qty
 	}
-	if input.ProductId != nil{
+	if input.ProductId != nil {
 		transactionDetailData.ProductId = input.ProductId
 	}
 	if input.TicketId != nil {
@@ -82,6 +82,9 @@ func (ar *transactionDetailRepository) UpdateTransactionDetail(id string, input 
 	}
 	if input.Contact != nil {
 		transactionDetailData.Contact = input.Contact
+	}
+	if input.Email != nil {
+		transactionDetailData.Email = input.Email
 	}
 
 	if err != nil {

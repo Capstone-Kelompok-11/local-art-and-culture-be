@@ -132,6 +132,12 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_GET_TRANSACTION_DETAIL_BAD_REQUEST_ID:
 		return http.StatusBadRequest
+	case ERR_GET_FILES_BAD_REQUEST_ID:
+		return http.StatusBadRequest
+	case ERR_CREATE_FILES_DATABASE:
+		return http.StatusInternalServerError
+	case ERR_SOURCE_IS_EMPTY:
+		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError
 	}
