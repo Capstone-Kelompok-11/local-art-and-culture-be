@@ -29,11 +29,28 @@ func (ah *ArticleHandler) CreateArticle(c echo.Context) error {
 
 func (ah *ArticleHandler) GetAllArticle(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
-	res, err := ah.articleService.GetAllArticle(nameFilter)
+	page, pageSize := 1, 10
+
+	res, allItems, err := ah.articleService.GetAllArticle(nameFilter, page, pageSize)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
-	return response.NewSuccessResponse(c, res)
+
+	currentPage, allPages := ah.articleService.CalculatePaginationValues(page, pageSize, allItems)
+	nextPage := ah.articleService.GetNextPage(currentPage, allPages)
+	prevPage := ah.articleService.GetPrevPage(currentPage)
+
+	responseData := map[string]interface{}{
+		"data": res,
+		"pagination": map[string]int{
+			"currentPage": currentPage,
+			"nextPage":    nextPage,
+			"prevPage":    prevPage,
+			"allPages":  allPages,
+		},
+	}
+
+	return response.NewSuccessResponse(c, responseData)
 }
 
 func (ah *ArticleHandler) GetArticle(c echo.Context) error {
@@ -64,23 +81,3 @@ func (ah *ArticleHandler) DeleteArticle(c echo.Context) error {
 	}
 	return response.NewSuccessResponse(c, res)
 }
-
-// func (ah *ArticleHandler) GetAdminWithArticles(c echo.Context) error {
-// 	adminIDParam := c.Param("adminID")
-
-// 	if adminIDParam == "" {
-// 		return response.NewErrorResponse(c, errors.New("adminID is required"))
-// 	}
-
-// 	adminID, err := strconv.ParseUint(adminIDParam, 10, 64)
-// 	if err != nil {
-// 		return response.NewErrorResponse(c, err)
-// 	}
-
-// 	res, err := ah.articleService.GetAdminWithArticles(uint(adminID))
-// 	if err != nil {
-// 		return response.NewErrorResponse(c, err)
-// 	}
-
-// 	return response.NewSuccessResponse(c, res)
-// }

@@ -30,12 +30,28 @@ func (pr *EventHandler) GetAllEvent(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
 	startDate := c.QueryParam("startDate")
     endDate := c.QueryParam("endDate")
+	page, pageSize := 1, 10
 
-	res, err := pr.eventService.GetAllEvent(nameFilter, startDate, endDate)
+	res, allItems, err := pr.eventService.GetAllEvent(nameFilter, startDate, endDate, page, pageSize)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
-	return response.NewSuccessResponse(c, res)
+
+	currentPage, allPages := pr.eventService.CalculatePaginationValues(page, pageSize, allItems)
+	nextPage := pr.eventService.GetNextPage(currentPage, allPages)
+	prevPage := pr.eventService.GetPrevPage(currentPage)
+
+	responseData := map[string]interface{}{
+		"data": res,
+		"pagination": map[string]int{
+			"currentPage": currentPage,
+			"nextPage":    nextPage,
+			"prevPage":    prevPage,
+			"allPages":    allPages,
+		},
+	}
+
+	return response.NewSuccessResponse(c, responseData)
 }
 
 func (pr *EventHandler) GetEvent(c echo.Context) error {

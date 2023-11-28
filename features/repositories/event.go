@@ -13,7 +13,7 @@ import (
 
 type IEventRepository interface {
 	CreateEvent(data *request.Event) (response.Event, error)
-	GetAllEvent(nameFilter, startDate, endDate string) ([]response.Event, error)
+	GetAllEvent(nameFilter, startDate, endDate string, page, pageSize int) ([]response.Event, int, error)
 	GetEvent(id string) (response.Event, error)
 	UpdateEvent(id string, input request.Event) (response.Event, error)
 	DeleteEvent(id string) (response.Event, error)
@@ -37,7 +37,7 @@ func (er *eventRepository) CreateEvent(data *request.Event) (response.Event, err
 	return *domain.ConvertFromModelToEventRes(*dataEvent), nil
 }
 
-func (er *eventRepository) GetAllEvent(nameFilter, startDate, endDate string) ([]response.Event, error) {
+func (er *eventRepository) GetAllEvent(nameFilter, startDate, endDate string, page, pageSize int) ([]response.Event, int, error) {
     var allEvent []models.Event
     var resAllEvent []response.Event
 
@@ -49,27 +49,35 @@ func (er *eventRepository) GetAllEvent(nameFilter, startDate, endDate string) ([
     if startDate != "" && endDate != "" {
         startDateTime, err := time.Parse("2006-01-02", startDate)
         if err != nil {
-            return nil, err
+            return nil, 0, err
         }
 
         endDateTime, err := time.Parse("2006-01-02", endDate)
         if err != nil {
-            return nil, err
+            return nil, 0, err
         }
 
         query = query.Where("from_date BETWEEN ? AND ?", startDateTime, endDateTime)
     }
 
+	offset := (page - 1) * pageSize
+
+	query = query.Limit(pageSize).Offset(offset)
+
     err := query.Find(&allEvent).Error
     if err != nil {
-        return nil, err
+        return nil, 0, err
     }
 
     for i := 0; i < len(allEvent); i++ {
         eventVm := domain.ConvertFromModelToEventRes(allEvent[i])
         resAllEvent = append(resAllEvent, *eventVm)
     }
-    return resAllEvent, nil
+
+	var allItems int64
+	query.Count(&allItems)
+
+    return resAllEvent, int(allItems), nil
 }
 
 func (er *eventRepository) GetEvent(id string) (response.Event, error) {

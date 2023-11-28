@@ -35,8 +35,8 @@ func (pr *ProductHandler) GetAllProduct(c echo.Context) error {
 		return response.NewErrorResponse(c, err)
 	}
 
-	currentPage, totalPages := pr.productService.CalculatePaginationValues(page, pageSize, totalItems)
-	nextPage := pr.productService.GetNextPage(currentPage, totalPages)
+	currentPage, allPages := pr.productService.CalculatePaginationValues(page, pageSize, totalItems)
+	nextPage := pr.productService.GetNextPage(currentPage, allPages)
 	prevPage := pr.productService.GetPrevPage(currentPage)
 
 	responseData := map[string]interface{}{
@@ -45,7 +45,7 @@ func (pr *ProductHandler) GetAllProduct(c echo.Context) error {
 			"currentPage": currentPage,
 			"nextPage":    nextPage,
 			"prevPage":    prevPage,
-			"totalPages":  totalPages,
+			"allPages":    allPages,
 		},
 	}
 
@@ -54,8 +54,7 @@ func (pr *ProductHandler) GetAllProduct(c echo.Context) error {
 
 func (pr *ProductHandler) GetProduct(c echo.Context) error {
 	id := c.Param("id")
-	page, pageSize := 1, 10
-	res, err := pr.productService.GetProduct(id, page, pageSize)
+	res, err := pr.productService.GetProduct(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

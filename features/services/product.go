@@ -11,7 +11,7 @@ import (
 type IProductService interface {
 	CreateProduct(data *request.Product) (response.Product, error)
 	GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error)
-	GetProduct(id string, page, pageSize int) (response.Product, error)
+	GetProduct(id string) (response.Product, error)
 	UpdateProduct(id string, input request.Product) (response.Product, error)
 	DeleteProduct(id string) (response.Product, error)
 	CalculatePaginationValues(page, pageSize, allItmes int) (int, int)
@@ -49,19 +49,19 @@ func (pr *ProductService) CreateProduct(data *request.Product) (response.Product
 }
 
 func (ps *ProductService) GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error) {
-    res, totalItems, err := ps.productRepository.GetAllProduct(nameFilter, page, pageSize)
+    res, allItems, err := ps.productRepository.GetAllProduct(nameFilter, page, pageSize)
     if err != nil {
         return nil, 0, err
     }
-    return res, totalItems, nil
+    return res, allItems, nil
 }
 
 
-func (pr *ProductService) GetProduct(id string, page, pageSize int) (response.Product, error) {
+func (pr *ProductService) GetProduct(id string) (response.Product, error) {
 	if id == "" {
 		return response.Product{}, errors.ERR_GET_PRODUCT_BAD_REQUEST_ID
 	}
-	res, err := pr.productRepository.GetProduct(id, page, pageSize)
+	res, err := pr.productRepository.GetProduct(id)
 	if err != nil {
 		return response.Product{}, err
 	}

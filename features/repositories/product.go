@@ -13,7 +13,7 @@ import (
 type IProductRepository interface {
 	CreateProduct(data *request.Product) (response.Product, error)
 	GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error)
-	GetProduct(id string, page, pageSize int) (response.Product, error)
+	GetProduct(id string) (response.Product, error)
 	UpdateProduct(id string, input request.Product) (response.Product, error)
 	DeleteProduct(id string) (response.Product, error)
 }
@@ -66,7 +66,7 @@ func (pr *productRepository) GetAllProduct(nameFilter string, page, pageSize int
 	return resAllProduct, int(totalItems), nil
 }
 
-func (pr *productRepository) GetProduct(id string, page, pageSize int) (response.Product, error) {
+func (pr *productRepository) GetProduct(id string) (response.Product, error) {
 	var productData models.Product
 	err := pr.db.Preload("Category").Preload("Creator").First(&productData, "id = ?", id).Error
 
