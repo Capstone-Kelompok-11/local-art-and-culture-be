@@ -12,8 +12,8 @@ import (
 
 type IProductRepository interface {
 	CreateProduct(data *request.Product) (response.Product, error)
-	GetAllProduct(nameFilter string) ([]response.Product, error)
-	GetProduct(id string) (response.Product, error)
+	GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error)
+	GetProduct(id string, page, pageSize int) (response.Product, error)
 	UpdateProduct(id string, input request.Product) (response.Product, error)
 	DeleteProduct(id string) (response.Product, error)
 }
@@ -36,32 +36,37 @@ func (pr *productRepository) CreateProduct(data *request.Product) (response.Prod
 	return *domain.ConvertFromModelToProductRes(*dataProduct), nil
 }
 
-func (pr *productRepository) GetAllProduct(nameFilter string) ([]response.Product, error) {
-    var allProduct []models.Product
-    var resAllProduct []response.Product
+func (pr *productRepository) GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error) {
+	var allProduct []models.Product
+	var resAllProduct []response.Product
 
-    query := pr.db.Preload("Category").Preload("Creator")
+	query := pr.db.Preload("Category").Preload("Creator")
 
-    if nameFilter != "" {
-        query = query.Where("name LIKE ?", "%"+nameFilter+"%")
-    }
+	if nameFilter != "" {
+		query = query.Where("name LIKE ?", "%"+nameFilter+"%")
+	}
 
-    err := query.Find(&allProduct).Error
-    if err != nil {
-        return nil, errors.ERR_GET_DATA
-    }
+	offset := (page - 1) * pageSize
 
-    for i := 0; i < len(allProduct); i++ {
-        productVm := domain.ConvertFromModelToProductRes(allProduct[i])
-        resAllProduct = append(resAllProduct, *productVm)
-    }
+	query = query.Limit(pageSize).Offset(offset)
 
-    return resAllProduct, nil
+	err := query.Find(&allProduct).Error
+	if err != nil {
+		return nil, 0, errors.ERR_GET_DATA
+	}
+
+	for i := 0; i < len(allProduct); i++ {
+		productVm := domain.ConvertFromModelToProductRes(allProduct[i])
+		resAllProduct = append(resAllProduct, *productVm)
+	}
+
+	var totalItems int64
+	query.Count(&totalItems)
+
+	return resAllProduct, int(totalItems), nil
 }
 
-
-
-func (pr *productRepository) GetProduct(id string) (response.Product, error) {
+func (pr *productRepository) GetProduct(id string, page, pageSize int) (response.Product, error) {
 	var productData models.Product
 	err := pr.db.Preload("Category").Preload("Creator").First(&productData, "id = ?", id).Error
 
