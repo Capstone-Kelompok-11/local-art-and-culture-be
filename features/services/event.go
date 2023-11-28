@@ -9,7 +9,7 @@ import (
 
 type IEventService interface {
 	CreateEvent(data *request.Event) (response.Event, error)
-	GetAllEvent() ([]response.Event, error)
+	GetAllEvent(nameFilter, startDate, endDate string) ([]response.Event, error)
 	GetEvent(id string) (response.Event, error)
 	UpdateEvent(id string, input request.Event) (response.Event, error)
 	DeleteEvent(id string) (response.Event, error)
@@ -41,8 +41,8 @@ func (er *EventService) CreateEvent(data *request.Event) (response.Event, error)
 	return res, nil
 }
 
-func (er *EventService) GetAllEvent() ([]response.Event, error) {
-	res, err := er.eventRepository.GetAllEvent()
+func (er *EventService) GetAllEvent(nameFilter, startDate, endDate string) ([]response.Event, error) {
+	res, err := er.eventRepository.GetAllEvent(nameFilter, startDate, endDate)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}

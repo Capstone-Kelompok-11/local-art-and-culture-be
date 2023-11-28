@@ -37,27 +37,29 @@ func (pr *productRepository) CreateProduct(data *request.Product) (response.Prod
 }
 
 func (pr *productRepository) GetAllProduct(nameFilter string) ([]response.Product, error) {
-	var allProduct []models.Product
-	var resAllProduct []response.Product
+    var allProduct []models.Product
+    var resAllProduct []response.Product
 
-	query := pr.db.Preload("Category").Preload("Creator")
+    query := pr.db.Preload("Category").Preload("Creator")
 
-	if nameFilter != "" {
-		query = query.Where("name LIKE ?", "%"+nameFilter+"%")
-	}
+    if nameFilter != "" {
+        query = query.Where("name LIKE ?", "%"+nameFilter+"%")
+    }
 
-	err := query.Find(&allProduct).Error
-	if err != nil {
-		return nil, errors.ERR_GET_DATA
-	}
+    err := query.Find(&allProduct).Error
+    if err != nil {
+        return nil, errors.ERR_GET_DATA
+    }
 
-	for i := 0; i < len(allProduct); i++ {
-		productVm := domain.ConvertFromModelToProductRes(allProduct[i])
-		resAllProduct = append(resAllProduct, *productVm)
-	}
+    for i := 0; i < len(allProduct); i++ {
+        productVm := domain.ConvertFromModelToProductRes(allProduct[i])
+        resAllProduct = append(resAllProduct, *productVm)
+    }
 
-	return resAllProduct, nil
+    return resAllProduct, nil
 }
+
+
 
 func (pr *productRepository) GetProduct(id string) (response.Product, error) {
 	var productData models.Product

@@ -27,7 +27,11 @@ func (pr *EventHandler) CreateEvent(c echo.Context) error {
 }
 
 func (pr *EventHandler) GetAllEvent(c echo.Context) error {
-	res, err := pr.eventService.GetAllEvent()
+	nameFilter := c.QueryParam("name")
+	startDate := c.QueryParam("startDate")
+    endDate := c.QueryParam("endDate")
+
+	res, err := pr.eventService.GetAllEvent(nameFilter, startDate, endDate)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
