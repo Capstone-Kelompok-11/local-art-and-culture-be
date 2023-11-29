@@ -6,6 +6,6 @@ type Rating struct {
 	Ulasan		string	`json:"ulasan"`
 	UserId		uint	`json:"userId"`
 	ProductId 	uint	`json:"productId"`
-	Users Users
-	Product Products
+	Users Users			`json:"user"`
+	Product Products	`json:"product"`
 }
