@@ -10,7 +10,7 @@ import (
 
 type IArticleService interface {
 	CreateArticle(data *request.Article) (response.Article, error)
-	GetAllArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error)
+	GetTrendingArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error)
 	GetArticle(id string) (response.Article, error)
 	UpdateArticle(id string, input request.Article) (response.Article, error)
 	DeleteArticle(id string) (response.Article, error)
@@ -40,8 +40,8 @@ func (as *ArticleService) CreateArticle(data *request.Article) (response.Article
 	return res, nil
 }
 
-func (as *ArticleService) GetAllArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error) {
-	res, allItems, err := as.articleRepository.GetAllArticle(nameFilter, page, pageSize)
+func (as *ArticleService) GetTrendingArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error) {
+	res, allItems, err := as.articleRepository.GetTrendingArticle(nameFilter, page, pageSize)
 	if err != nil {
 		return nil, 0, errors.ERR_GET_DATA
 	}

@@ -27,11 +27,11 @@ func (ah *ArticleHandler) CreateArticle(c echo.Context) error {
 	return response.NewSuccessResponse(c, res)
 }
 
-func (ah *ArticleHandler) GetAllArticle(c echo.Context) error {
+func (ah *ArticleHandler) GetTrendingArticle(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
 	page, pageSize := 1, 10
 
-	res, allItems, err := ah.articleService.GetAllArticle(nameFilter, page, pageSize)
+	res, allItems, err := ah.articleService.GetTrendingArticle(nameFilter, page, pageSize)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

@@ -14,7 +14,7 @@ import (
 
 type IArticleRepository interface {
 	CreateArticle(data *request.Article) (response.Article, error)
-	GetAllArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error)
+	GetTrendingArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error)
 	GetArticle(id string) (response.Article, error)
 	UpdateArticle(id string, input request.Article) (response.Article, error)
 	DeleteArticle(id string) (response.Article, error)
@@ -40,7 +40,7 @@ func (ar *articleRepository) CreateArticle(data *request.Article) (response.Arti
 	return *domain.ConvertFromModelToArticleRes(*dataArticle), nil
 }
 
-func (ar *articleRepository) GetAllArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error) {
+func (ar *articleRepository) GetTrendingArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error) {
     var allArticle []models.Article
     var resAllArticle []response.Article
 
@@ -54,7 +54,8 @@ func (ar *articleRepository) GetAllArticle(nameFilter string, page, pageSize int
 
     query = query.Limit(pageSize).Offset(offset)
     
-    err := query.Find(&allArticle).Error
+    twoWeeksAgo := time.Now().Add(-2 * 7 * 24 * time.Hour)
+    err := query.Where("created_at >= ?", twoWeeksAgo).Find(&allArticle).Error
     if err != nil {
         return nil, 0, errors.ERR_GET_DATA
     }
@@ -97,6 +98,11 @@ func (ar *articleRepository) GetAllArticle(nameFilter string, page, pageSize int
     var allItems int64
     query.Count(&allItems)
 
+		// sort by like
+		sort.Slice(resAllArticle, func(i, j int) bool {
+			return resAllArticle[i].TotalLike > resAllArticle[j].TotalLike
+		})
+
     return resAllArticle, int(allItems), nil
 }
 
@@ -119,11 +125,9 @@ func (ar *articleRepository) GetTotalLikes(SourceId uint, SourceStr string) (uin
 
 func (ar *articleRepository) GetTotalLikesLastTwoWeeks(SourceId uint, SourceStr string) (uint, error) {
     var count int64
-    twoWeeksAgo := time.Now().Add(-2 * 7 * 24 * time.Hour)
 
     if err := ar.db.Model(&models.Like{}).
         Where("source_id = ? AND source_str = ?", SourceId, SourceStr).
-        Where("created_at >= ?", twoWeeksAgo).
         Count(&count).Error; err != nil {
         return 0, err
     }
