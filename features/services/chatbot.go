@@ -3,7 +3,6 @@ package services
 import (
 	"bufio"
 	"context"
-	"fmt"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"strings"
@@ -12,7 +11,7 @@ import (
 )
 
 type IChatbotService interface {
-	Chatbot(client *openai.Client, input request.Chatbot) (response.Chatbot, error)
+	Chatbot(client openai.Client, input request.Chatbot) (response.Chatbot, error)
 }
 
 type ChatbotService struct {
@@ -23,13 +22,15 @@ func NewChatbotService(client *openai.Client) *ChatbotService {
 	return &ChatbotService{client}
 }
 
-func (cs *ChatbotService) Chatbot(client *openai.Client, input request.Chatbot) {
+func (cs *ChatbotService) Chatbot(client openai.Client, input request.Chatbot) (response.Chatbot, error) {
+	cs.client = &client
+	var res response.Chatbot
 	req := openai.ChatCompletionRequest{
 		Model: openai.GPT3Dot5Turbo,
 		Messages: []openai.ChatCompletionMessage{
 			{
 				Role:    openai.ChatMessageRoleSystem,
-				Content: "Response as a customer service operating in the field of local art and cultural event",
+				Content: "Response as a customer service operating in the field of local art and cultural events, originating from a company named Lokasani.",
 			},
 		},
 		MaxTokens: 150,
@@ -41,13 +42,12 @@ func (cs *ChatbotService) Chatbot(client *openai.Client, input request.Chatbot) 
 			Role:    openai.ChatMessageRoleUser,
 			Content: s.Text(),
 		})
-		resp, err := client.CreateChatCompletion(context.Background(), req)
+		resp, err := cs.client.CreateChatCompletion(context.Background(), req)
 		if err != nil {
-			fmt.Printf("ChatCompletion error: %v\n", err)
 			continue
 		}
-		fmt.Printf("%s\n\n", resp.Choices[0].Message.Content)
+		res.Message = resp.Choices[0].Message.Content
 		req.Messages = append(req.Messages, resp.Choices[0].Message)
-		fmt.Print("> ")
 	}
+	return res, nil
 }
