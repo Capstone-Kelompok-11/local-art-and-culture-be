@@ -6,4 +6,6 @@ type Article struct {
 	Content string     `json:"content"`
 	AdminId uint       `json:"adminId"`
 	Admin   SuperAdmin `json:"admin"`
+	TotalLike	uint	`json:"totalLike"`
+	Like	[]Like	  `json:"like"`
 }

@@ -15,5 +15,5 @@ func LikeRoute(e *echo.Echo, db *gorm.DB) {
 	handler := handler.NewLikeHandler(service)
 
 	e.PUT("/like", handler.UpdateLike)
-	e.GET("/like/:articleId", handler.GetAllLike)
+	e.GET("/like/:sourceId", handler.GetAllLike)
 }

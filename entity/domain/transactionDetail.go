@@ -19,6 +19,7 @@ func ConvertFromTransactionDetailReqToModels(data []request.TransactionDetail) *
 		temp.Qty = data[i].Qty
 		temp.Fullname = data[i].Fullname
 		temp.Contact = data[i].Contact
+		temp.Email = data[i].Email
 		result = append(result, temp)
 	}
 	return &result
@@ -35,6 +36,7 @@ func ConvertFromTransactionDetailReqToModel(data request.TransactionDetail) *mod
 		Qty:           data.Qty,
 		Fullname:      data.Fullname,
 		Contact:       data.Contact,
+		Email:         data.Email,
 	}
 }
 
@@ -49,6 +51,7 @@ func ConvertFromModelsToTransactionDetailRes(data []models.TransactionDetail) *[
 		temp.Qty = data[i].Qty
 		temp.Fullname = data[i].Fullname
 		temp.Contact = data[i].Contact
+		temp.Email = data[i].Email
 		result = append(result, temp)
 	}
 	return &result
@@ -63,5 +66,6 @@ func ConvertFromModelToTransactionDetailRes(data models.TransactionDetail) *resp
 		Qty:           data.Qty,
 		Fullname:      data.Fullname,
 		Contact:       data.Contact,
+		Email:         data.Email,
 	}
 }
