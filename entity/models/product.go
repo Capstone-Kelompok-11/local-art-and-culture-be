@@ -11,6 +11,6 @@ type Product struct {
 	CategoryId  uint     `gorm:"not null"`
 	CreatorId   uint     `gorm:"not null"`
 	Like		[]Like	 `gorm:"foreignKey:SourceId"`
-	Creator     Creator  `gorm:"foreignKey:ID;references:CreatorId"`
-	Category    Category `gorm:"foreignKey:ID;references:CategoryId"`
+	Creator     Creator  `gorm:"foreignKey:CreatorId"`
+	Category    Category `gorm:"foreignKey:CategoryId"`
 }

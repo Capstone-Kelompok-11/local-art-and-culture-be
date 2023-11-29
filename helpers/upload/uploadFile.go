@@ -25,8 +25,6 @@ func ConfigCloud() *s3.Client {
 		}, nil
 	})
 
-	fmt.Println(accountId)
-
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithEndpointResolverWithOptions(r2Resolver),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyId, accessKeySecret, "")),
@@ -42,7 +40,6 @@ func ConfigCloud() *s3.Client {
 func UploadFile(file *multipart.FileHeader, client *s3.Client) string {
 
 	bucketName := cfg.CloudBucket()
-	fmt.Println(file)
 	src, _ := file.Open()
 	randomKey := uuid.New().String()
 	input := &s3.PutObjectInput{
