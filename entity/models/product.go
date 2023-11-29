@@ -10,6 +10,7 @@ type Product struct {
 	Status      string   `gorm:"not null"`
 	CategoryId  uint     `gorm:"not null"`
 	CreatorId   uint     `gorm:"not null"`
+	TotalLike 	uint
 	Like		[]Like	 `gorm:"foreignKey:SourceId"`
 	Creator     Creator  `gorm:"foreignKey:CreatorId"`
 	Category    Category `gorm:"foreignKey:CategoryId"`
