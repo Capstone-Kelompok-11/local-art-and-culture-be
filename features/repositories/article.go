@@ -18,8 +18,8 @@ type IArticleRepository interface {
 	GetArticle(id string) (response.Article, error)
 	UpdateArticle(id string, input request.Article) (response.Article, error)
 	DeleteArticle(id string) (response.Article, error)
-	GetTotalLikes(SourceId uint) (uint, error)
-	GetTotalLikesLastTwoWeeks(SourceId uint) (uint, error)
+	GetTotalLikes(SourceId uint, SourceStr string) (uint, error) 
+	GetTotalLikesLastTwoWeeks(SourceId uint, SourceStr string) (uint, error)
 }
 
 type articleRepository struct {
@@ -63,24 +63,36 @@ func (ar *articleRepository) GetAllArticle(nameFilter string, page, pageSize int
         return allArticle[j].TotalLike > allArticle[i].TotalLike
     })
 
-    for i := 0; i < len(allArticle); i++ {
-        articleVm := domain.ConvertFromModelToArticleRes(allArticle[i])
+	for i := 0; i < len(allArticle); i++ {
+		articleVm := domain.ConvertFromModelToArticleRes(allArticle[i])
+	
+		totalLikes, err := ar.GetTotalLikes(allArticle[i].ID, "article")
+		if err != nil {
+			return nil, 0, err
+		}
+	
+		totalLikesLastTwoWeeks, err := ar.GetTotalLikesLastTwoWeeks(allArticle[i].ID, "article")
+		if err != nil {
+			return nil, 0, err
+		}
+	
+		articleVm.TotalLike = totalLikes
+		articleVm.TotalLike = totalLikesLastTwoWeeks
 
-        totalLikes, err := ar.GetTotalLikes(allArticle[i].ID)
-        if err != nil {
-            return nil, 0, err
-        }
+		if totalLikes == 0 {
+			articleVm.Like = nil
+		}
 
-        totalLikesLastTwoWeeks, err := ar.GetTotalLikesLastTwoWeeks(allArticle[i].ID)
-        if err != nil {
-            return nil, 0, err
-        }
-
-        articleVm.TotalLike = totalLikes
-        articleVm.TotalLike= totalLikesLastTwoWeeks
-
-        resAllArticle = append(resAllArticle, *articleVm)
-    }
+		var filteredLikes []response.Like
+   		 for _, like := range articleVm.Like {
+        if like.SourceStr == "article" {
+            filteredLikes = append(filteredLikes, like)
+        	}
+    	}
+   		articleVm.Like = filteredLikes
+	
+		resAllArticle = append(resAllArticle, *articleVm)
+	}	
 
     var allItems int64
     query.Count(&allItems)
@@ -97,25 +109,24 @@ func (ar *articleRepository) GetArticle(id string) (response.Article, error) {
 	return *domain.ConvertFromModelToArticleRes(articleData), nil
 }
 
-func (ar *articleRepository) GetTotalLikes(SourceId uint) (uint, error) {
+func (ar *articleRepository) GetTotalLikes(SourceId uint, SourceStr string) (uint, error) {
     var count int64
-    if err := ar.db.Model(&models.Like{}).Where("source_id = ?", SourceId).Count(&count).Error; err != nil {
+    if err := ar.db.Model(&models.Like{}).Where("source_id = ? AND source_str = ?", SourceId, SourceStr).Count(&count).Error; err != nil {
         return 0, err
     }
     return uint(count), nil
 }
 
-func (ar *articleRepository) GetTotalLikesLastTwoWeeks(SourceId uint) (uint, error) {
+func (ar *articleRepository) GetTotalLikesLastTwoWeeks(SourceId uint, SourceStr string) (uint, error) {
     var count int64
     twoWeeksAgo := time.Now().Add(-2 * 7 * 24 * time.Hour)
 
     if err := ar.db.Model(&models.Like{}).
-        Where("source_id = ?", SourceId).
-        Where("created_at > ?", twoWeeksAgo).
+        Where("source_id = ? AND source_str = ?", SourceId, SourceStr).
+        Where("created_at >= ?", twoWeeksAgo).
         Count(&count).Error; err != nil {
         return 0, err
     }
-
     return uint(count), nil
 }
 
