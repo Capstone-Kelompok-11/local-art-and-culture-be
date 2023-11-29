@@ -16,14 +16,18 @@ func ConvertFromArticleReqToModel(data request.Article) *models.Article {
 		Title:   data.Title,
 		Content: data.Content,
 		AdminId: data.AdminId,
+		PictureId: 	data.PictureId,
+		Status: 	data.Status,
 	}
 }
 
 func ConvertFromModelToArticleRes(data models.Article) *response.Article {
 	return &response.Article{
-		Id:      data.ID,
-		Title:   data.Title,
-		Content: data.Content,
-		AdminId: data.AdminId,
+		Id:      	data.ID,
+		Title:   	data.Title,
+		Content: 	data.Content,
+		AdminId: 	data.AdminId,
+		PictureId: 	data.PictureId,
+		Status: 	data.Status,
 	}
 }
