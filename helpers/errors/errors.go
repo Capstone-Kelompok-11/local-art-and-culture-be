@@ -70,5 +70,5 @@ var (
 	ERR_GET_TRANSACTION_DETAIL_BAD_REQUEST_ID = errors.New("can't find any Transaction Detail with this id")
 	ERR_GET_FILES_BAD_REQUEST_ID              = errors.New("can't find any file with this id")
 	ERR_CREATE_FILES_DATABASE                 = errors.New("failed to upload new files to database")
-	ERR_SOURCE_IS_EMPTY                        = errors.New("can't find any source")
+	ERR_SOURCE_IS_EMPTY                       = errors.New("source is empty")
 )

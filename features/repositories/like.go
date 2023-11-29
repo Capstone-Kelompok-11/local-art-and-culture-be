@@ -42,11 +42,14 @@ func (co *likeRepository) UpdateLike(input request.Like) (response.Like, error) 
 	likeData := *domain.ConvertFromLikeReqToModel(input)
 	err := co.db.First(&likeData, "source_id = ? AND user_id = ? AND source_str = ?", input.SourceId, input.UserId, input.SourceStr).Error
 
-	if input.Active != likeData.Active {
+	if input.Active != false {
 		likeData.Active = input.Active
 	}
 	if input.SourceStr != "" {
 		likeData.SourceStr = input.SourceStr
+	}
+	if input.SourceId != 0 {
+		likeData.SourceId = input.SourceId
 	}
 
 	if err = co.db.Save(&likeData).Error; err != nil {

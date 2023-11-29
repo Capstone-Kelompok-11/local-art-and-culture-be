@@ -20,7 +20,6 @@ func NewLikeService(repo repositories.ILikeRepository) *LikeService {
 	return &LikeService{likeRepository: repo}
 }
 
-
 func (co *LikeService) GetAllLike(sourceId string) ([]response.Like, error) {
 	res, err := co.likeRepository.GetAllLike(sourceId)
 	if err != nil {
@@ -31,10 +30,13 @@ func (co *LikeService) GetAllLike(sourceId string) ([]response.Like, error) {
 
 func (co *LikeService) UpdateLike(input request.Like) (response.Like, error) {
 	if input.SourceId == 0 {
-		return response.Like{}, errors.ERR_GET_ARTICLE_BAD_REQUEST_ID
+		return response.Like{}, errors.ERR_SOURCE_IS_EMPTY
 	}
 	if input.UserId == 0 {
 		return response.Like{}, errors.ERR_GET_USER_BAD_REQUEST_ID
+	}
+	if input.SourceStr == "" {
+		return response.Like{}, errors.ERR_SOURCE_IS_EMPTY
 	}
 
 	res, err := co.likeRepository.UpdateLike(input)
