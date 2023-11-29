@@ -8,6 +8,6 @@ type Rating struct {
 	Ulasan			string
 	UserId			uint
 	ProductId		uint
-	Users Users 	`gorm:"foreignKey:ID;references:UserId"`
-	Product Product `gorm:"foreignKey:ID;references:ProductId"`
+	Users Users 	`gorm:"foreignKey:UserId"`
+	Product Product `gorm:"foreignKey:ProductId"`
 }

@@ -13,8 +13,8 @@ type Transaction struct {
 	PaymentMethodId   uint
 	ShippingMethodId  uint
 	Status            string
-	User              Users               `gorm:"foreignKey:ID;references:UserId"`
-	Payment           Payment             `gorm:"foreignKey:ID;references:PaymentMethodId"`
-	Shipping          Shipping            `gorm:"foreignKey:ID;references:ShippingMethodId"`
+	User              Users               `gorm:"foreignKey:UserId"`
+	Payment           Payment             `gorm:"foreignKey:PaymentMethodId"`
+	Shipping          Shipping            `gorm:"foreignKey:ShippingMethodId"`
 	TransactionDetail []TransactionDetail `gorm:"foreignKey:TransactionId"`
 }
