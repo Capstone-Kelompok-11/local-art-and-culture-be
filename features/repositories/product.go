@@ -12,7 +12,7 @@ import (
 
 type IProductRepository interface {
 	CreateProduct(data *request.Product) (response.Product, error)
-	GetAllProduct(nameFilter string) ([]response.Product, error)
+	GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error)
 	GetProduct(id string) (response.Product, error)
 	UpdateProduct(id string, input request.Product) (response.Product, error)
 	DeleteProduct(id string) (response.Product, error)
@@ -36,7 +36,7 @@ func (pr *productRepository) CreateProduct(data *request.Product) (response.Prod
 	return *domain.ConvertFromModelToProductRes(*dataProduct), nil
 }
 
-func (pr *productRepository) GetAllProduct(nameFilter string) ([]response.Product, error) {
+func (pr *productRepository) GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error) {
 	var allProduct []models.Product
 	var resAllProduct []response.Product
 
@@ -46,9 +46,13 @@ func (pr *productRepository) GetAllProduct(nameFilter string) ([]response.Produc
 		query = query.Where("name LIKE ?", "%"+nameFilter+"%")
 	}
 
+	offset := (page - 1) * pageSize
+
+	query = query.Limit(pageSize).Offset(offset)
+
 	err := query.Find(&allProduct).Error
 	if err != nil {
-		return nil, errors.ERR_GET_DATA
+		return nil, 0, errors.ERR_GET_DATA
 	}
 
 	for i := 0; i < len(allProduct); i++ {
@@ -56,7 +60,10 @@ func (pr *productRepository) GetAllProduct(nameFilter string) ([]response.Produc
 		resAllProduct = append(resAllProduct, *productVm)
 	}
 
-	return resAllProduct, nil
+	var totalItems int64
+	query.Count(&totalItems)
+
+	return resAllProduct, int(totalItems), nil
 }
 
 func (pr *productRepository) GetProduct(id string) (response.Product, error) {

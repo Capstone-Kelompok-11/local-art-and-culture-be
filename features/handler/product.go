@@ -28,12 +28,28 @@ func (pr *ProductHandler) CreateProduct(c echo.Context) error {
 
 func (pr *ProductHandler) GetAllProduct(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
+	page, pageSize := 1, 10
 
-    res, err := pr.productService.GetAllProduct(nameFilter)
-    if err != nil {
-        return response.NewErrorResponse(c, err)
-    }
-    return response.NewSuccessResponse(c, res)
+	res, totalItems, err := pr.productService.GetAllProduct(nameFilter, page, pageSize)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+
+	currentPage, allPages := pr.productService.CalculatePaginationValues(page, pageSize, totalItems)
+	nextPage := pr.productService.GetNextPage(currentPage, allPages)
+	prevPage := pr.productService.GetPrevPage(currentPage)
+
+	responseData := map[string]interface{}{
+		"data": res,
+		"pagination": map[string]int{
+			"currentPage": currentPage,
+			"nextPage":    nextPage,
+			"prevPage":    prevPage,
+			"allPages":    allPages,
+		},
+	}
+
+	return response.NewSuccessResponse(c, responseData)
 }
 
 func (pr *ProductHandler) GetProduct(c echo.Context) error {

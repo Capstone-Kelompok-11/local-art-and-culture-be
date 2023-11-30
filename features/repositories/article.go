@@ -53,7 +53,6 @@ func (ar *articleRepository) GetAllArticle(nameFilter string, page, pageSize int
 	offset := (page - 1) * pageSize
 
 	query = query.Limit(pageSize).Offset(offset)
-
 	err := query.Find(&allArticle).Error
 	if err != nil {
 		return nil, 0, errors.ERR_GET_DATA

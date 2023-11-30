@@ -7,15 +7,19 @@ import (
 	"lokasani/helpers/bcrypt"
 	"lokasani/helpers/errors"
 	"lokasani/helpers/middleware"
+	"math"
 )
 
 type IUserService interface {
 	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.User, error)
-	GetAllUser(nameFilter string) ([]response.User, error)
+	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
 	GetUser(id string) (response.User, error)
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
+	CalculatePaginationValues(page, pageSize, allItmes int) (int, int)
+	GetNextPage(currentPage, allPages int) int
+	GetPrevPage(currentPage int) int
 }
 
 type UserService struct {
@@ -81,12 +85,12 @@ func (u *UserService) LoginUser(data *request.User) (response.User, error) {
 	return res, nil
 }
 
-func (u *UserService) GetAllUser(nameFilter string) ([]response.User, error) {
-	err, res := u.UserRepo.GetAllUser(nameFilter)
+func (u *UserService) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error) {
+	err, allItems, res := u.UserRepo.GetAllUser(nameFilter, page, pageSize)
 	if err != nil {
-		return err, nil
+		return err, 0,  nil
 	}
-	return nil, res
+	return nil, allItems, res
 }
 
 func (u *UserService) GetUser(id string) (response.User, error) {
@@ -123,4 +127,33 @@ func (u *UserService) DeleteUser(id string) (response.User, error) {
 		return response.User{}, errors.ERR_DELETE_USER
 	}
 	return res, nil
+}
+
+func (pr *UserService) CalculatePaginationValues(page, pageSize, allItmes int) (int, int) {
+	pageInt := page
+	if pageInt <= 0 {
+		pageInt = 1
+	}
+
+	allPages := int(math.Ceil(float64(allItmes) / float64(pageSize)))
+
+	if pageInt > allPages {
+		pageInt = allPages
+	}
+
+	return pageInt, allPages
+}
+
+func (pr *UserService) GetNextPage(currentPage, allPages int) int {
+	if currentPage < allPages {
+		return currentPage + 1
+	}
+	return allPages
+}
+
+func (pr *UserService) GetPrevPage(currentPage int) int {
+	if currentPage > 1 {
+		return currentPage - 1
+	}
+	return 1
 }
