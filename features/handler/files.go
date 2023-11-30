@@ -25,9 +25,10 @@ func (fh *FilesHandler) CreateFiles(c echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
+
 	client := upload.ConfigCloud()
 	imageUrl := upload.UploadFile(file, client)
-	input.Url = imageUrl
+	input.Image = imageUrl
 	res, err := fh.filesService.CreateFiles(&input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)

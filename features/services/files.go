@@ -24,8 +24,8 @@ func NewFilesService(repo repositories.IFilesRepository) *FilesService {
 }
 
 func (gu *FilesService) CreateFiles(data *request.Files) (response.Files, error) {
-	if data.Filename == "" {
-		return response.Files{}, errors.ERR_NAME_IS_EMPTY
+	if data.Image == "" {
+		return response.Files{}, errors.ERR_IMAGE_IS_EMPTY
 	}
 	if data.SourceStr == "" || data.SourceId == 0 {
 		return response.Files{}, errors.ERR_SOURCE_IS_EMPTY
