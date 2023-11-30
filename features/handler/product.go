@@ -52,6 +52,32 @@ func (pr *ProductHandler) GetAllProduct(c echo.Context) error {
 	return response.NewSuccessResponse(c, responseData)
 }
 
+func (pr *ProductHandler) GetTrendingProduct(c echo.Context) error {
+	nameFilter := c.QueryParam("name")
+	page, pageSize := 1, 10
+
+	res, totalItems, err := pr.productService.GetTrendingProduct(nameFilter, page, pageSize)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+
+	currentPage, allPages := pr.productService.CalculatePaginationValues(page, pageSize, totalItems)
+	nextPage := pr.productService.GetNextPage(currentPage, allPages)
+	prevPage := pr.productService.GetPrevPage(currentPage)
+
+	responseData := map[string]interface{}{
+		"data": res,
+		"pagination": map[string]int{
+			"currentPage": currentPage,
+			"nextPage":    nextPage,
+			"prevPage":    prevPage,
+			"allPages":    allPages,
+		},
+	}
+
+	return response.NewSuccessResponse(c, responseData)
+}
+
 func (pr *ProductHandler) GetProduct(c echo.Context) error {
 	id := c.Param("id")
 	res, err := pr.productService.GetProduct(id)

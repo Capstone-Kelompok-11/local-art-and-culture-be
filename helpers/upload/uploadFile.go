@@ -21,13 +21,14 @@ func ConfigCloud() *s3.Client {
 
 	r2Resolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
 		return aws.Endpoint{
-			URL: fmt.Sprintf("https://%s.r2.cloudflarestorage.com/lokasani", accountId),
+			URL: fmt.Sprintf("https://%s.r2.cloudflarestorage.com", accountId),
 		}, nil
 	})
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithEndpointResolverWithOptions(r2Resolver),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyId, accessKeySecret, "")),
+		config.WithRegion("apac"),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -37,8 +38,7 @@ func ConfigCloud() *s3.Client {
 	return client
 }
 
-func UploadFile(file *multipart.FileHeader, client *s3.Client) string {
-
+func UploadFile(file *multipart.FileHeader, client *s3.Client, ) string {
 	bucketName := cfg.CloudBucket()
 	src, _ := file.Open()
 	randomKey := uuid.New().String()
@@ -54,7 +54,6 @@ func UploadFile(file *multipart.FileHeader, client *s3.Client) string {
 		log.Fatal(err)
 	}
 
-	publiccostume := fmt.Sprintf("https://pub-0e2f2cf14fb64c84930c7dc185185ee2.r2.dev/%s", randomKey)
-	return publiccostume
-
+	publicURL := fmt.Sprintf("https://pub-64bcdb2f5c8141989ec03f62f3988b00.r2.dev/%s", randomKey)
+	return publicURL
 }

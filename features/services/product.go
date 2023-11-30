@@ -11,6 +11,7 @@ import (
 type IProductService interface {
 	CreateProduct(data *request.Product) (response.Product, error)
 	GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error)
+	GetTrendingProduct(nameFilter string, page, pageSize int) ([]response.Products, int, error)
 	GetProduct(id string) (response.Product, error)
 	UpdateProduct(id string, input request.Product) (response.Product, error)
 	DeleteProduct(id string) (response.Product, error)
@@ -48,8 +49,16 @@ func (pr *ProductService) CreateProduct(data *request.Product) (response.Product
 	return res, nil
 }
 
-func (ps *ProductService) GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error) {
-    res, allItems, err := ps.productRepository.GetAllProduct(nameFilter, page, pageSize)
+func (pr *ProductService) GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error) {
+    res, allItems, err := pr.productRepository.GetAllProduct(nameFilter, page, pageSize)
+    if err != nil {
+        return nil, 0, err
+    }
+    return res, allItems, nil
+}
+
+func (pr *ProductService) GetTrendingProduct(nameFilter string, page, pageSize int) ([]response.Products, int, error) {
+    res, allItems, err := pr.productRepository.GetTrendingProduct(nameFilter, page, pageSize)
     if err != nil {
         return nil, 0, err
     }

@@ -24,6 +24,7 @@ func ConvertFromArticleReqToModel(data request.Article) *models.Article {
 func ConvertFromModelToArticleRes(data models.Article) *response.Article {
 	return &response.Article{
 		Id:        data.ID,
+		CreatedAt: data.CreatedAt,
 		Title:     data.Title,
 		Content:   data.Content,
 		AdminId:   data.AdminId,

@@ -27,7 +27,7 @@ func NewFilesRepository(db *gorm.DB) *filesRepository {
 }
 
 func (rr *filesRepository) CreateFiles(data *request.Files) (response.Files, error) {
-	dataFiles := domain.ConvertFromFilesReqToModel(*data)
+	dataFiles := domain.ConvertFromFilesReqToModel(*data, data.Image)
 	err := rr.db.Create(&dataFiles).Error
 	if err != nil {
 		return response.Files{}, err
@@ -76,12 +76,9 @@ func (rr *filesRepository) UpdateFiles(id string, input request.Files) (response
 		return response.Files{}, errors.ERR_GET_FILES_BAD_REQUEST_ID
 	}
 
-	if input.Url != "" {
-		filesData.Url = input.Url
-	}
-	if input.Filename != "" {
-		filesData.Filename = input.Filename
-	}
+	if input.Image != "" {
+		filesData.Image = input.Image
+		
 	if filesData.SourceId != 0 {
 		filesData.SourceId = input.SourceId
 	}
@@ -92,6 +89,7 @@ func (rr *filesRepository) UpdateFiles(id string, input request.Files) (response
 	if err = rr.db.Save(&filesData).Error; err != nil {
 		return response.Files{}, errors.ERR_UPDATE_DATA
 	}
+}
 	return *domain.ConvertFromModelToFilesRes(filesData), nil
 }
 
