@@ -40,11 +40,28 @@ func (ah *AdminHandler) LoginAdmin(c echo.Context) error {
 
 func (ah *AdminHandler) GetAllAdmin(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
-	res, err := ah.adminService.GetAllAdmin(nameFilter)
+	page, pageSize := 1, 10
+
+	res, allItems, err := ah.adminService.GetAllAdmin(nameFilter, page, pageSize)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
-	return response.NewSuccessResponse(c, res)
+
+	currentPage, allPages := ah.adminService.CalculatePaginationValues(page, pageSize, allItems)
+	nextPage := ah.adminService.GetNextPage(currentPage, allPages)
+	prevPage := ah.adminService.GetPrevPage(currentPage)
+
+	responseData := map[string]interface{}{
+		"data": res,
+		"pagination": map[string]int{
+			"currentPage": currentPage,
+			"nextPage":    nextPage,
+			"prevPage":    prevPage,
+			"allPages":  allPages,
+		},
+	}
+
+	return response.NewSuccessResponse(c, responseData)
 }
 
 func (ah *AdminHandler) GetAdmin(c echo.Context) error {

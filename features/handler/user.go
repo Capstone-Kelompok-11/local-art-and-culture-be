@@ -40,11 +40,28 @@ func (u *UserHandler) LoginUsers(e echo.Context) error {
 
 func (u *UserHandler) GetAllUser(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
-	res, err := u.userService.GetAllUser(nameFilter)
+	page, pageSize := 1, 10
+
+	res, allItems, err := u.userService.GetAllUser(nameFilter, page, pageSize)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
-	return response.NewSuccessResponse(c, res)
+
+	currentPage, allPages := u.userService.CalculatePaginationValues(page, pageSize, allItems)
+	nextPage := u.userService.GetNextPage(currentPage, allPages)
+	prevPage := u.userService.GetPrevPage(currentPage)
+
+	responseData := map[string]interface{}{
+		"data": res,
+		"pagination": map[string]int{
+			"currentPage": currentPage,
+			"nextPage":    nextPage,
+			"prevPage":    prevPage,
+			"allPages":  allPages,
+		},
+	}
+
+	return response.NewSuccessResponse(c, responseData)
 }
 
 func (u *UserHandler) GetUser(c echo.Context) error {

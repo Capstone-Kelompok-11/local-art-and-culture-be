@@ -10,5 +10,7 @@ type Article struct {
 	Admin     SuperAdmin `json:"admin"`
 	TotalLike uint       `json:"totalLike"`
 	CreatedAt time.Time  `json:"postedAt"`
+	FilesId   *uint   
+	Status    string     `json:"status"`
 	Like      []Like     `json:"like"`
 }

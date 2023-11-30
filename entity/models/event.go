@@ -18,7 +18,7 @@ type Event struct {
 	AddressId        *uint
 	CreatorId        uint     `gorm:"not null"`
 	CategoryId       uint     `gorm:"not null"`
-	Creator          Creator  `gorm:"foreignKey:CreatorId"`
-	Category         Category 	`gorm:"foreignKey:CategoryId"`
+	Creator          Creator  `gorm:"foreignKey:ID;references:CreatorId"`
+	Category         Category 	`gorm:"foreignKey:ID;references:CategoryId"`
 	Guest			[]Guest		`gorm:"foreignKey:EventId"`
 }

@@ -45,13 +45,13 @@ func (ar *articleRepository) GetTrendingArticle(nameFilter string, page, pageSiz
     var allArticle []models.Article
     var resAllArticle []response.Article
 
-    query := ar.db.Preload("Admin").Preload("Like")
+	query := ar.db.Preload("Admin").Preload("Like")
 
-    if nameFilter != "" {
-        query = query.Where("title LIKE ?", "%"+nameFilter+"%")
-    }
+	if nameFilter != "" {
+		query = query.Where("title LIKE ?", "%"+nameFilter+"%")
+	}
 
-    offset := (page - 1) * pageSize
+	offset := (page - 1) * pageSize
 
     query = query.Limit(pageSize).Offset(offset)
     
@@ -61,9 +61,9 @@ func (ar *articleRepository) GetTrendingArticle(nameFilter string, page, pageSiz
         return nil, 0, errors.ERR_GET_DATA
     }
 
-    sort.Slice(allArticle, func(i, j int) bool {
-        return allArticle[j].TotalLike > allArticle[i].TotalLike
-    })
+	sort.Slice(allArticle, func(i, j int) bool {
+		return allArticle[j].TotalLike > allArticle[i].TotalLike
+	})
 
 	for i := 0; i < len(allArticle); i++ {
 		articleVm := domain.ConvertFromModelToArticleRes(allArticle[i])
@@ -174,8 +174,15 @@ func (ar *articleRepository) UpdateArticle(id string, input request.Article) (re
 
 	if input.Title != "" {
 		articleData.Title = input.Title
-	} else if input.Content != "" {
+	}
+	if input.Content != "" {
 		articleData.Content = input.Content
+	}
+	if input.FilesId != nil {
+		articleData.FilesId = input.FilesId
+	}
+	if input.Status != "" {
+		articleData.Status = input.Status
 	}
 
 	if err = ar.db.Save(&articleData).Error; err != nil {

@@ -65,6 +65,7 @@ func (pr *ProductService) GetTrendingProduct(nameFilter string, page, pageSize i
     return res, allItems, nil
 }
 
+
 func (pr *ProductService) GetProduct(id string) (response.Product, error) {
 	if id == "" {
 		return response.Product{}, errors.ERR_GET_PRODUCT_BAD_REQUEST_ID

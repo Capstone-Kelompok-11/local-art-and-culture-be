@@ -16,6 +16,8 @@ func ConvertFromArticleReqToModel(data request.Article) *models.Article {
 		Title:   data.Title,
 		Content: data.Content,
 		AdminId: data.AdminId,
+		Status:  data.Status,
+		FilesId: data.FilesId,
 	}
 }
 
@@ -27,6 +29,8 @@ func ConvertFromModelToArticleRes(data models.Article) *response.Article {
 		Content:   data.Content,
 		AdminId:   data.AdminId,
 		TotalLike: data.TotalLike,
+		Status:    data.Status,
+		FilesId:   data.FilesId,
 		Admin:     *ConvertFromModelToAdminRes(data.Admin),
 		Like:      *ConvertFromModelsToLikeRes(data.Like),
 	}

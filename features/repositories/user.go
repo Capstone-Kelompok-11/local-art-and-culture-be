@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"log"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
@@ -15,7 +14,7 @@ import (
 type IUserRepository interface {
 	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.User, error)
-	GetAllUser(nameFilter string) ([]response.User, error)
+	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
 	GetUser(id string) (response.User, error)
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
@@ -54,7 +53,7 @@ func (u *userRepository) LoginUser(data *request.User) (response.User, error) {
 	return *domain.ConvertFromModelToUserRes(*dataUser), nil
 }
 
-func (u *userRepository) GetAllUser(nameFilter string) ([]response.User, error) {
+func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error) {
 	var allUser []models.Users
 	var resAllUser []response.User
 
@@ -63,10 +62,13 @@ func (u *userRepository) GetAllUser(nameFilter string) ([]response.User, error) 
     	query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
 	}
 
+	offset := (page - 1) * pageSize
+
+	query = query.Limit(pageSize).Offset(offset)
+
 	err := query.Find(&allUser).Error
 	if err != nil {
-		log.Printf("Error fetching data from database: %v", err)
-		return nil, errors.ERR_GET_DATA
+		return nil, 0, errors.ERR_GET_DATA
 	}
 
 	for i := 0; i < len(allUser); i++ {
@@ -74,7 +76,10 @@ func (u *userRepository) GetAllUser(nameFilter string) ([]response.User, error) 
 		resAllUser = append(resAllUser, *userVm)
 	}
 
-	return resAllUser, nil
+	var allItems int64
+	query.Count(&allItems)
+
+	return resAllUser, int(allItems), nil
 }
 
 func (u *userRepository) GetUser(id string) (response.User, error) {
