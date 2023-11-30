@@ -74,7 +74,7 @@ func getPaymentMethod(db *gorm.DB, id uint, from string) uint {
 func (ar *transactionRepository) GetAllTransaction() (error, []response.Transaction) {
 	var allTransaction []models.Transaction
 	var resAllTransaction []response.Transaction
-	err := ar.db.Find(&allTransaction).Error
+	err := ar.db.Preload("TransactionDetail").Find(&allTransaction).Error
 	if err != nil {
 		return errors.ERR_GET_DATA, nil
 	}

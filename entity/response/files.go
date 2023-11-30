@@ -1,9 +1,9 @@
-package request
+package response
 
-type Like struct {
+type Files struct {
 	Id        uint   `json:"id"`
-	UserId    uint   `json:"userId"`
 	SourceId  uint   `json:"sourceId"`
 	SourceStr string `json:"sourceStr"`
-	Active    bool   `json:"like"`
+	Url       string `json:"url"`
+	Filename  string `json:"filename"`
 }

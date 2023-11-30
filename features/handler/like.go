@@ -18,7 +18,7 @@ func NewLikeHandler(ilikeService services.ILikeService) *LikeHandler {
 
 
 func (co *LikeHandler) GetAllLike(c echo.Context) error {
-	id := c.Param("articleId")
+	id := c.Param("sourceId")
 	res, err := co.likeService.GetAllLike(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)

@@ -7,10 +7,10 @@ type Product struct {
 	Description string  `json:"description"`
 	Status      string  `json:"status"`
 	//AddressId	uint	`json:"addressId"``
-	CategoryId uint `json:"categoryId"`
-	CreatorId  uint `json:"creatorId"`
-	Creator Creator
-	Category Category
+	CategoryId uint 	`json:"categoryId"`
+	CreatorId  uint 	`json:"creatorId"`
+	Creator Creator 	`json:"creator"`
+	Category Category	`json:"category"`
 }
 
 type Products struct {
@@ -20,7 +20,8 @@ type Products struct {
 	Description string  `json:"description"`
 	Status      string  `json:"status"`
 	//AddressId	uint	`json:"addressId"``
-	CategoryId uint `json:"categoryId"`
-	CreatorId  uint `json:"creatorId"`
-	Category Category
+	CategoryId uint 	`json:"categoryId"`
+	CreatorId  uint 	`json:"creatorId"`
+	Category Category	`json:"category"`
+	Like	[]Like		`json:"like"`
 }

@@ -28,6 +28,6 @@ func ConvertFromModelToRatingRes(data models.Rating) *response.Rating {
 		UserId: 	data.UserId,
 		ProductId: 	data.ProductId,
 		Users: 		*ConvertFromModelToUsersRes(data.Users),
-		Product: 	*ConvertFromModelToProductRes(data.Product),
+		Product: 	*ConvertFromModelToProductsRes(data.Product),
 	}
 }

@@ -36,14 +36,18 @@ func (rs *TransactionService) CreateTransaction(data *request.Transaction) (resp
 	if err != nil {
 		return response.Transaction{}, errors.ERR_CREATE_TRANSACTION_DATABASE
 	}
+	// fmt.Println(data.TransactionDetail)
 
-	for i := range data.TransactionDetail {
-		_, err := rs.transactionDetailRepository.CreateTransactionDetail(&data.TransactionDetail[i])
-		if err != nil {
-			return res, errors.ERR_CREATE_TRANSACTION_DETAIL
-		}
-		// res := rs.GetTransaction(res.Id)
-	}
+	// var transactionDetailRes []response.TransactionDetail
+	// for i := range data.TransactionDetail {
+	// 	data.TransactionDetail[i].TransactionId = res.Id
+	// 	result, err := rs.transactionDetailRepository.CreateTransactionDetail(&data.TransactionDetail[i])
+	// 	if err != nil {
+	// 		return res, errors.ERR_CREATE_TRANSACTION_DETAIL
+	// 	}
+	// 	transactionDetailRes = append(transactionDetailRes, result)
+	// }
+	// res.TransactionDetail = transactionDetailRes
 
 	return res, nil
 }
@@ -75,6 +79,16 @@ func (rs *TransactionService) UpdateTransaction(id string, data request.Transact
 	if err != nil {
 		return response.Transaction{}, errors.ERR_UPDATE_DATA
 	}
+	var transactionDetailRes []response.TransactionDetail
+	for i := range data.TransactionDetail {
+		data.TransactionDetail[i].TransactionId = res.Id
+		err, result := rs.transactionDetailRepository.UpdateTransactionDetail(string(data.TransactionDetail[i].Id), data.TransactionDetail[i])
+		if err != nil {
+			return res, errors.ERR_CREATE_TRANSACTION_DETAIL
+		}
+		transactionDetailRes = append(transactionDetailRes, result)
+	}
+	res.TransactionDetail = transactionDetailRes
 	return res, nil
 }
 

@@ -82,7 +82,7 @@ func (er *eventRepository) GetAllEvent(nameFilter, startDate, endDate string, pa
 
 func (er *eventRepository) GetEvent(id string) (response.Event, error) {
 	var eventData models.Event
-	err := er.db.Preload("Category").Preload("Creator").First(&eventData, "id = ?", id).Error
+	err := er.db.Preload("Category").Preload("Creator").Preload("Guest").First(&eventData, "id = ?", id).Error
 
 	if err != nil {
 		return response.Event{}, err

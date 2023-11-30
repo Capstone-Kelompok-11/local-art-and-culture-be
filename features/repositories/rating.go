@@ -32,7 +32,7 @@ func (ra *ratingRepository) CreateRating(data *request.Rating) (response.Rating,
 	if err != nil {
 		return response.Rating{}, err
 	}
-	err = ra.db.Preload("Users").Preload("Rating").First(&dataRating, "id = ?", dataRating.ID).Error
+	err = ra.db.Preload("Users").Preload("Product").Preload("Product.Category").First(&dataRating, "id = ?", dataRating.ID).Error
 	return *domain.ConvertFromModelToRatingRes(*dataRating), nil
 }
 
@@ -40,7 +40,7 @@ func (ra *ratingRepository) GetAllRating(nameFilter string) ([]response.Rating, 
 	var allRating []models.Rating
 	var resAllRating []response.Rating
 
-	query := ra.db.Preload("Users").Preload("Rating")
+	query := ra.db.Preload("Users").Preload("Product").Preload("Product.Category")
 
 	if nameFilter != "" {
 		query = query.Where("rating LIKE ?", "%"+nameFilter+"%")
@@ -61,7 +61,7 @@ func (ra *ratingRepository) GetAllRating(nameFilter string) ([]response.Rating, 
 
 func (ra *ratingRepository) GetRating(id string) (response.Rating, error) {
 	var ratingData models.Rating
-	err := ra.db.Preload("Users").Preload("Rating").First(&ratingData, "id = ?", id).Error
+	err := ra.db.Preload("Users").Preload("Product").Preload("Product.Category").First(&ratingData, "id = ?", id).Error
 
 	if err != nil {
 		return response.Rating{}, err
@@ -71,7 +71,7 @@ func (ra *ratingRepository) GetRating(id string) (response.Rating, error) {
 
 func (ra *ratingRepository) UpdateRating(id string, input request.Rating) (response.Rating, error) {
 	ratingData := models.Rating{}
-	err := ra.db.First(&ratingData, "id = ?", id).Error
+	err := ra.db.Preload("Users").Preload("Product").Preload("Product.Category").First(&ratingData, "id = ?", id).Error
 	if err != nil {
 		return response.Rating{}, err
 	}
@@ -92,7 +92,7 @@ func (ra *ratingRepository) UpdateRating(id string, input request.Rating) (respo
 func (ra *ratingRepository) DeleteRating(id string) (response.Rating, error) {
 	ratingData := models.Rating{}
 	res := response.Rating{}
-	find := ra.db.Preload("Users").Preload("Rating").First(&ratingData, "id = ?", id).Error
+	find := ra.db.Preload("Users").Preload("Product").Preload("Product.Category").First(&ratingData, "id = ?", id).Error
 	if find == nil {
 		res = *domain.ConvertFromModelToRatingRes(ratingData)
 	}
