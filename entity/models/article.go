@@ -6,10 +6,13 @@ import (
 
 type Article struct {
 	gorm.Model
-	Title   string
-	AdminId uint
-	Content string
+	Title     string
+	AdminId   uint
+	Content   string
+	FilesId   *uint
+	Status    string
 	TotalLike uint
-	Like	[]Like	 `gorm:"foreignKey:SourceId"`
-	Admin   SuperAdmin `gorm:"foreignKey:ID;references:AdminId"`
+	Files     Files      `gorm:"foreignKey:FilesId"`
+	Like      []Like     `gorm:"foreignKey:SourceId"`
+	Admin     SuperAdmin `gorm:"foreignKey:AdminId"`
 }

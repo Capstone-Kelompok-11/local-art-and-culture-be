@@ -41,51 +41,51 @@ func (ar *articleRepository) CreateArticle(data *request.Article) (response.Arti
 }
 
 func (ar *articleRepository) GetAllArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error) {
-    var allArticle []models.Article
-    var resAllArticle []response.Article
+	var allArticle []models.Article
+	var resAllArticle []response.Article
 
-    query := ar.db.Preload("Admin").Preload("Like")
+	query := ar.db.Preload("Admin").Preload("Like")
 
-    if nameFilter != "" {
-        query = query.Where("title LIKE ?", "%"+nameFilter+"%")
-    }
+	if nameFilter != "" {
+		query = query.Where("title LIKE ?", "%"+nameFilter+"%")
+	}
 
-    offset := (page - 1) * pageSize
+	offset := (page - 1) * pageSize
 
-    query = query.Limit(pageSize).Offset(offset)
-    
-    err := query.Find(&allArticle).Error
-    if err != nil {
-        return nil, 0, errors.ERR_GET_DATA
-    }
+	query = query.Limit(pageSize).Offset(offset)
 
-    sort.Slice(allArticle, func(i, j int) bool {
-        return allArticle[j].TotalLike > allArticle[i].TotalLike
-    })
+	err := query.Find(&allArticle).Error
+	if err != nil {
+		return nil, 0, errors.ERR_GET_DATA
+	}
 
-    for i := 0; i < len(allArticle); i++ {
-        articleVm := domain.ConvertFromModelToArticleRes(allArticle[i])
+	sort.Slice(allArticle, func(i, j int) bool {
+		return allArticle[j].TotalLike > allArticle[i].TotalLike
+	})
 
-        totalLikes, err := ar.GetTotalLikes(allArticle[i].ID)
-        if err != nil {
-            return nil, 0, err
-        }
+	for i := 0; i < len(allArticle); i++ {
+		articleVm := domain.ConvertFromModelToArticleRes(allArticle[i])
 
-        totalLikesLastTwoWeeks, err := ar.GetTotalLikesLastTwoWeeks(allArticle[i].ID)
-        if err != nil {
-            return nil, 0, err
-        }
+		totalLikes, err := ar.GetTotalLikes(allArticle[i].ID)
+		if err != nil {
+			return nil, 0, err
+		}
 
-        articleVm.TotalLike = totalLikes
-        articleVm.TotalLike= totalLikesLastTwoWeeks
+		totalLikesLastTwoWeeks, err := ar.GetTotalLikesLastTwoWeeks(allArticle[i].ID)
+		if err != nil {
+			return nil, 0, err
+		}
 
-        resAllArticle = append(resAllArticle, *articleVm)
-    }
+		articleVm.TotalLike = totalLikes
+		articleVm.TotalLike = totalLikesLastTwoWeeks
 
-    var allItems int64
-    query.Count(&allItems)
+		resAllArticle = append(resAllArticle, *articleVm)
+	}
 
-    return resAllArticle, int(allItems), nil
+	var allItems int64
+	query.Count(&allItems)
+
+	return resAllArticle, int(allItems), nil
 }
 
 func (ar *articleRepository) GetArticle(id string) (response.Article, error) {
@@ -98,25 +98,25 @@ func (ar *articleRepository) GetArticle(id string) (response.Article, error) {
 }
 
 func (ar *articleRepository) GetTotalLikes(SourceId uint) (uint, error) {
-    var count int64
-    if err := ar.db.Model(&models.Like{}).Where("source_id = ?", SourceId).Count(&count).Error; err != nil {
-        return 0, err
-    }
-    return uint(count), nil
+	var count int64
+	if err := ar.db.Model(&models.Like{}).Where("source_id = ?", SourceId).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return uint(count), nil
 }
 
 func (ar *articleRepository) GetTotalLikesLastTwoWeeks(SourceId uint) (uint, error) {
-    var count int64
-    twoWeeksAgo := time.Now().Add(-2 * 7 * 24 * time.Hour)
+	var count int64
+	twoWeeksAgo := time.Now().Add(-2 * 7 * 24 * time.Hour)
 
-    if err := ar.db.Model(&models.Like{}).
-        Where("source_id = ?", SourceId).
-        Where("created_at > ?", twoWeeksAgo).
-        Count(&count).Error; err != nil {
-        return 0, err
-    }
+	if err := ar.db.Model(&models.Like{}).
+		Where("source_id = ?", SourceId).
+		Where("created_at > ?", twoWeeksAgo).
+		Count(&count).Error; err != nil {
+		return 0, err
+	}
 
-    return uint(count), nil
+	return uint(count), nil
 }
 
 func (ar *articleRepository) UpdateArticle(id string, input request.Article) (response.Article, error) {
@@ -128,8 +128,15 @@ func (ar *articleRepository) UpdateArticle(id string, input request.Article) (re
 
 	if input.Title != "" {
 		articleData.Title = input.Title
-	} else if input.Content != "" {
+	}
+	if input.Content != "" {
 		articleData.Content = input.Content
+	}
+	if input.FilesId != nil {
+		articleData.FilesId = input.FilesId
+	}
+	if input.Status != "" {
+		articleData.Status = input.Status
 	}
 
 	if err = ar.db.Save(&articleData).Error; err != nil {

@@ -31,10 +31,13 @@ func (as *ArticleService) CreateArticle(data *request.Article) (response.Article
 	if data.Title == "" {
 		return response.Article{}, errors.ERR_NAME_IS_EMPTY
 	}
+	if data.Status == "" {
+		return response.Article{}, errors.ERR_STATUS_IS_EMPTY
+	}
 
 	res, err := as.articleRepository.CreateArticle(data)
 	if err != nil {
-		return response.Article{}, errors.ERR_REGISTER_USER_DATABASE
+		return response.Article{}, errors.ERR_CREATE_ARTICLE_DATABASE
 	}
 
 	return res, nil
