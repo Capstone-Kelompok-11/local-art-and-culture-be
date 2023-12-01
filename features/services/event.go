@@ -11,6 +11,7 @@ import (
 type IEventService interface {
 	CreateEvent(data *request.Event) (response.Event, error)
 	GetAllEvent(nameFilter, startDate, endDate string, page, pageSize int) ([]response.Event, int, error)
+	GetAllAvailableEvent(nameFilter, startDate, endDate string, page, pageSize int) ([]response.Event, int, error)
 	GetEvent(id string) (response.Event, error)
 	UpdateEvent(id string, input request.Event) (response.Event, error)
 	DeleteEvent(id string) (response.Event, error)
@@ -47,6 +48,14 @@ func (er *EventService) CreateEvent(data *request.Event) (response.Event, error)
 
 func (er *EventService) GetAllEvent(nameFilter, startDate, endDate string, page, pageSize int) ([]response.Event, int, error) {
 	res, allItems, err := er.eventRepository.GetAllEvent(nameFilter, startDate, endDate, page, pageSize)
+	if err != nil {
+		return nil, 0, errors.ERR_GET_DATA
+	}
+	return res, allItems, nil
+}
+
+func (er *EventService) GetAllAvailableEvent(nameFilter, startDate, endDate string, page, pageSize int) ([]response.Event, int, error) {
+	res, allItems, err := er.eventRepository.GetAllAvailableEvent(nameFilter, startDate, endDate, page, pageSize)
 	if err != nil {
 		return nil, 0, errors.ERR_GET_DATA
 	}

@@ -40,6 +40,8 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_GET_ADMIN_BAD_REQUEST_ID:
 		return http.StatusNotFound
+	case ERR_GET_CATEGORY_BAD_REQUEST_TYPE:
+		return http.StatusNotFound
 	case ERR_GET_USER_BAD_REQUEST_ID:
 		return http.StatusBadRequest
 	case ERR_GET_PAYMENT_BAD_REQUEST_ID:

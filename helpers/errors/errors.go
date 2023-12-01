@@ -16,6 +16,7 @@ var (
 	ERR_PASSWORD_IS_EMPTY                     = errors.New("password is empty")
 	ERR_PHONE_NUMBER_IS_EMPTY                 = errors.New("phone number is empty")
 	ERR_GET_ADMIN_BAD_REQUEST_ID              = errors.New("can't find any admin with this id")
+	ERR_GET_CATEGORY_BAD_REQUEST_TYPE         = errors.New("can't find any category with this type")
 	ERR_GET_USER_BAD_REQUEST_ID               = errors.New("can't find any user with this id")
 	ERR_DELETE_ADMIN                          = errors.New("can't delete this admin")
 	ERR_DELETE_USER                           = errors.New("can't delete this user")

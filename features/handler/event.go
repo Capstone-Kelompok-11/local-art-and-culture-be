@@ -4,6 +4,7 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	"strconv"
 
 	"github.com/labstack/echo"
 )
@@ -33,6 +34,41 @@ func (pr *EventHandler) GetAllEvent(c echo.Context) error {
 	page, pageSize := 1, 10
 
 	res, allItems, err := pr.eventService.GetAllEvent(nameFilter, startDate, endDate, page, pageSize)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+
+	currentPage, allPages := pr.eventService.CalculatePaginationValues(page, pageSize, allItems)
+	nextPage := pr.eventService.GetNextPage(currentPage, allPages)
+	prevPage := pr.eventService.GetPrevPage(currentPage)
+
+	responseData := map[string]interface{}{
+		"data": res,
+		"pagination": map[string]int{
+			"currentPage": currentPage,
+			"nextPage":    nextPage,
+			"prevPage":    prevPage,
+			"allPages":    allPages,
+		},
+	}
+
+	return response.NewSuccessResponse(c, responseData)
+}
+
+func (pr *EventHandler) GetAllAvailableEvent(c echo.Context) error {
+	nameFilter := c.QueryParam("name")
+	startDate := c.QueryParam("startDate")
+	endDate := c.QueryParam("endDate")
+	page, err := strconv.Atoi(c.QueryParam("page"))
+	if err != nil {
+	   page = 1
+	}
+	pageSize, err := strconv.Atoi(c.QueryParam("pageSize"))
+	if err != nil {
+	   pageSize = 10
+	}
+
+	res, allItems, err := pr.eventService.GetAllAvailableEvent(nameFilter, startDate, endDate, page, pageSize)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

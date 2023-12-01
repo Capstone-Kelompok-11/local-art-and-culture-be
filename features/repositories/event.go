@@ -14,6 +14,7 @@ import (
 type IEventRepository interface {
 	CreateEvent(data *request.Event) (response.Event, error)
 	GetAllEvent(nameFilter, startDate, endDate string, page, pageSize int) ([]response.Event, int, error)
+	GetAllAvailableEvent(nameFilter, startDate, endDate string, page, pageSize int) ([]response.Event, int, error)
 	GetEvent(id string) (response.Event, error)
 	UpdateEvent(id string, input request.Event) (response.Event, error)
 	DeleteEvent(id string) (response.Event, error)
@@ -33,7 +34,7 @@ func (er *eventRepository) CreateEvent(data *request.Event) (response.Event, err
 	if err != nil {
 		return response.Event{}, err
 	}
-	err = er.db.Preload("Category").Preload("Creator").First(&dataEvent, "id = ?", dataEvent.ID).Error
+	err = er.db.Preload("Category").Preload("Creator").Preload("Guest").First(&dataEvent, "id = ?", dataEvent.ID).Error
 	return *domain.ConvertFromModelToEventRes(*dataEvent), nil
 }
 
@@ -41,7 +42,7 @@ func (er *eventRepository) GetAllEvent(nameFilter, startDate, endDate string, pa
     var allEvent []models.Event
     var resAllEvent []response.Event
 
-    query := er.db.Preload("Category").Preload("Creator")
+    query := er.db.Preload("Category").Preload("Creator").Preload("Guest")
     if nameFilter != "" {
         query = query.Where("event_name LIKE ?", "%"+nameFilter+"%")
     }
@@ -80,6 +81,52 @@ func (er *eventRepository) GetAllEvent(nameFilter, startDate, endDate string, pa
     return resAllEvent, int(allItems), nil
 }
 
+func (er *eventRepository) GetAllAvailableEvent(nameFilter, startDate, endDate string, page, pageSize int) ([]response.Event, int, error) {
+    var allEvent []models.Event
+    var resAllEvent []response.Event
+
+    query := er.db.Preload("Category").Preload("Creator").Preload("Guest")
+
+    if nameFilter != "" {
+        query = query.Where("event_name LIKE ?", "%"+nameFilter+"%")
+    }
+
+    if startDate != "" && endDate != "" {
+        startDateTime, err := time.Parse("2006-01-02", startDate)
+        if err != nil {
+            return nil, 0, err
+        }
+
+        endDateTime, err := time.Parse("2006-01-02", endDate)
+        if err != nil {
+            return nil, 0, err
+        }
+
+        query = query.Where("from_date BETWEEN ? AND ?", startDateTime, endDateTime)
+    }
+
+    today := time.Now()
+	query = query.Where("to_date >= ?", today)
+
+    offset := (page - 1) * pageSize
+    query = query.Limit(pageSize).Offset(offset)
+
+    err := query.Find(&allEvent).Error
+    if err != nil {
+        return nil, 0, err
+    }
+
+    for i := 0; i < len(allEvent); i++ {
+        eventVm := domain.ConvertFromModelToEventRes(allEvent[i])
+        resAllEvent = append(resAllEvent, *eventVm)
+    }
+
+    var allItems int64
+    query.Count(&allItems)
+
+    return resAllEvent, int(allItems), nil
+}
+
 func (er *eventRepository) GetEvent(id string) (response.Event, error) {
 	var eventData models.Event
 	err := er.db.Preload("Category").Preload("Creator").Preload("Guest").First(&eventData, "id = ?", id).Error
@@ -93,7 +140,7 @@ func (er *eventRepository) GetEvent(id string) (response.Event, error) {
 
 func (er *eventRepository) UpdateEvent(id string, input request.Event) (response.Event, error) {
 	eventData := models.Event{}
-	err := er.db.Preload("Category").Preload("Creator").First(&eventData, "id = ?", id).Error
+	err := er.db.Preload("Category").Preload("Creator").Preload("Guest").First(&eventData, "id = ?", id).Error
 
 	if err != nil {
 		return response.Event{}, errors.ERR_GET_EVENT_BAD_REQUEST_ID
@@ -120,7 +167,7 @@ func (er *eventRepository) UpdateEvent(id string, input request.Event) (response
 func (er *eventRepository) DeleteEvent(id string) (response.Event, error) {
 	eventData := models.Event{}
 	res := response.Event{}
-	find := er.db.Preload("Category").Preload("Creator").First(&eventData, "id = ?", id).Error
+	find := er.db.Preload("Category").Preload("Creator").Preload("Guest").First(&eventData, "id = ?", id).Error
 	if find == nil {
 		res = *domain.ConvertFromModelToEventRes(eventData)
 	}

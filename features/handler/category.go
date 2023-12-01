@@ -45,6 +45,15 @@ func (ca *CategoryHandler) GetCategory(c echo.Context) error {
 	return response.NewSuccessResponse(c, res)
 }
 
+func (ca *CategoryHandler) GetTypeCategory(c echo.Context) error {
+	Type := c.Param("Type")
+	res, err := ca.categoryService.GetTypeCategory(Type)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	return response.NewSuccessResponse(c, res)
+}
+
 func (ca *CategoryHandler) UpdateCategory(c echo.Context) error {
 	id := c.Param("id")
 	var input request.Category

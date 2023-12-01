@@ -16,6 +16,7 @@ func EventRoute(e *echo.Echo, db *gorm.DB) {
 
 	e.POST("/event", handler.CreateEvent)
 	e.GET("/event", handler.GetAllEvent)
+	e.GET("/event/home", handler.GetAllAvailableEvent)
 	e.GET("/event/:id", handler.GetEvent)
 	e.PUT("/event/:id", handler.UpdateEvent)
 	e.DELETE("/event/:id", handler.DeleteEvent)
