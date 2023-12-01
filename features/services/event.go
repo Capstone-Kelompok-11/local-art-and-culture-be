@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
@@ -30,12 +31,15 @@ func NewEventService(repo repositories.IEventRepository) *EventService {
 
 func (er *EventService) CreateEvent(data *request.Event) (response.Event, error) {
 	if data.EventName == "" {
+		fmt.Println(data)
 		return response.Event{}, errors.ERR_NAME_IS_EMPTY
 	}
 	if data.EventDescription == "" {
+		fmt.Println(data)
 		return response.Event{}, errors.ERR_DESCRIPTION_IS_EMPTY
 	}
 	if data.FromDate.IsZero() || data.ToDate.IsZero() {
+		fmt.Println(data)
 		return response.Event{}, errors.ERR_EVENT_DATE_IS_EMPTY
 	}
 
@@ -43,6 +47,7 @@ func (er *EventService) CreateEvent(data *request.Event) (response.Event, error)
 	if err != nil {
 		return response.Event{}, errors.ERR_CREATE_EVENT_DATABASE
 	}
+	fmt.Println(data)
 	return res, nil
 }
 

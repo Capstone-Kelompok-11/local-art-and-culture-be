@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
@@ -22,8 +23,10 @@ func (pr *EventHandler) CreateEvent(c echo.Context) error {
 	c.Bind(&input)
 	res, err := pr.eventService.CreateEvent(&input)
 	if err != nil {
+		fmt.Println(input)
 		return response.NewErrorResponse(c, err)
 	}
+	fmt.Println(input)
 	return response.NewSuccessResponse(c, res)
 }
 
