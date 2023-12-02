@@ -35,6 +35,6 @@ func Route(db *gorm.DB) *echo.Echo {
 	TransactionRoute(e, db)
 	TransactionDetailRoute(e, db)
 	FilesRoute(e, db)
-	ChatbotRoute(e)
+	ChatbotRoute(e, db)
 	return e
 }
