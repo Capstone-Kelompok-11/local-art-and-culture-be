@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"io"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
@@ -19,6 +20,17 @@ func NewProductHandler(iProductService services.IProductService) *ProductHandler
 func (pr *ProductHandler) CreateProduct(c echo.Context) error {
 	var input request.Product
 	c.Bind(&input)
+	file, err := c.FormFile("file")
+	if file != nil {
+		src, err := file.Open()
+		if err != nil {
+			return response.NewErrorResponse(c, err)
+		}
+		defer src.Close()
+
+		fileBytes, err := io.ReadAll(src)
+		input.File = fileBytes
+	}
 	res, err := pr.productService.CreateProduct(&input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)

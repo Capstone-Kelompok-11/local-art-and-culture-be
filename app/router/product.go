@@ -11,7 +11,8 @@ import (
 
 func ProductRoute(e *echo.Echo, db *gorm.DB) {
 	repository := repositories.NewProductRepository(db)
-	service := services.NewProductService(repository)
+	categoryRepository := repositories.NewCategoryRepository(db)
+	service := services.NewProductService(repository, categoryRepository)
 	handler := handler.NewProductHandler(service)
 
 	e.POST("/product", handler.CreateProduct)
