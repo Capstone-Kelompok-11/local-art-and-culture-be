@@ -13,7 +13,7 @@ import (
 )
 
 type IProductService interface {
-	CreateProduct(data *request.Product) (response.Product, error)
+	CreateProduct(data *request.Product) ([]response.Product, error)
 	GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error)
 	GetTrendingProduct(nameFilter string, page, pageSize int) ([]response.Products, int, error)
 	GetProduct(id string) (response.Product, error)
