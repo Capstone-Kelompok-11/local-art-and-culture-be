@@ -8,6 +8,6 @@ type Product struct {
 	Status      string  `json:"status" form:"status"`
 	CategoryId  uint    `json:"categoryId" form:"categoryId"`
 	CreatorId   uint    `json:"creatorId" form:"creatorId"`
-	Category    string
-	File        []byte `json:"file" form:"file"`
+	Category    string  `json:"category"`
+	File        []byte  `json:"file" form:"file"`
 }
