@@ -9,15 +9,20 @@ import (
 	"strconv"
 
 	"strings"
+	"math"
 )
 
 type IProductService interface {
-	CreateProduct(data *request.Product) ([]response.Product, error)
-	GetAllProduct(nameFilter string) ([]response.Product, error)
+	CreateProduct(data *request.Product) (response.Product, error)
+	GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error)
+	GetTrendingProduct(nameFilter string, page, pageSize int) ([]response.Products, int, error)
 	GetProduct(id string) (response.Product, error)
 	UpdateProduct(id string, input request.Product) (response.Product, error)
 	DeleteProduct(id string) (response.Product, error)
-	getCategoryId(category string) uint
+	CalculatePaginationValues(page, pageSize, allItmes int) (int, int)
+	GetNextPage(currentPage, allPages int) int
+	GetPrevPage(currentPage int) int
+  getCategoryId(category string) uint
 }
 
 type ProductService struct {
@@ -96,13 +101,22 @@ func validation(data request.Product) error {
 	return nil
 }
 
-func (pr *ProductService) GetAllProduct(nameFilter string) ([]response.Product, error) {
-	res, err := pr.productRepository.GetAllProduct(nameFilter)
-	if err != nil {
-		return nil, errors.ERR_GET_DATA
-	}
-	return res, nil
+func (pr *ProductService) GetAllProduct(nameFilter string, page, pageSize int) ([]response.Product, int, error) {
+    res, allItems, err := pr.productRepository.GetAllProduct(nameFilter, page, pageSize)
+    if err != nil {
+        return nil, 0, err
+    }
+    return res, allItems, nil
 }
+
+func (pr *ProductService) GetTrendingProduct(nameFilter string, page, pageSize int) ([]response.Products, int, error) {
+    res, allItems, err := pr.productRepository.GetTrendingProduct(nameFilter, page, pageSize)
+    if err != nil {
+        return nil, 0, err
+    }
+    return res, allItems, nil
+}
+
 
 func (pr *ProductService) GetProduct(id string) (response.Product, error) {
 	if id == "" {
@@ -135,4 +149,33 @@ func (pr *ProductService) DeleteProduct(id string) (response.Product, error) {
 		return response.Product{}, err
 	}
 	return res, nil
+}
+
+func (pr *ProductService) CalculatePaginationValues(page, pageSize, allItmes int) (int, int) {
+	pageInt := page
+	if pageInt <= 0 {
+		pageInt = 1
+	}
+
+	allPages := int(math.Ceil(float64(allItmes) / float64(pageSize)))
+
+	if pageInt > allPages {
+		pageInt = allPages
+	}
+
+	return pageInt, allPages
+}
+
+func (pr *ProductService) GetNextPage(currentPage, allPages int) int {
+	if currentPage < allPages {
+		return currentPage + 1
+	}
+	return allPages
+}
+
+func (pr *ProductService) GetPrevPage(currentPage int) int {
+	if currentPage > 1 {
+		return currentPage - 1
+	}
+	return 1
 }

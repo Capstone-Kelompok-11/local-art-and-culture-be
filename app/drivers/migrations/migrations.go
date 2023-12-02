@@ -26,4 +26,5 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.Guest{})
 	db.AutoMigrate(&models.Rating{})
 	db.AutoMigrate(&models.Wishlist{})
+	db.AutoMigrate(&models.Files{})
 }

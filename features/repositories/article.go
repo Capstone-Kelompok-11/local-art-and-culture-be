@@ -14,12 +14,13 @@ import (
 
 type IArticleRepository interface {
 	CreateArticle(data *request.Article) (response.Article, error)
+	GetTrendingArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error)
 	GetAllArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error)
 	GetArticle(id string) (response.Article, error)
 	UpdateArticle(id string, input request.Article) (response.Article, error)
 	DeleteArticle(id string) (response.Article, error)
-	GetTotalLikes(SourceId uint) (uint, error)
-	GetTotalLikesLastTwoWeeks(SourceId uint) (uint, error)
+	GetTotalLikes(SourceId uint, SourceStr string) (uint, error) 
+	GetTotalLikesLastTwoWeeks(SourceId uint, SourceStr string) (uint, error)
 }
 
 type articleRepository struct {
@@ -40,9 +41,9 @@ func (ar *articleRepository) CreateArticle(data *request.Article) (response.Arti
 	return *domain.ConvertFromModelToArticleRes(*dataArticle), nil
 }
 
-func (ar *articleRepository) GetAllArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error) {
-	var allArticle []models.Article
-	var resAllArticle []response.Article
+func (ar *articleRepository) GetTrendingArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error) {
+    var allArticle []models.Article
+    var resAllArticle []response.Article
 
 	query := ar.db.Preload("Admin").Preload("Like")
 
@@ -52,12 +53,13 @@ func (ar *articleRepository) GetAllArticle(nameFilter string, page, pageSize int
 
 	offset := (page - 1) * pageSize
 
-	query = query.Limit(pageSize).Offset(offset)
-
-	err := query.Find(&allArticle).Error
-	if err != nil {
-		return nil, 0, errors.ERR_GET_DATA
-	}
+    query = query.Limit(pageSize).Offset(offset)
+    
+    twoWeeksAgo := time.Now().Add(-2 * 7 * 24 * time.Hour)
+    err := query.Where("created_at >= ?", twoWeeksAgo).Find(&allArticle).Error
+    if err != nil {
+        return nil, 0, errors.ERR_GET_DATA
+    }
 
 	sort.Slice(allArticle, func(i, j int) bool {
 		return allArticle[j].TotalLike > allArticle[i].TotalLike
@@ -65,27 +67,74 @@ func (ar *articleRepository) GetAllArticle(nameFilter string, page, pageSize int
 
 	for i := 0; i < len(allArticle); i++ {
 		articleVm := domain.ConvertFromModelToArticleRes(allArticle[i])
-
-		totalLikes, err := ar.GetTotalLikes(allArticle[i].ID)
+	
+		totalLikes, err := ar.GetTotalLikes(allArticle[i].ID, "article")
 		if err != nil {
 			return nil, 0, err
 		}
-
-		totalLikesLastTwoWeeks, err := ar.GetTotalLikesLastTwoWeeks(allArticle[i].ID)
+	
+		totalLikesLastTwoWeeks, err := ar.GetTotalLikesLastTwoWeeks(allArticle[i].ID, "article")
 		if err != nil {
 			return nil, 0, err
 		}
-
+	
 		articleVm.TotalLike = totalLikes
 		articleVm.TotalLike = totalLikesLastTwoWeeks
 
+		if totalLikes == 0 {
+			articleVm.Like = nil
+		}
+
+		var filteredLikes []response.Like
+   		 for _, like := range articleVm.Like {
+        if like.SourceStr == "article" {
+            filteredLikes = append(filteredLikes, like)
+        	}
+    	}
+   		articleVm.Like = filteredLikes
+	
+		resAllArticle = append(resAllArticle, *articleVm)
+	}	
+
+    var allItems int64
+    query.Count(&allItems)
+
+		// sort by like
+		sort.Slice(resAllArticle, func(i, j int) bool {
+			return resAllArticle[i].TotalLike > resAllArticle[j].TotalLike
+		})
+
+    return resAllArticle, int(allItems), nil
+}
+
+func (ar *articleRepository) GetAllArticle(nameFilter string, page, pageSize int) ([]response.Article, int, error) {
+	var allArticle []models.Article
+	var resAllArticle []response.Article
+
+	query := ar.db.Preload("Admin")
+
+	if nameFilter != "" {
+		query = query.Where("title LIKE ?", "%"+nameFilter+"%")
+	}
+
+	offset := (page - 1) * pageSize
+
+	query = query.Limit(pageSize).Offset(offset)
+	
+	err := query.Find(&allArticle).Error
+	if err != nil {
+		return nil, 0, errors.ERR_GET_DATA
+	}
+
+	for i := 0; i < len(allArticle); i++ {
+		articleVm := domain.ConvertFromModelToArticleRes(allArticle[i])
 		resAllArticle = append(resAllArticle, *articleVm)
 	}
 
 	var allItems int64
 	query.Count(&allItems)
 
-	return resAllArticle, int(allItems), nil
+	return resAllArticle, int(allItems) , nil
 }
 
 func (ar *articleRepository) GetArticle(id string) (response.Article, error) {
@@ -97,26 +146,23 @@ func (ar *articleRepository) GetArticle(id string) (response.Article, error) {
 	return *domain.ConvertFromModelToArticleRes(articleData), nil
 }
 
-func (ar *articleRepository) GetTotalLikes(SourceId uint) (uint, error) {
-	var count int64
-	if err := ar.db.Model(&models.Like{}).Where("source_id = ?", SourceId).Count(&count).Error; err != nil {
-		return 0, err
-	}
-	return uint(count), nil
+func (ar *articleRepository) GetTotalLikes(SourceId uint, SourceStr string) (uint, error) {
+    var count int64
+    if err := ar.db.Model(&models.Like{}).Where("source_id = ? AND source_str = ?", SourceId, SourceStr).Count(&count).Error; err != nil {
+        return 0, err
+    }
+    return uint(count), nil
 }
 
-func (ar *articleRepository) GetTotalLikesLastTwoWeeks(SourceId uint) (uint, error) {
-	var count int64
-	twoWeeksAgo := time.Now().Add(-2 * 7 * 24 * time.Hour)
+func (ar *articleRepository) GetTotalLikesLastTwoWeeks(SourceId uint, SourceStr string) (uint, error) {
+    var count int64
 
-	if err := ar.db.Model(&models.Like{}).
-		Where("source_id = ?", SourceId).
-		Where("created_at > ?", twoWeeksAgo).
-		Count(&count).Error; err != nil {
-		return 0, err
-	}
-
-	return uint(count), nil
+    if err := ar.db.Model(&models.Like{}).
+        Where("source_id = ? AND source_str = ?", SourceId, SourceStr).
+        Count(&count).Error; err != nil {
+        return 0, err
+    }
+    return uint(count), nil
 }
 
 func (ar *articleRepository) UpdateArticle(id string, input request.Article) (response.Article, error) {

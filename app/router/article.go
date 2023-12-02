@@ -16,6 +16,7 @@ func ArticleRoute(e *echo.Echo, db *gorm.DB) {
 
 	e.POST("/article", handler.CreateArticle)
 	e.GET("/article", handler.GetAllArticle)
+	e.GET("/article/trending", handler.GetTrendingArticle)
 	e.GET("/article/:id", handler.GetArticle)
 	e.PUT("/article/:id", handler.UpdateArticle)
 	e.DELETE("/article/:id", handler.DeleteArticle)

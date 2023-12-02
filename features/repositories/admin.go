@@ -14,7 +14,7 @@ import (
 type IAdminRepository interface {
 	RegisterAdmin(data *request.SuperAdmin) (response.SuperAdmin, error)
 	LoginAdmin(data *request.SuperAdmin) (response.SuperAdmin, error)
-	GetAllAdmin(nameFilter string) ([]response.SuperAdmin, error)
+	GetAllAdmin(nameFilter string, page, pageSize int) ([]response.SuperAdmin, int, error)
 	GetAdmin(id string) (response.SuperAdmin, error)
 	UpdateAdmin(id string, input request.SuperAdmin) (response.SuperAdmin, error)
 	DeleteAdmin(id string) (response.SuperAdmin, error)
@@ -51,7 +51,7 @@ func (ar *adminRepository) LoginAdmin(data *request.SuperAdmin) (response.SuperA
 	return *domain.ConvertFromModelToAdminRes(*dataAdmin), nil
 }
 
-func (ar *adminRepository) GetAllAdmin(nameFilter string) ([]response.SuperAdmin, error) {
+func (ar *adminRepository) GetAllAdmin(nameFilter string, page, pageSize int) ([]response.SuperAdmin, int, error){
 	var allAdmin []models.SuperAdmin
 	var resAllAdmin []response.SuperAdmin
 
@@ -59,17 +59,25 @@ func (ar *adminRepository) GetAllAdmin(nameFilter string) ([]response.SuperAdmin
 	if nameFilter != "" {
 		query = query.Where("name LIKE ?", "%"+nameFilter+"%")
 	}
+
+	offset := (page - 1) * pageSize
+
+	query = query.Limit(pageSize).Offset(offset)
 	
 	err := query.Find(&allAdmin).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	for i := 0; i < len(allAdmin); i++ {
 		adminVm := domain.ConvertFromModelToAdminRes(allAdmin[i])
 		resAllAdmin = append(resAllAdmin, *adminVm)
 	}
-	return resAllAdmin, nil
+
+	var allItems int64
+	query.Count(&allItems)
+
+	return resAllAdmin, int(allItems), nil
 }
 
 func (ar *adminRepository) GetAdmin(id string) (response.SuperAdmin, error) {

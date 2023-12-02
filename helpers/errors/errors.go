@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	ERR_EMAIL_IS_EMPTY                        = errors.New("email is empty")
+	ERR_IMAGE_IS_EMPTY                        = errors.New("image is empty")
 	ERR_PRICE_IS_EMPTY                        = errors.New("price is empty")
 	ERR_COMMENT_IS_EMPTY                      = errors.New("comment is empty")
 	ERR_DESCRIPTION_IS_EMPTY                  = errors.New("description is empty")

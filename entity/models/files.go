@@ -6,6 +6,5 @@ type Files struct {
 	gorm.Model
 	SourceId  uint
 	SourceStr string
-	Url       string
-	Filename  string
+	Image     string
 }
