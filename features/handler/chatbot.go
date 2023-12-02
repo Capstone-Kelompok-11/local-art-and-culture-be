@@ -6,7 +6,6 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
-	"strconv"
 
 	"github.com/labstack/echo"
 )
@@ -38,14 +37,8 @@ func (ch *ChatbotHandler) Chatbot(c echo.Context) error {
 	return response.NewSuccessResponse(c, res)
 }
 
-func (ch *ChatbotHandler) GetChatbot(c echo.Context) error {
-	idString := c.Param("id")
-	id, err := strconv.ParseUint(idString, 10, 64)
-	if err != nil {
-		return response.NewErrorResponse(c, err)
-	}
-
-	res, err := ch.save.GetChatbot(uint(id))
+func (ch *ChatbotHandler) GetAllChatbot(c echo.Context) error {
+	res, err := ch.save.GetAllChatbot(1)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

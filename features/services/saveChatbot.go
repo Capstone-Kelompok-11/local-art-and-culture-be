@@ -9,7 +9,7 @@ import (
 
 type ISaveService interface {
 	SaveChatbot(data models.SaveChatbot) (response.SaveChatbot, error)
-	GetChatbot(UserId uint) (response.SaveChatbot, error)
+	GetAllChatbot(UserId uint) ([]*response.SaveChatbot, error)
 }
 
 type SaveService struct {
@@ -35,14 +35,14 @@ func (sv *SaveService) SaveChatbot(data models.SaveChatbot) (response.SaveChatbo
 	return res, nil
 }
 
-func (sv *SaveService) GetChatbot(UserId uint) (response.SaveChatbot, error) {
+func (sv *SaveService) GetAllChatbot(UserId uint) ([]*response.SaveChatbot, error) {
 	if UserId == 0 {
-		return response.SaveChatbot{}, errors.ERR_GET_SAVE_BAD_REQUEST_ID
+		return []*response.SaveChatbot{}, errors.ERR_GET_SAVE_BAD_REQUEST_ID
 	}
 
-	res, err := sv.saveRepository.GetChatbot(UserId)
+	res, err := sv.saveRepository.GetAllChatbot(UserId)
 	if err != nil {
-		return response.SaveChatbot{}, errors.ERR_GET_DATA
+		return []*response.SaveChatbot{}, errors.ERR_GET_DATA
 	}
 	return res, nil
 }

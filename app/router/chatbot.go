@@ -17,5 +17,5 @@ func ChatbotRoute(e *echo.Echo, db *gorm.DB) {
 	handler := handler.NewChatbotHandler(service, serviceSave)
 
 	e.POST("/chatbot", handler.Chatbot)
-	e.GET("/chatbot/:id", handler.GetChatbot)
+	e.GET("/chatbot", handler.GetAllChatbot)
 }

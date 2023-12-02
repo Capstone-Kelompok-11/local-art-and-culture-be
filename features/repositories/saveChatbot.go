@@ -10,7 +10,7 @@ import (
 
 type ISaveRepository interface {
 	SaveChatbot(data models.SaveChatbot) (response.SaveChatbot, error)
-	GetChatbot(UserId uint) (response.SaveChatbot, error)
+	GetAllChatbot(UserId uint) ([]*response.SaveChatbot, error)
 }
 
 type saveRepository struct {
@@ -31,11 +31,16 @@ func (sv *saveRepository) SaveChatbot(data models.SaveChatbot) (response.SaveCha
 	return *domain.ConvertFromModelToSaveRes(*dataSave), nil
 }
 
-func (sv *saveRepository) GetChatbot(UserId uint) (response.SaveChatbot, error) {
-	var saveData models.SaveChatbot
-	err := sv.db.First(&saveData, "user_id = ?", UserId).Error
+func (sv *saveRepository) GetAllChatbot(UserId uint) ([]*response.SaveChatbot, error) {
+	var saveData []models.SaveChatbot
+
+
+	err := sv.db.Find(&saveData, "user_id = ?", UserId).Error
 	if err != nil {
-		return response.SaveChatbot{}, err
+		return nil, err
 	}
-	return *domain.ConvertFromModelToSaveRes(saveData), nil
+
+	resAllChat := domain.ListConvertFromModelToSaveRes(saveData)
+
+	return resAllChat, nil
 }
