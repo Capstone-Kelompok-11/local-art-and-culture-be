@@ -10,7 +10,7 @@ jobs:
     steps: 
     - uses: actions/checkout@v3
     - name: docker build
-      run: docker build -t peacechopath/lokasani:1.1.0 .
+      run: docker image prune -a && docker build -t peacechopath/lokasani:1.1.0 .
     - name: docker login
       uses: docker/login-action@v3
       with: 
