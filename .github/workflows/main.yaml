@@ -41,7 +41,7 @@ jobs:
           StrictHostKeyChecking=no
         END
     - name: login ec2, docker pull and running container
-      run: ssh staging 'docker rm -f $(docker ps -a -q) && docker pull peacechopath/lokasani:1.1.0 && docker run -d -e OPEN_AI_KEY=${{secret.OPEN_AI_KEY}} -p 8080:8080 --name development peacechopath/lokasani:1.1.0'
+      run: ssh staging 'docker rm -f $(docker ps -a -q) && docker pull peacechopath/lokasani:1.1.0 && docker run -d -e OPEN_AI_KEY=${{secrets.OPEN_AI_KEY}} -p 8080:8080 --name development peacechopath/lokasani:1.1.0'
 
 
 
