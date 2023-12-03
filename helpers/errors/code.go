@@ -8,6 +8,10 @@ func GetCodeError(err error) int {
 	switch err {
 	case ERR_EMAIL_IS_EMPTY:
 		return http.StatusBadRequest
+	case ERR_ADDRESS_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_LOCATION_IS_EMPTY:
+		return http.StatusBadRequest
 	case ERR_IMAGE_IS_EMPTY:
 		return http.StatusBadRequest
 	case ERR_RATING_IS_EMPTY:
@@ -78,6 +82,8 @@ func GetCodeError(err error) int {
 		return http.StatusNotFound
 	case ERR_DELETE_ROLE:
 		return http.StatusInternalServerError
+	case ERR_DELETE_ADDRESS:
+		return http.StatusInternalServerError
 	case ERR_TITLE_IS_EMPTY:
 		return http.StatusBadRequest
 	case ERR_CONTENT_IS_EMPTY:
@@ -95,6 +101,8 @@ func GetCodeError(err error) int {
 	case ERR_DELETE_CREATOR:
 		return http.StatusInternalServerError
 	case ERR_CREATE_CREATOR_DATABASE:
+		return http.StatusInternalServerError
+	case ERR_CREATE_ADDRESS_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_CREATE_TICKET_DATABASE:
 		return http.StatusInternalServerError

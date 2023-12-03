@@ -9,7 +9,7 @@ type Creator struct {
 	PhoneNumber string `gorm:"unique;not null"`
 	UserId      uint   `gorm:"not null"`
 	RoleId      uint   `gorm:"not null"`
-	AddressId   *uint
+	AddressId   uint
 	Users       Users    `gorm:"foreignKey:UserId"`
 	Role       Role     `gorm:"foreignKey:RoleId"`
 	Addresses   *Address `gorm:"foreignKey:AddressId"`
