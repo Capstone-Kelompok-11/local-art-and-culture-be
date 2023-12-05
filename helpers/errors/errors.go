@@ -73,4 +73,5 @@ var (
 	ERR_CREATE_FILES_DATABASE                 = errors.New("failed to upload new files to database")
 	ERR_SOURCE_IS_EMPTY                       = errors.New("source is empty`")
 	ERR_CATEGORY_NOT_FOUND                    = errors.New("category not found")
+	ERR_INVALID_PAYLOAD                       = errors.New("invalid payload")
 )

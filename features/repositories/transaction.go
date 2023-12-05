@@ -7,6 +7,7 @@ import (
 	"lokasani/entity/response"
 	"time"
 
+	"lokasani/helpers/consts"
 	"lokasani/helpers/errors"
 
 	"gorm.io/gorm"
@@ -31,6 +32,7 @@ func NewTransactionRepository(db *gorm.DB) *transactionRepository {
 func (ar *transactionRepository) CreateTransaction(data *request.Transaction) (response.Transaction, error) {
 	dataTransaction := domain.ConvertFromTransactionReqToModel(*data)
 	dataTransaction.TransactionDate = time.Now()
+	dataTransaction.Status = consts.OrderStatusUnpaid
 
 	dataTransaction.PaymentMethodId = getPaymentMethod(ar.db, data.PaymentMethodId, "payment")
 	dataTransaction.ShippingMethodId = getPaymentMethod(ar.db, data.ShippingMethodId, "shipping")

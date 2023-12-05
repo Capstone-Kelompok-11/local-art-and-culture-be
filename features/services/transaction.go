@@ -5,6 +5,7 @@ import (
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
 	"lokasani/helpers/errors"
+	"lokasani/helpers/midtrans"
 )
 
 type ITransactionService interface {
@@ -25,9 +26,6 @@ func NewTransactionService(repo repositories.ITransactionRepository) *Transactio
 }
 
 func (rs *TransactionService) CreateTransaction(data *request.Transaction) (response.Transaction, error) {
-	if data.Status == "" {
-		return response.Transaction{}, errors.ERR_STATUS_IS_EMPTY
-	}
 	if data.TransactionDate.IsZero() {
 		return response.Transaction{}, errors.ERR_EVENT_DATE_IS_EMPTY
 	}
@@ -48,6 +46,8 @@ func (rs *TransactionService) CreateTransaction(data *request.Transaction) (resp
 	// 	transactionDetailRes = append(transactionDetailRes, result)
 	// }
 	// res.TransactionDetail = transactionDetailRes
+	res.Total = 10000
+	midtrans.Payment(&res)
 
 	return res, nil
 }
