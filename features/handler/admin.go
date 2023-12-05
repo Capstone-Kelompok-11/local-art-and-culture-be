@@ -4,8 +4,10 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	"lokasani/helpers/errors"
+	"lokasani/helpers/middleware"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type AdminHandler struct {
@@ -35,6 +37,13 @@ func (ah *AdminHandler) LoginAdmin(c echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
+
+	token, err := middleware.CreateToken(uint(res.Id), res.Name, res.Role)
+	if err != nil {
+		return response.NewErrorResponse(c, errors.ERR_TOKEN)
+	}
+
+	middleware.SetTokenCookie(c, token)
 	return response.NewSuccessResponse(c, res)
 }
 

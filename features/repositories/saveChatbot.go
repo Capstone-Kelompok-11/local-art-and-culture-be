@@ -22,7 +22,7 @@ func NewSaveRepository(db *gorm.DB) *saveRepository {
 }
 
 func (sv *saveRepository) SaveChatbot(data models.SaveChatbot) (response.SaveChatbot, error) {
-	dataSave := domain.ConvertFromSaveReqToModel(data.Message, data.Response)
+	dataSave := domain.ConvertFromSaveReqToModel(data.Message, data.Response, data.UserId)
 	err := sv.db.Create(&dataSave).Error
 	if err != nil {
 		return response.SaveChatbot{}, err
@@ -33,7 +33,6 @@ func (sv *saveRepository) SaveChatbot(data models.SaveChatbot) (response.SaveCha
 
 func (sv *saveRepository) GetAllChatbot(UserId uint) ([]*response.SaveChatbot, error) {
 	var saveData []models.SaveChatbot
-
 
 	err := sv.db.Find(&saveData, "user_id = ?", UserId).Error
 	if err != nil {

@@ -44,7 +44,7 @@ func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
 		return response.User{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
 	}
 
-	hashPass, err := bcrypt.Hash(data.Password)
+	hashPass, err := bcrypt.HashPassword(data.Password)
 	if err != nil {
 		return response.User{}, errors.ERR_BCRYPT_PASSWORD
 	}
@@ -55,7 +55,7 @@ func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
 		return response.User{}, errors.ERR_REGISTER_USER_DATABASE
 	}
 
-	token, err := middleware.CreateToken(int(data.Id), data.Email)
+	token, err := middleware.CreateToken(uint(data.Id), data.Email, "")
 	if err != nil {
 		return response.User{}, errors.ERR_TOKEN
 	}
@@ -76,7 +76,7 @@ func (u *UserService) LoginUser(data *request.User) (response.User, error) {
 		return response.User{}, err
 	}
 
-	token, err := middleware.CreateToken(int(data.Id), data.Email)
+	token, err := middleware.CreateToken(uint(data.Id), data.Email, "")
 	if err != nil {
 		return response.User{}, errors.ERR_TOKEN
 	}

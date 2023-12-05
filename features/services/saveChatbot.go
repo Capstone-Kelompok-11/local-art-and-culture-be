@@ -1,6 +1,7 @@
 package services
 
 import (
+	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
@@ -28,7 +29,8 @@ func (sv *SaveService) SaveChatbot(data models.SaveChatbot) (response.SaveChatbo
 		return response.SaveChatbot{}, errors.ERR_RESPONSE_IS_EMPTY
 	}
 
-	res, err := sv.saveRepository.SaveChatbot(data)
+	dataSave := domain.ConvertFromSaveReqToModel(data.Message, data.Response, data.UserId)
+	res, err := sv.saveRepository.SaveChatbot(*dataSave)
 	if err != nil {
 		return response.SaveChatbot{}, errors.ERR_CREATE_SAVE_DATABASE
 	}

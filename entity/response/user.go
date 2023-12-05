@@ -14,7 +14,7 @@ type User struct {
 	Gender		string		`json:"gender"`
 	BirthDate   time.Time 	`json:"birthday"`
 	RoleId 		uint		`json:"roleId"`
-	Role Role
+	Role Role				`json:"role"`
 }
 
 type UserCreatorResponse struct {

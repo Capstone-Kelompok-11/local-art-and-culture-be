@@ -18,6 +18,8 @@ type IUserRepository interface {
 	GetUser(id string) (response.User, error)
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
+	FindByEmail(email string) (*models.Users, error)
+	CreateUser(user *models.Users) (*models.Users, error)
 }
 
 type userRepository struct {
@@ -142,4 +144,21 @@ func (u *userRepository) DeleteUser(id string) (response.User, error) {
 		return response.User{}, err
 	}
 	return res, nil
+}
+
+func (u *userRepository) FindByEmail(email string) (*models.Users, error) {
+	user := models.Users{}
+	res := u.db.Where("email = ?", email).First(&user).Error
+	if res != nil {
+		return nil, res
+	}
+	return &user, nil
+}
+
+func (u *userRepository) CreateUser(user *models.Users) (*models.Users, error) {
+	result := u.db.Create(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return user, nil
 }

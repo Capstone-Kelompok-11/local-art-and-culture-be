@@ -1,13 +1,19 @@
 package handler
 
 import (
+	"fmt"
 	"lokasani/app/drivers/config"
 	"lokasani/entity/domain"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	"lokasani/helpers/middleware"
+	"strconv"
 
-	"github.com/labstack/echo"
+	// "lokasani/helpers/middleware"
+	// "strconv"
+
+	"github.com/labstack/echo/v4"
 )
 
 type ChatbotHandler struct {
@@ -27,18 +33,39 @@ func (ch *ChatbotHandler) Chatbot(c echo.Context) error {
 	c.Bind(&input)
 	client := config.OpenAiClient()
 
+	userID, _, _, err := middleware.ExtractToken(c)
+
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	input.UserId = userID
+
 	res, err := ch.chatbotService.Chatbot(*client, input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
 
-	history := domain.ConvertFromSaveReqToModel(input.Message, res.Message)
+	history := domain.ConvertFromSaveReqToModel(input.Message, res.Message, input.UserId)
 	ch.save.SaveChatbot(*history)
 	return response.NewSuccessResponse(c, res)
 }
 
+var userID uint
+
 func (ch *ChatbotHandler) GetAllChatbot(c echo.Context) error {
-	res, err := ch.save.GetAllChatbot(1)
+	userID, _, _, err := middleware.ExtractToken(c)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	fmt.Println(userID)
+	userIDString := strconv.FormatUint(uint64(userID), 10)
+
+	userIDUint, err := strconv.ParseUint(userIDString, 10, 64)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+
+	res, err := ch.save.GetAllChatbot(uint(userIDUint))
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

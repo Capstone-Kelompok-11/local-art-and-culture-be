@@ -84,7 +84,7 @@ func (er *EventService) UpdateEvent(id string, input request.Event) (response.Ev
 	}
 	res, err := er.eventRepository.UpdateEvent(id, input)
 	if err != nil {
-		return response.Event{}, err
+		return response.Event{}, errors.ERR_UPDATE_DATA
 	}
 	return res, nil
 }

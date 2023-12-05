@@ -3,16 +3,19 @@ package routes
 import (
 	"os"
 
+	"github.com/go-playground/validator"
 	"github.com/joho/godotenv"
-	"github.com/labstack/echo/middleware"
-
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
 )
 
 func Route(db *gorm.DB) *echo.Echo {
 	godotenv.Load(".env")
 	e := echo.New()
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+
 	eJwt := e.Group("/")
 	eJwt.Use(middleware.JWT([]byte(os.Getenv("SECRET_JWT"))))
 	RoleRoute(e, db)
@@ -37,4 +40,10 @@ func Route(db *gorm.DB) *echo.Echo {
 	FilesRoute(e, db)
 	ChatbotRoute(e, db)
 	return e
+}
+
+func InitRoutes(e *echo.Echo, db *gorm.DB, validator *validator.Validate) {
+	v1 := e.Group("", middleware.Logger())
+
+	AuthGoogleRoute(v1, db, validator)
 }

@@ -5,11 +5,11 @@ import (
 	"lokasani/entity/response"
 )
 
-func ConvertFromSaveReqToModel(message, response string) *models.SaveChatbot {
+func ConvertFromSaveReqToModel(message, response string, userId uint) *models.SaveChatbot {
 	return &models.SaveChatbot{
 		Message:  message,
 		Response: response,
-		UserId:   1,
+		UserId:   userId,
 	}
 }
 
