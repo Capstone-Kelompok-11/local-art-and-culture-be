@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 func AuthMiddleware(roles ...string) echo.MiddlewareFunc {
@@ -16,7 +16,7 @@ func AuthMiddleware(roles ...string) echo.MiddlewareFunc {
 
 			_, ok := claims["role"].(string)
 			if !ok {
-				return c.JSON(http.StatusForbidden, "Role not found in token claims")
+				return c.JSON(http.StatusForbidden, "role not found in token claims")
 			}
 
 			for _, allowedRole := range roles {
@@ -25,7 +25,7 @@ func AuthMiddleware(roles ...string) echo.MiddlewareFunc {
 				}
 			}
 
-			return c.JSON(http.StatusForbidden, "Unauthorized")
+			return c.JSON(http.StatusForbidden, "unauthorized")
 		}
 	}
 }

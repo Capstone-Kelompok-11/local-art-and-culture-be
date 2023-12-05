@@ -52,3 +52,16 @@ func ConvertFromModelToUsersRes(data models.Users) *response.Users {
 		BirthDate:   data.BirthDate,
 	}
 }
+
+func UserCreateRequestToUserDomain(request request.User) *models.Users {
+	return &models.Users{
+		FirstName: request.FirstName,
+		LastName:  request.LastName,
+		Email:     request.Email,
+		PhoneNumber:   request.PhoneNumber,
+		NIK:           request.NIK,
+		Gender:        request.Gender,
+		BirthDate:     request.BirthDate,
+		RoleId:        request.RoleId, 
+	}
+}
