@@ -11,12 +11,12 @@ import (
 )
 
 func Route(db *gorm.DB) *echo.Echo {
-	godotenv.Load(".env")
+	godotenv.Load("")
 	e := echo.New()
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 
-	eJwt := e.Group("/")
+	eJwt := e.Group("")
 	eJwt.Use(middleware.JWT([]byte(os.Getenv("SECRET_JWT"))))
 	RoleRoute(e, db)
 	AdminRoute(e, db)

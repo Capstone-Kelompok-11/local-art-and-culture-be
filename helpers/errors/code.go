@@ -150,6 +150,8 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_SOURCE_IS_EMPTY:
 		return http.StatusBadRequest
+	case ERR_CATEGORY_NOT_FOUND:
+		return http.StatusNotFound
 	default:
 		return http.StatusInternalServerError
 	}

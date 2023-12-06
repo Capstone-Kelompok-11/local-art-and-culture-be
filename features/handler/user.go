@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
@@ -27,6 +26,14 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(e, err)
 	}
+
+	token, err := middleware.CreateToken(uint(res.Id), res.Email, "")
+	if err != nil {
+		return response.NewErrorResponse(e, errors.ERR_TOKEN)
+	}
+	res.Token = token
+
+	middleware.SetTokenCookie(e, token)
 	return response.NewSuccessResponse(e, res)
 }
 
@@ -38,17 +45,17 @@ func (u *UserHandler) LoginUsers(e echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(e, err)
 	}
-	fmt.Println(res.Id)
+
 	token, err := middleware.CreateToken(uint(res.Id), res.Email, "")
 	if err != nil {
 		return response.NewErrorResponse(e, errors.ERR_TOKEN)
 	}
+	res.Token = token
 
 	middleware.SetTokenCookie(e, token)
 
 	return response.NewSuccessResponse(e, res)
 }
-
 
 func (u *UserHandler) GetAllUser(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
@@ -69,7 +76,7 @@ func (u *UserHandler) GetAllUser(c echo.Context) error {
 			"currentPage": currentPage,
 			"nextPage":    nextPage,
 			"prevPage":    prevPage,
-			"allPages":  allPages,
+			"allPages":    allPages,
 		},
 	}
 

@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -20,7 +19,6 @@ func CreateToken(userId uint, name, role string) (string, error) {
     claims["name"] = name
     claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
     claims["role"] = role
-    fmt.Println(claims)
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
     return token.SignedString([]byte(os.Getenv("SECRET_JWT")))
 }
@@ -44,31 +42,24 @@ func SetTokenCookie(e echo.Context, token string) {
 }
 
 func ExtractToken(e echo.Context) (uint, string, string, error) {
-    user := e.Get("user").(*jwt.Token)
-    if user.Valid {
-        claims := user.Claims.(jwt.MapClaims)
+	user := e.Get("user").(*jwt.Token)
+	if user.Valid {
+		claims := user.Claims.(jwt.MapClaims)
+		userIDFloat, ok := claims["id"].(float64)
+		if !ok {
+			return 0, "", "", errors.New("invalid token claims")
+		}
 
-        userIDFloat, ok := claims["id"].(float64)
-        if !ok {
-            return 0, "", "", errors.New("invalid token claims")
-        }
-
-        userID := uint(userIDFloat)
-        name, okName := claims["name"].(string)
-        if !okName {
-            return 0, "", "", errors.New("invalid token claims")
-        }
-
-        role, okRole := claims["role"].(string)
-        if !okRole {
-            return 0, "", "", errors.New("invalid token claims")
-        }
-
-        e.Set("userID", userID)
-        e.Set("userName", name)
-        e.Set("userRole", role)
-
-        return userID, name, role, nil
-    }
-    return 0, "", "", errors.New("invalid token")
+		userID := uint(userIDFloat)
+		name, okName := claims["name"].(string)
+		if !okName {
+			return 0, "", "", errors.New("invalid token claims")
+		}
+		role, okRole := claims["role"].(string)
+		if !okRole {
+			return 0, "", "", errors.New("invalid token claims")
+		}
+		return userID, name, role, nil
+	}
+	return 0, "", "", errors.New("invalid token")
 }

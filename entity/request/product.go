@@ -1,12 +1,13 @@
 package request
 
 type Product struct {
-	Id			uint	`json:"id"`
-	Name		string	`json:"name"`
-	Price		float64	`json:"price"`
-	Description	string	`json:"description"`
-	Status		string	`json:"status"`
-	//AddressId	uint	`json:"addressId"``
-	CategoryId	uint	`json:"categoryId"`
-	CreatorId	uint	`json:"creatorId"`
+	Id          uint    `json:"id"`
+	Name        string  `json:"name" form:"name"`
+	Price       float64 `json:"price" form:"price"`
+	Description string  `json:"description" form:"description"`
+	Status      string  `json:"status" form:"status"`
+	CategoryId  uint    `json:"categoryId" form:"categoryId"`
+	CreatorId   uint    `json:"creatorId" form:"creatorId"`
+	Category    string  `json:"category"`
+	File        []byte  `json:"file" form:"file"`
 }

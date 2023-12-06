@@ -51,16 +51,7 @@ func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
 
 	data.Password = hashPass
 	res, err := u.UserRepo.RegisterUser(data)
-	if err != nil {
-		return response.User{}, errors.ERR_REGISTER_USER_DATABASE
-	}
 
-	token, err := middleware.CreateToken(uint(data.Id), data.Email, "")
-	if err != nil {
-		return response.User{}, errors.ERR_TOKEN
-	}
-
-	res.Token = token
 	return res, nil
 }
 
@@ -75,7 +66,7 @@ func (u *UserService) LoginUser(data *request.User) (response.User, error) {
 	if err != nil {
 		return response.User{}, err
 	}
-
+	
 	token, err := middleware.CreateToken(uint(res.Id), res.Email, "")
 	if err != nil {
 		return response.User{}, errors.ERR_TOKEN
@@ -88,7 +79,7 @@ func (u *UserService) LoginUser(data *request.User) (response.User, error) {
 func (u *UserService) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error) {
 	err, allItems, res := u.UserRepo.GetAllUser(nameFilter, page, pageSize)
 	if err != nil {
-		return err, 0,  nil
+		return err, 0, nil
 	}
 	return nil, allItems, res
 }
