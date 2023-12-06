@@ -50,8 +50,6 @@ func (ch *ChatbotHandler) Chatbot(c echo.Context) error {
 	return response.NewSuccessResponse(c, res)
 }
 
-var userID uint
-
 func (ch *ChatbotHandler) GetAllChatbot(c echo.Context) error {
 	userID, _, _, err := middleware.ExtractToken(c)
 	if err != nil {

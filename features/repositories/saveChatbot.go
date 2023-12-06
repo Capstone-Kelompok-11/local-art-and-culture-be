@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"fmt"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/response"
@@ -22,14 +23,17 @@ func NewSaveRepository(db *gorm.DB) *saveRepository {
 }
 
 func (sv *saveRepository) SaveChatbot(data models.SaveChatbot) (response.SaveChatbot, error) {
+
 	dataSave := domain.ConvertFromSaveReqToModel(data.Message, data.Response, data.UserId)
+	fmt.Println(dataSave.UserId)
 	err := sv.db.Create(&dataSave).Error
 	if err != nil {
-		return response.SaveChatbot{}, err
+	   fmt.Println("error saving chatbot data:", err)
+	   return response.SaveChatbot{}, err
 	}
-
+	fmt.Println("userId:", data.UserId)
 	return *domain.ConvertFromModelToSaveRes(*dataSave), nil
-}
+ } 
 
 func (sv *saveRepository) GetAllChatbot(UserId uint) ([]*response.SaveChatbot, error) {
 	var saveData []models.SaveChatbot

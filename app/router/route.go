@@ -42,7 +42,8 @@ func Route(db *gorm.DB) *echo.Echo {
 	return e
 }
 
-func InitRoutes(e *echo.Echo, db *gorm.DB, validator *validator.Validate) {
+func InitRoutes(db *gorm.DB, validator *validator.Validate) {
+	e := echo.New()
 	v1 := e.Group("", middleware.Logger())
 
 	AuthGoogleRoute(v1, db, validator)

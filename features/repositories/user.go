@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"fmt"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
@@ -52,6 +53,7 @@ func (u *userRepository) LoginUser(data *request.User) (response.User, error) {
 		return response.User{}, errors.ERR_WRONG_PASSWORD
 	}
 	err = u.db.Preload("Role").First(&dataUser, "id = ?", dataUser.ID).Error
+	fmt.Println(dataUser)
 	return *domain.ConvertFromModelToUserRes(*dataUser), nil
 }
 
@@ -106,6 +108,9 @@ func (u *userRepository) UpdateUser(id string, input request.User) (response.Use
 	} 
 	if input.LastName != "" {
 		userData.LastName = input.LastName
+	} 
+	if input.Username != "" {
+		userData.Username = input.Username
 	} 
 	if input.Email != "" {
 		userData.Email = input.Email

@@ -14,15 +14,15 @@ import (
 )
 
 func CreateToken(userId uint, name, role string) (string, error) {
-	godotenv.Load()
-	claims := jwt.MapClaims{}
-	claims["id"] = userId
-	claims["name"] = name
-	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
-	claims["role"] = role
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(os.Getenv("SECRET_JWT")))
+    godotenv.Load()
+    claims := jwt.MapClaims{}
+    claims["id"] = userId
+    claims["name"] = name
+    claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
+    claims["role"] = role
+    fmt.Println(claims)
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+    return token.SignedString([]byte(os.Getenv("SECRET_JWT")))
 }
 
 func JWTMiddleware() echo.MiddlewareFunc {
@@ -46,8 +46,8 @@ func SetTokenCookie(e echo.Context, token string) {
 func ExtractToken(e echo.Context) (uint, string, string, error) {
     user := e.Get("user").(*jwt.Token)
     if user.Valid {
-		fmt.Println(1)
         claims := user.Claims.(jwt.MapClaims)
+
         userIDFloat, ok := claims["id"].(float64)
         if !ok {
             return 0, "", "", errors.New("invalid token claims")
@@ -58,13 +58,16 @@ func ExtractToken(e echo.Context) (uint, string, string, error) {
         if !okName {
             return 0, "", "", errors.New("invalid token claims")
         }
-		fmt.Println(1)
-		role, okRole := claims["role"].(string)
-		if !okRole {
+
+        role, okRole := claims["role"].(string)
+        if !okRole {
             return 0, "", "", errors.New("invalid token claims")
         }
-		fmt.Println(userID)
-		fmt.Println(user)
+
+        e.Set("userID", userID)
+        e.Set("userName", name)
+        e.Set("userRole", role)
+
         return userID, name, role, nil
     }
     return 0, "", "", errors.New("invalid token")

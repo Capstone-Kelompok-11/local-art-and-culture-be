@@ -6,6 +6,7 @@ type User struct {
 	Id        	uint   		`json:"id"`
 	FirstName 	string 		`json:"firstName"`
 	LastName  	string 		`json:"lastName"`
+	Username	string		`json:"username"`
 	Email     	string 		`json:"email"`
 	Token     	string 		`json:"token"`
 	// AddressID   *uint     `json:"addressID"`
@@ -21,6 +22,7 @@ type UserCreatorResponse struct {
 	Id        	uint   		`json:"id"`
 	FirstName 	string 		`json:"firstName"`
 	LastName  	string 		`json:"lastName"`
+	Username	string		`json:"username"`
 	Email     	string 		`json:"email"`
 	Token     	string 		`json:"token"`
 	// AddressID   *uint     `json:"addressID"`
@@ -36,6 +38,7 @@ type Users struct {
 	Id        	uint   		`json:"id"`
 	FirstName 	string 		`json:"firstName"`
 	LastName  	string 		`json:"lastName"`
+	Username	string		`json:"username"`
 	Email     	string 		`json:"email"`
 	Token     	string 		`json:"token"`
 	// AddressID   *uint     `json:"addressID"`

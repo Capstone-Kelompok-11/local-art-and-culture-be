@@ -15,6 +15,7 @@ func ConvertFromUserReqToModel(data request.User) *models.Users {
 		},
 		FirstName:   data.FirstName,
 		LastName:    data.LastName,
+		Username: 	 data.Username,
 		Email:       data.Email,
 		Password:    data.Password,
 		PhoneNumber: data.PhoneNumber,
@@ -30,6 +31,7 @@ func ConvertFromModelToUserRes(data models.Users) *response.User {
 		Id:          data.ID,
 		FirstName:   data.FirstName,
 		LastName:    data.LastName,
+		Username: 	 data.Username,
 		Email:       data.Email,
 		PhoneNumber: data.PhoneNumber,
 		NIK: 		 data.NIK,
@@ -45,6 +47,7 @@ func ConvertFromModelToUsersRes(data models.Users) *response.Users {
 		Id:          data.ID,
 		FirstName:   data.FirstName,
 		LastName:    data.LastName,
+		Username: 	 data.Username,
 		Email:       data.Email,
 		PhoneNumber: data.PhoneNumber,
 		NIK: 		 data.NIK,
@@ -55,13 +58,14 @@ func ConvertFromModelToUsersRes(data models.Users) *response.Users {
 
 func UserCreateRequestToUserDomain(request request.User) *models.Users {
 	return &models.Users{
-		FirstName: request.FirstName,
-		LastName:  request.LastName,
-		Email:     request.Email,
-		PhoneNumber:   request.PhoneNumber,
-		NIK:           request.NIK,
-		Gender:        request.Gender,
-		BirthDate:     request.BirthDate,
-		RoleId:        request.RoleId, 
+		FirstName: 		request.FirstName,
+		LastName:  		request.LastName,
+		Username: 	 	request.Username,
+		Email:     		request.Email,
+		PhoneNumber:   	request.PhoneNumber,
+		NIK:           	request.NIK,
+		Gender:        	request.Gender,
+		BirthDate:     	request.BirthDate,
+		RoleId:        	request.RoleId, 
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -62,4 +63,23 @@ func (ah *TransactionHandler) DeleteTransaction(c echo.Context) error {
 		return response.NewErrorResponse(c, err)
 	}
 	return response.NewSuccessResponse(c, res)
+}
+
+func (pr *TransactionHandler) GetTransactionReport(c echo.Context) error {
+    startDate, err := time.Parse("2006-01-02", c.QueryParam("start_date"))
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+
+    endDate, err := time.Parse("2006-01-02", c.QueryParam("end_date"))
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+
+    transactions, err := pr.transactionService.GetTransactionReport(startDate, endDate)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+
+    return response.NewSuccessResponse(c, transactions)
 }

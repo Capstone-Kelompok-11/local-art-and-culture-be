@@ -6,7 +6,6 @@ import (
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
 	"lokasani/helpers/errors"
-	"math"
 )
 
 type IEventService interface {
@@ -23,6 +22,11 @@ type IEventService interface {
 
 type EventService struct {
 	eventRepository repositories.IEventRepository
+}
+
+// CalculatePaginationValues implements IEventService.
+func (*EventService) CalculatePaginationValues(page int, pageSize int, allItmes int) (int, int) {
+	panic("unimplemented")
 }
 
 func NewEventService(repo repositories.IEventRepository) *EventService {
@@ -98,21 +102,6 @@ func (er *EventService) DeleteEvent(id string) (response.Event, error) {
 		return response.Event{}, err
 	}
 	return res, nil
-}
-
-func (er *EventService) CalculatePaginationValues(page, pageSize, allItmes int) (int, int) {
-	pageInt := page
-	if pageInt <= 0 {
-		pageInt = 1
-	}
-
-	allPages := int(math.Ceil(float64(allItmes) / float64(pageSize)))
-
-	if pageInt > allPages {
-		pageInt = allPages
-	}
-
-	return pageInt, allPages
 }
 
 func (er *EventService) GetNextPage(currentPage, allPages int) int {
