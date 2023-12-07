@@ -16,3 +16,5 @@ type User struct {
 	RoleId 		uint		`json:"roleId"`
 	Role Role
 }
+
+
