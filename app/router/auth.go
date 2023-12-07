@@ -11,12 +11,12 @@ import (
 )
 
 func AuthGoogleRoute(e *echo.Group, db *gorm.DB, validate *validator.Validate) {
-
 	RoleRepo := repositories.NewRoleRepository(db)
 	UserRepo := repositories.NewUsersRepository(db)
 	AuthService := services.NewAuthService(RoleRepo, UserRepo, validate)
 	AuthHandler := handler.NewAuthHandler(*AuthService)
 
-	e.GET("/google-auth", AuthHandler.OauthGoogleHandler)
-	e.GET("/callback-google-auth", AuthHandler.OauthCallbackGoogleHandler)
+	v1 := e.Group("")
+	v1.GET("/google-auth", AuthHandler.OauthGoogleHandler)
+	v1.GET("/callback-google-auth", AuthHandler.OauthCallbackGoogleHandler)
 }

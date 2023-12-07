@@ -66,13 +66,24 @@ func (ah *TransactionHandler) DeleteTransaction(c echo.Context) error {
 }
 
 func (pr *TransactionHandler) GetTransactionReport(c echo.Context) error {
-    startDate, err := time.Parse("2006-01-02", c.QueryParam("start_date"))
+    startDateStr := c.QueryParam("start_date")
+    endDateStr := c.QueryParam("end_date")
+
+    if startDateStr == "" || endDateStr == "" {
+        return response.NewErrorResponse(c, echo.ErrBadGateway)
+    }
+
+    startDate, err := time.Parse("2006-01-02", startDateStr)
     if err != nil {
         return response.NewErrorResponse(c, err)
     }
 
-    endDate, err := time.Parse("2006-01-02", c.QueryParam("end_date"))
+    endDate, err := time.Parse("2006-01-02", endDateStr)
     if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+
+    if endDate.Before(startDate) {
         return response.NewErrorResponse(c, err)
     }
 

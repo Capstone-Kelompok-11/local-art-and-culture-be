@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func Route(db *gorm.DB) *echo.Echo {
+func Route(db *gorm.DB) *echo.Echo  {
 	godotenv.Load("")
 	e := echo.New()
 	e.Use(middleware.Recover())
@@ -43,8 +43,8 @@ func Route(db *gorm.DB) *echo.Echo {
 }
 
 func InitRoutes(db *gorm.DB, validator *validator.Validate) {
-	e := echo.New()
-	v1 := e.Group("", middleware.Logger())
+    e := echo.New()
+    v1 := e.Group("") 
 
-	AuthGoogleRoute(v1, db, validator)
+    AuthGoogleRoute(v1, db, validator)
 }

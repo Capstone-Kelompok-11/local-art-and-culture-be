@@ -78,11 +78,11 @@ func (auth *AuthServiceImpl) OauthCallbackGoogleHandler(c echo.Context) error {
 	GetResponseEmail, errMessage := auth.AuthService.GoogleCallbackService(c)
 
 	if errMessage != nil {
-		if strings.Contains(errMessage.Error(), "State is not match") {
+		if strings.Contains(errMessage.Error(), "state is not match") {
 			return response.NewErrorResponse(c, errMessage)
 		}
 
-		if strings.Contains(errMessage.Error(), "User denied access login") {
+		if strings.Contains(errMessage.Error(), "user denied access login") {
 			return response.NewErrorResponse(c, errMessage)
 		}
 
