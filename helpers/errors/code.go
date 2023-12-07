@@ -8,6 +8,8 @@ func GetCodeError(err error) int {
 	switch err {
 	case ERR_EMAIL_IS_EMPTY:
 		return http.StatusBadRequest
+	case ERR_LOGIN:
+		return http.StatusBadRequest
 	case ERR_MESSAGE_IS_EMPTY:
 		return http.StatusBadRequest
 	case ERR_RESPONSE_IS_EMPTY:

@@ -31,6 +31,7 @@ type UserCreatorResponse struct {
 	Gender		string		`json:"gender"`
 	BirthDate   time.Time 	`json:"birthday"`
 	RoleId 		uint		`json:"roleId"`
+	Role Role				`json:"role"`
 	Creator     Creator		`json:"creator"`
 }
 

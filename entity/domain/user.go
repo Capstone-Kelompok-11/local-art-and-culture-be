@@ -69,3 +69,20 @@ func UserCreateRequestToUserDomain(request request.User) *models.Users {
 		RoleId:        	request.RoleId, 
 	}
 }
+
+// func ConvertFromModelToUserCRes(data models.Users) *response.UserCreatorResponse {
+// 	return &response.UserCreatorResponse{
+// 		Id:          data.ID,
+// 		FirstName:   data.FirstName,
+// 		LastName:    data.LastName,
+// 		Username: 	 data.Username,
+// 		Email:       data.Email,
+// 		PhoneNumber: data.PhoneNumber,
+// 		NIK: 		 data.NIK,
+// 		Gender: 	 data.Gender,
+// 		BirthDate:   data.BirthDate,
+// 		RoleId: 	 data.RoleId,
+// 		Role: 		 *ConvertFromModelToRoleRes(data.Role),
+// 		Creator: 	*ConvertFromModelToCreatorRes(data.Cre),
+// 	}
+// }

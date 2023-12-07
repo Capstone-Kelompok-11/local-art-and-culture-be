@@ -27,11 +27,11 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 		return response.NewErrorResponse(e, err)
 	}
 
-	token, err := middleware.CreateToken(uint(res.Id), res.Email, "")
+	token, err := middleware.CreateToken(uint(res.Id), uint(res.RoleId), uint(res.Id), res.Email, "")
 	if err != nil {
 		return response.NewErrorResponse(e, errors.ERR_TOKEN)
 	}
-	res.Token = token
+	res.Users.Token = token
 
 	middleware.SetTokenCookie(e, token)
 	return response.NewSuccessResponse(e, res)
@@ -46,11 +46,11 @@ func (u *UserHandler) LoginUsers(e echo.Context) error {
 		return response.NewErrorResponse(e, err)
 	}
 
-	token, err := middleware.CreateToken(uint(res.Id), res.Email, "")
+	token, err := middleware.CreateToken(uint(res.Users.Id), uint(res.RoleId), uint(res.Id), res.Email, "")
 	if err != nil {
 		return response.NewErrorResponse(e, errors.ERR_TOKEN)
 	}
-	res.Token = token
+	res.Users.Token = token
 
 	middleware.SetTokenCookie(e, token)
 

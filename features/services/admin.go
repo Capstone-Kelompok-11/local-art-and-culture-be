@@ -6,7 +6,6 @@ import (
 	"lokasani/features/repositories"
 	"lokasani/helpers/bcrypt"
 	"lokasani/helpers/errors"
-	"lokasani/helpers/middleware"
 	"math"
 )
 
@@ -53,12 +52,12 @@ func (as *AdminService) RegisterAdmin(data *request.SuperAdmin) (response.SuperA
 	if err != nil {
 		return response.SuperAdmin{}, errors.ERR_REGISTER_USER_DATABASE
 	}
-	token, err := middleware.CreateToken(uint(data.Id), data.Name, data.Role)
+	// token, err := middleware.CreateToken(uint(data.Id), uint(data.RoleId), data.Name, data.Role)
 
-	if err != nil {
-		return response.SuperAdmin{}, errors.ERR_TOKEN
-	}
-	res.Token = token
+	// if err != nil {
+	// 	return response.SuperAdmin{}, errors.ERR_TOKEN
+	// }
+	// res.Token = token
 	return res, nil
 }
 
@@ -74,13 +73,13 @@ func (as *AdminService) LoginAdmin(data *request.SuperAdmin) (response.SuperAdmi
 		return response.SuperAdmin{}, err
 	}
 
-	data.Role = "superadmin"
-	token, err := middleware.CreateToken(uint(data.Id), data.Name, data.Role)
+	// data.Role = "superadmin"
+	// token, err := middleware.CreateToken(uint(data.Id), uint(res.RoleId), data.Name, data.Role)
 
-	if err != nil {
-		return response.SuperAdmin{}, errors.ERR_TOKEN
-	}
-	res.Token = token
+	// if err != nil {
+	// 	return response.SuperAdmin{}, errors.ERR_TOKEN
+	// }
+	// res.Token = token
 	return res, nil
 }
 

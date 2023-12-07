@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
@@ -13,8 +12,8 @@ import (
 )
 
 type IUserRepository interface {
-	RegisterUser(data *request.User) (response.User, error)
-	LoginUser(data *request.User) (response.User, error)
+	RegisterUser(data *request.User) (response.Creators, error)
+	LoginUser(data *request.User) (response.Creators, error)
 	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
 	GetUser(id string) (response.User, error)
 	UpdateUser(id string, input request.User) (response.User, error)
@@ -31,30 +30,37 @@ func NewUsersRepository(db *gorm.DB) *userRepository {
 	return &userRepository{db}
 }
 
-func (u *userRepository) RegisterUser(data *request.User) (response.User, error) {
+func (u *userRepository) RegisterUser(data *request.User) (response.Creators, error) {
 	dataUser := domain.ConvertFromUserReqToModel(*data)
 	err := u.db.Create(&dataUser).Error
 	if err != nil {
-		return response.User{}, err
+		return response.Creators{}, err
 	}
-	err = u.db.Preload("Role").First(&dataUser, "id = ?", dataUser.ID).Error
-	return *domain.ConvertFromModelToUserRes(*dataUser), nil
+	var creator models.Creator
+	err = u.db.Preload("Role").Preload("Users", "id = ?", dataUser.ID).First(&creator).Error
+	if err != nil {
+		return response.Creators{}, errors.ERR_LOGIN
+	}
+	return *domain.ConvertFromModelToCreatorsRes(creator), nil
 }
 
-func (u *userRepository) LoginUser(data *request.User) (response.User, error) {
+func (u *userRepository) LoginUser(data *request.User) (response.Creators, error) {
 	dataUser := domain.ConvertFromUserReqToModel(*data)
 	err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
 	if err != nil {
-		return response.User{}, errors.ERR_EMAIL_NOT_FOUND
+		return response.Creators{}, errors.ERR_EMAIL_NOT_FOUND
 	}
 
 	err = bcrypt.CheckPassword(data.Password, dataUser.Password)
 	if err != nil {
-		return response.User{}, errors.ERR_WRONG_PASSWORD
+		return response.Creators{}, errors.ERR_WRONG_PASSWORD
 	}
-	err = u.db.Preload("Role").First(&dataUser, "id = ?", dataUser.ID).Error
-	fmt.Println(dataUser)
-	return *domain.ConvertFromModelToUserRes(*dataUser), nil
+	var creator models.Creator
+	err = u.db.Preload("Role").Preload("Users", "id = ?", dataUser.ID).First(&creator).Error
+	if err != nil {
+		return response.Creators{}, errors.ERR_LOGIN
+	}
+	return *domain.ConvertFromModelToCreatorsRes(creator), nil
 }
 
 func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error) {

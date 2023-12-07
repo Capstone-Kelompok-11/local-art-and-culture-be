@@ -22,5 +22,5 @@ func ChatbotRoute(e *echo.Echo, db *gorm.DB) {
 	eJwt.Use(echojwt.JWT([]byte(os.Getenv("SECRET_JWT"))))
 	
 	eJwt.POST("/chatbot", handler.Chatbot)
-	eJwt.GET("/chatbot", handler.GetAllChatbot)
+	//eJwt.GET("/chatbot", handler.GetAllChatbot)
 }
