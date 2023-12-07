@@ -38,7 +38,7 @@ func (ar *transactionRepository) CreateTransaction(data *request.Transaction) (r
 		dataTransaction.PaymentMethodId = *getPaymentMethod(ar.db, data.PaymentMethodId, "payment")
 	}
 	if dataTransaction.ShippingMethodId == nil {
-		dataTransaction.ShippingMethodId = getPaymentMethod(ar.db, data.ShippingMethodId, "shipping")
+		dataTransaction.ShippingMethodId = getPaymentMethod(ar.db, *data.ShippingMethodId, "shipping")
 	}
 	err := ar.db.Create(&dataTransaction).Error
 	if err != nil {
@@ -117,8 +117,8 @@ func (ar *transactionRepository) UpdateTransaction(id string, input request.Tran
 	if input.PaymentMethodId != 0 {
 		transactionData.PaymentMethodId = input.PaymentMethodId
 	}
-	if input.ShippingMethodId != 0 {
-		transactionData.ShippingMethodId = &input.ShippingMethodId
+	if input.ShippingMethodId != nil {
+		transactionData.ShippingMethodId = input.ShippingMethodId
 	}
 	if !input.TransactionDate.IsZero() {
 		transactionData.TransactionDate = input.TransactionDate
