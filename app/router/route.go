@@ -3,7 +3,6 @@ package routes
 import (
 	"os"
 
-	"github.com/go-playground/validator"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -39,12 +38,6 @@ func Route(db *gorm.DB) *echo.Echo  {
 	TransactionDetailRoute(e, db)
 	FilesRoute(e, db)
 	ChatbotRoute(e, db)
+	AuthGoogleRoute(e, db)
 	return e
-}
-
-func InitRoutes(db *gorm.DB, validator *validator.Validate) {
-    e := echo.New()
-    v1 := e.Group("") 
-
-    AuthGoogleRoute(v1, db, validator)
 }

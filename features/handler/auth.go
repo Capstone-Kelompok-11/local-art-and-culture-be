@@ -11,38 +11,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// type GoogleOauthHandler struct {
-// 	GoogleOauthService *services.GoogleOauthService
-// }
-
-// func NewGoogleOauthHandler(googleOauthService *services.GoogleOauthService) *GoogleOauthHandler {
-// 	return &GoogleOauthHandler{
-// 		GoogleOauthService: googleOauthService,
-// 	}
-// }
-
-// func (h *GoogleOauthHandler) HandleGoogleOauthCallback(c echo.Context) error {
-//     log.Println("Handling Google Oauth Callback")
-//     code := c.QueryParam("code")
-//     if code == "" {
-//         return response.NewErrorResponse(c, echo.ErrBadGateway)
-//     }
-
-//     token, err := h.GoogleOauthService.ExchangeCode(code)
-// 	if err != nil {
-//     	log.Println("Error exchanging code:", err)
-//     	return response.NewErrorResponse(c, echo.ErrInternalServerError)
-// 	}
-
-// 	userInfo, err := h.GoogleOauthService.GetGoogleUserInfo(token.AccessToken)
-// 	if err != nil {
-//     	log.Println("Error getting Google user info:", err)
-//     	return response.NewErrorResponse(c, echo.ErrInternalServerError)
-// 	}
-
-//     return c.JSON(http.StatusOK, response.NewSuccessResponse(c, userInfo))
-// }
-
 type AuthHandler interface {
 	AuthHandler(echo.Context) error
 	OauthGoogleHandler(echo.Context) error

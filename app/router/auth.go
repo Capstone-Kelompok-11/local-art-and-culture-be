@@ -5,18 +5,16 @@ import (
 	"lokasani/features/services"
 	"lokasani/features/repositories"
 
-	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
-func AuthGoogleRoute(e *echo.Group, db *gorm.DB, validate *validator.Validate) {
+func AuthGoogleRoute(e *echo.Echo, db *gorm.DB) {
 	RoleRepo := repositories.NewRoleRepository(db)
 	UserRepo := repositories.NewUsersRepository(db)
-	AuthService := services.NewAuthService(RoleRepo, UserRepo, validate)
+	AuthService := services.NewAuthService(RoleRepo, UserRepo)
 	AuthHandler := handler.NewAuthHandler(*AuthService)
 
-	v1 := e.Group("")
-	v1.GET("/google-auth", AuthHandler.OauthGoogleHandler)
-	v1.GET("/callback-google-auth", AuthHandler.OauthCallbackGoogleHandler)
+	e.GET("/google-auth", AuthHandler.OauthGoogleHandler)
+	e.GET("/callback-google-auth", AuthHandler.OauthCallbackGoogleHandler)
 }

@@ -8,17 +8,17 @@ import (
 	"lokasani/entity/response"
 	"net/http"
 	"net/url"
+	"os"
 
-	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
 
 func SetupGoogleOauth() *oauth2.Config {
 	oauth2GoogleConfig := &oauth2.Config{
-		ClientID: viper.GetString("CLIENT_ID"),
-		ClientSecret: viper.GetString("CLIENT_SECRET"),
-		RedirectURL: viper.GetString("CALLBACK_URL"),
+		ClientID:     os.Getenv("CLIENT_ID"),      
+		ClientSecret: os.Getenv("CLIENT_SECRET"),    
+		RedirectURL:  os.Getenv("CALLBACK_URL"),     
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.profile",
 			"https://www.googleapis.com/auth/userinfo.email",
@@ -31,7 +31,7 @@ func SetupGoogleOauth() *oauth2.Config {
 func GetResponseAccountGoogle(code string, config *oauth2.Config) (*response.UserGoogleInfo, error) {
 	token, errToken := config.Exchange(context.Background(), code)
 	if errToken != nil {
-		return nil, errors.New("Error exchange google")
+		return nil, errors.New("error exchange google")
 	}
 
 	res, errRes := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + url.QueryEscape(token.AccessToken))

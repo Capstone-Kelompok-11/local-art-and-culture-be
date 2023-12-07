@@ -2,56 +2,19 @@ package services
 
 import (
 	"errors"
+	"os"
 
-	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
-	"github.com/spf13/viper"
 
 	"lokasani/entity/domain"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
-	"lokasani/helpers/generate"
-	"lokasani/helpers/oauth"
 	"lokasani/helpers/bcrypt"
+	"lokasani/helpers/generate"
 	"lokasani/helpers/middleware"
+	"lokasani/helpers/oauth"
 )
-
-// type IAuthGoogleService interface {
-// 	ExchangeCode(code string) (*oauth2.Token, error)
-// 	GetGoogleUserInfo(accessToken string) (*response.UserGoogleInfo, error)
-// }
-
-// type GoogleOauthService struct {
-// 	Config *oauth2.Config
-// }
-
-// func NewAuthGoogleService(Config *oauth2.Config) *GoogleOauthService {
-//     return &GoogleOauthService{Config: Config}
-// }
-
-// func (g *GoogleOauthService) ExchangeCode(code string) (*oauth2.Token, error) {
-//     log.Println("Exchanging code:", code)
-//     return g.Config.Exchange(context.Background(), code)
-// }
-
-// func (g *GoogleOauthService) GetGoogleUserInfo(accessToken string) (*response.UserGoogleInfo, error) {
-//     log.Println("Getting user info with access token:", accessToken)
-// 	res, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + url.QueryEscape(accessToken))
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return nil, err
-// 	}
-// 	defer res.Body.Close()
-
-// 	var user *response.UserGoogleInfo
-// 	err = json.NewDecoder(res.Body).Decode(&user)
-// 	if err != nil {
-// 		fmt.Print(err)
-// 		return nil, err
-// 	}
-// 	return user, nil
-// }
 
 type IAuthService interface {
 	GoogleAuthService() string
@@ -61,20 +24,18 @@ type IAuthService interface {
 type AuthService struct {
 	RoleRepo repositories.IRoleRepository
 	UserRepo repositories.IUserRepository
-	validate *validator.Validate
 }
 
-func NewAuthService(role repositories.IRoleRepository, user repositories.IUserRepository, validate *validator.Validate) *AuthService{
+func NewAuthService(role repositories.IRoleRepository, user repositories.IUserRepository) *AuthService{
 	return &AuthService{
 		RoleRepo: role,
 		UserRepo: user,
-		validate: validate,
 	}
 }
 
 func (auth *AuthService) GoogleAuthService() string {
 	googleOauth := oauth.SetupGoogleOauth()
-	url := googleOauth.AuthCodeURL(viper.GetString("STATE_STRING"))
+	url := googleOauth.AuthCodeURL(os.Getenv("STATE_STRING"))
 	return url
 }
 
@@ -85,7 +46,7 @@ func (auth *AuthService) GoogleCallbackService(ctx echo.Context) (*response.Auth
 	StateQuery := ctx.FormValue("state")
 	CodeQuery := ctx.FormValue("code")
 
-	if StateQuery != viper.GetString("STATE_STRING") {
+	if StateQuery != os.Getenv("STATE_STRING") {
 		return nil, errors.New("state does not match")
 	}
 
