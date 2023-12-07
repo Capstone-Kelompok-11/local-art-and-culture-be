@@ -34,8 +34,12 @@ func (ar *transactionRepository) CreateTransaction(data *request.Transaction) (r
 	dataTransaction.TransactionDate = time.Now()
 	dataTransaction.Status = consts.OrderStatusUnpaid
 
-	dataTransaction.PaymentMethodId = getPaymentMethod(ar.db, data.PaymentMethodId, "payment")
-	dataTransaction.ShippingMethodId = getPaymentMethod(ar.db, data.ShippingMethodId, "shipping")
+	if dataTransaction.PaymentMethodId == 0 {
+		dataTransaction.PaymentMethodId = *getPaymentMethod(ar.db, data.PaymentMethodId, "payment")
+	}
+	if dataTransaction.ShippingMethodId == nil {
+		dataTransaction.ShippingMethodId = getPaymentMethod(ar.db, data.ShippingMethodId, "shipping")
+	}
 	err := ar.db.Create(&dataTransaction).Error
 	if err != nil {
 		return response.Transaction{}, err
@@ -43,19 +47,19 @@ func (ar *transactionRepository) CreateTransaction(data *request.Transaction) (r
 	return *domain.ConvertFromModelToTransactionRes(*dataTransaction), nil
 }
 
-func getPaymentMethod(db *gorm.DB, id uint, from string) uint {
+func getPaymentMethod(db *gorm.DB, id uint, from string) *uint {
 	if from == "payment" {
 		var paymentMethod models.Payment
 		if id != 0 {
 			err := db.First(&paymentMethod, "id = ?", id).Error
 			if err != nil {
 				err = db.First(&paymentMethod).Error
-				return paymentMethod.ID
+				return &paymentMethod.ID
 			}
-			return paymentMethod.ID
+			return &paymentMethod.ID
 		} else {
 			db.First(&paymentMethod)
-			return paymentMethod.ID
+			return &paymentMethod.ID
 		}
 	} else {
 		var shippingMethod models.Shipping
@@ -63,12 +67,12 @@ func getPaymentMethod(db *gorm.DB, id uint, from string) uint {
 			err := db.First(&shippingMethod, "id = ?", id).Error
 			if err != nil {
 				err = db.First(&shippingMethod).Error
-				return shippingMethod.ID
+				return &shippingMethod.ID
 			}
-			return shippingMethod.ID
+			return &shippingMethod.ID
 		} else {
 			db.First(&shippingMethod)
-			return shippingMethod.ID
+			return &shippingMethod.ID
 		}
 	}
 }
@@ -114,7 +118,7 @@ func (ar *transactionRepository) UpdateTransaction(id string, input request.Tran
 		transactionData.PaymentMethodId = input.PaymentMethodId
 	}
 	if input.ShippingMethodId != 0 {
-		transactionData.ShippingMethodId = input.ShippingMethodId
+		transactionData.ShippingMethodId = &input.ShippingMethodId
 	}
 	if !input.TransactionDate.IsZero() {
 		transactionData.TransactionDate = input.TransactionDate

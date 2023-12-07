@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
@@ -34,7 +33,7 @@ func (ar *transactionDetailRepository) CreateTransactionDetail(data *request.Tra
 	if err != nil {
 		return response.TransactionDetail{}, err
 	}
-	fmt.Println(data)
+
 	return *domain.ConvertFromModelToTransactionDetailRes(*dataTransactionDetail), nil
 }
 
