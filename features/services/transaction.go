@@ -82,7 +82,7 @@ func (rs *TransactionService) UpdateTransaction(id string, data request.Transact
 	var transactionDetailRes []response.TransactionDetail
 	for i := range data.TransactionDetail {
 		data.TransactionDetail[i].TransactionId = res.Id
-		err, result := rs.transactionDetailRepository.UpdateTransactionDetail(string(data.TransactionDetail[i].Id), data.TransactionDetail[i])
+		err, result := rs.transactionDetailRepository.UpdateTransactionDetail(string(rune(data.TransactionDetail[i].Id)), data.TransactionDetail[i])
 		if err != nil {
 			return res, errors.ERR_CREATE_TRANSACTION_DETAIL
 		}
