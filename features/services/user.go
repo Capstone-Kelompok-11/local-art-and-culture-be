@@ -10,7 +10,7 @@ import (
 )
 
 type IUserService interface {
-	RegisterUser(data *request.User) (response.Creators, error)
+	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.Creators, error)
 	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
 	GetUser(id string) (response.User, error)
@@ -29,23 +29,23 @@ func NewUserService(repo repositories.IUserRepository) *UserService {
 	return &UserService{UserRepo: repo}
 }
 
-func (u *UserService) RegisterUser(data *request.User) (response.Creators, error) {
+func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
 	if data.FirstName == "" {
-		return response.Creators{}, errors.ERR_NAME_IS_EMPTY
+		return response.User{}, errors.ERR_NAME_IS_EMPTY
 	}
 	if data.LastName == "" {
-		return response.Creators{}, errors.ERR_NAME_IS_EMPTY
+		return response.User{}, errors.ERR_NAME_IS_EMPTY
 	}
 	if data.Email == "" {
-		return response.Creators{}, errors.ERR_EMAIL_IS_EMPTY
+		return response.User{}, errors.ERR_EMAIL_IS_EMPTY
 	}
 	if data.PhoneNumber == "" {
-		return response.Creators{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
+		return response.User{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
 	}
 
 	hashPass, err := bcrypt.HashPassword(data.Password)
 	if err != nil {
-		return response.Creators{}, errors.ERR_BCRYPT_PASSWORD
+		return response.User{}, errors.ERR_BCRYPT_PASSWORD
 	}
 
 	data.Password = hashPass

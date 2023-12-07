@@ -32,7 +32,7 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(e, errors.ERR_TOKEN)
 	}
-	res.Users.Token = token
+	res.Token = token
 
 	middleware.SetTokenCookie(e, token)
 	return response.NewSuccessResponse(e, res)

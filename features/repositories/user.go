@@ -12,7 +12,7 @@ import (
 )
 
 type IUserRepository interface {
-	RegisterUser(data *request.User) (response.Creators, error)
+	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.Creators, error)
 	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
 	GetUser(id string) (response.User, error)
@@ -30,37 +30,37 @@ func NewUsersRepository(db *gorm.DB) *userRepository {
 	return &userRepository{db}
 }
 
-func (u *userRepository) RegisterUser(data *request.User) (response.Creators, error) {
+func (u *userRepository) RegisterUser(data *request.User) (response.User, error) {
 	dataUser := domain.ConvertFromUserReqToModel(*data)
 	err := u.db.Create(&dataUser).Error
 	if err != nil {
-		return response.Creators{}, err
+		return response.User{}, err
 	}
-	var creator models.Creator
-	err = u.db.Preload("Role").Preload("Users", "id = ?", dataUser.ID).First(&creator).Error
+	err = u.db.Preload("Role").First(&dataUser, "id = ?", dataUser.ID).Error
 	if err != nil {
-		return response.Creators{}, errors.ERR_LOGIN
+		return response.User{}, errors.ERR_LOGIN
 	}
-	return *domain.ConvertFromModelToCreatorsRes(creator), nil
+	return *domain.ConvertFromModelToUserRes(*dataUser), nil
 }
 
 func (u *userRepository) LoginUser(data *request.User) (response.Creators, error) {
 	dataUser := domain.ConvertFromUserReqToModel(*data)
-	err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
-	if err != nil {
-		return response.Creators{}, errors.ERR_EMAIL_NOT_FOUND
-	}
+    err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
+    if err != nil {
+        return response.Creators{}, errors.ERR_EMAIL_NOT_FOUND
+    }
 
-	err = bcrypt.CheckPassword(data.Password, dataUser.Password)
-	if err != nil {
-		return response.Creators{}, errors.ERR_WRONG_PASSWORD
-	}
-	var creator models.Creator
-	err = u.db.Preload("Role").Preload("Users", "id = ?", dataUser.ID).First(&creator).Error
-	if err != nil {
-		return response.Creators{}, errors.ERR_LOGIN
-	}
-	return *domain.ConvertFromModelToCreatorsRes(creator), nil
+    err = bcrypt.CheckPassword(data.Password, dataUser.Password)
+    if err != nil {
+        return response.Creators{}, errors.ERR_WRONG_PASSWORD
+    }
+    var creator models.Creator
+    err = u.db.Preload("Role").Preload("Users").First(&creator, "user_id = ?", dataUser.ID).Error
+    if err != nil {
+        creator.Users = *dataUser
+        return *domain.ConvertFromModelToCreatorsRes(creator), nil
+    }
+    return *domain.ConvertFromModelToCreatorsRes(creator), nil
 }
 
 func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error) {

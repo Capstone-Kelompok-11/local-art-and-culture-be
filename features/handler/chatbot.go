@@ -1,14 +1,14 @@
 package handler
 
 import (
-	//"fmt"
+	"fmt"
 	"lokasani/app/drivers/config"
 	"lokasani/entity/domain"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
-	// "lokasani/helpers/middleware"
-	// "strconv"
+	"lokasani/helpers/middleware"
+	"strconv"
 
 	// "lokasani/helpers/middleware"
 	// "strconv"
@@ -33,12 +33,12 @@ func (ch *ChatbotHandler) Chatbot(c echo.Context) error {
 	c.Bind(&input)
 	client := config.OpenAiClient()
 
-	// userID, _, _, _, err := middleware.ExtractToken(c)
+	userID, _, _, _, _, err := middleware.ExtractToken(c)
 
-	// if err != nil {
-	// 	return response.NewErrorResponse(c, err)
-	// }
-	// input.UserId = userID
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	input.UserId = userID
 
 	res, err := ch.chatbotService.Chatbot(*client, input)
 	if err != nil {
@@ -50,22 +50,22 @@ func (ch *ChatbotHandler) Chatbot(c echo.Context) error {
 	return response.NewSuccessResponse(c, res)
 }
 
-// func (ch *ChatbotHandler) GetAllChatbot(c echo.Context) error {
-// 	// userID, _, _, err := middleware.ExtractToken(c)
-// 	// if err != nil {
-// 	// 	return response.NewErrorResponse(c, err)
-// 	// }
-// 	// fmt.Println(userID)
-// 	//userIDString := strconv.FormatUint(uint64(userID), 10)
+func (ch *ChatbotHandler) GetAllChatbot(c echo.Context) error {
+	userID, _, _, _, _, err := middleware.ExtractToken(c)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	fmt.Println(userID)
+	userIDString := strconv.FormatUint(uint64(userID), 10)
 
-// 	// userIDUint, err := strconv.ParseUint(userIDString, 10, 64)
-// 	// if err != nil {
-// 	// 	return response.NewErrorResponse(c, err)
-// 	// }
+	userIDUint, err := strconv.ParseUint(userIDString, 10, 64)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
 
-// 	// res, err := ch.save.GetAllChatbot(uint(userIDUint))
-// 	// if err != nil {
-// 	// 	return response.NewErrorResponse(c, err)
-// 	// }
-// 	// return response.NewSuccessResponse(c, res)
-// }
+	res, err := ch.save.GetAllChatbot(uint(userIDUint))
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	return response.NewSuccessResponse(c, res)
+}
