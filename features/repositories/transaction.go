@@ -19,6 +19,7 @@ type ITransactionRepository interface {
 	GetTransaction(id string) (error, response.Transaction)
 	UpdateTransaction(id string, input request.Transaction) (error, response.Transaction)
 	DeleteTransaction(id string) (error, response.Transaction)
+	GetTransactionReport(transactionStartDate, transactionEndDate time.Time) ([]models.Transaction, error) 
 }
 
 type transactionRepository struct {
@@ -142,4 +143,13 @@ func (ar *transactionRepository) DeleteTransaction(id string) (error, response.T
 		return err, response.Transaction{}
 	}
 	return nil, res
+}
+
+func (ar *transactionRepository) GetTransactionReport(transactionStartDate, transactionEndDate time.Time) ([]models.Transaction, error) {
+    var transactions []models.Transaction
+    err := ar.db.Where("transaction_date BETWEEN ? AND ?", transactionStartDate, transactionEndDate).Find(&transactions).Error
+    if err != nil {
+        return nil, err
+    }
+    return transactions, nil
 }

@@ -4,8 +4,10 @@ import (
 	"lokasani/features/handler"
 	"lokasani/features/repositories"
 	"lokasani/features/services"
+	"os"
 
-	"github.com/labstack/echo"
+	echojwt "github.com/labstack/echo-jwt/v4"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
@@ -14,6 +16,9 @@ func LikeRoute(e *echo.Echo, db *gorm.DB) {
 	service := services.NewLikeService(repository)
 	handler := handler.NewLikeHandler(service)
 
-	e.PUT("/like", handler.UpdateLike)
-	e.GET("/like/:sourceId", handler.GetAllLike)
+	eJwt := e.Group("")
+	eJwt.Use(echojwt.JWT([]byte(os.Getenv("SECRET_JWT"))))
+	
+	eJwt.PUT("/like", handler.UpdateLike)
+	eJwt.GET("/like/:sourceId", handler.GetAllLike)
 }

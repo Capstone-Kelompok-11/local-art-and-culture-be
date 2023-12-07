@@ -4,8 +4,10 @@ import (
 	"lokasani/features/handler"
 	"lokasani/features/repositories"
 	"lokasani/features/services"
+	"os"
 
-	"github.com/labstack/echo"
+	echojwt "github.com/labstack/echo-jwt/v4"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
@@ -14,9 +16,12 @@ func CommentRoute(e *echo.Echo, db *gorm.DB) {
 	service := services.NewCommentService(repositories)
 	handler := handler.NewCommentHandler(service)
 
-	e.POST("/comment", handler.CreateComment)
-	e.GET("/comment", handler.GetAllComment)
-	e.GET("/comment/:id", handler.GetComment)
-	e.PUT("/comment/:id", handler.UpdateComment)
-	e.DELETE("/comment/:id", handler.DeleteComment)
+	eJwt := e.Group("")
+	eJwt.Use(echojwt.JWT([]byte(os.Getenv("SECRET_JWT"))))
+	
+	eJwt.POST("/comment", handler.CreateComment)
+	eJwt.GET("/comment", handler.GetAllComment)
+	eJwt.GET("/comment/:id", handler.GetComment)
+	eJwt.PUT("/comment/:id", handler.UpdateComment)
+	eJwt.DELETE("/comment/:id", handler.DeleteComment)
 }
