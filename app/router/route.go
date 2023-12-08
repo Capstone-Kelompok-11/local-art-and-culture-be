@@ -4,17 +4,18 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/labstack/echo/middleware"
-
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
 )
 
-func Route(e *echo.Echo, db *gorm.DB) {
-	godotenv.Load(".env")
-	//e := echo.New()
-	//e.Use(middleware.CORS())
-	eJwt := e.Group("/")
+func Route(db *gorm.DB) *echo.Echo  {
+	godotenv.Load("")
+	e := echo.New()
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+
+	eJwt := e.Group("")
 	eJwt.Use(middleware.JWT([]byte(os.Getenv("SECRET_JWT"))))
 	//eJwt.Use(middleware.CORS())
 	RoleRoute(e, db)
@@ -37,5 +38,7 @@ func Route(e *echo.Echo, db *gorm.DB) {
 	TransactionRoute(e, db)
 	TransactionDetailRoute(e, db)
 	FilesRoute(e, db)
-	ChatbotRoute(e)
+	ChatbotRoute(e, db)
+	AuthGoogleRoute(e, db)
+	return e
 }

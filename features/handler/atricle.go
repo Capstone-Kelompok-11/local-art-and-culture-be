@@ -5,7 +5,7 @@ import (
 	"lokasani/entity/response"
 	"lokasani/features/services"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type ArticleHandler struct {
@@ -17,15 +17,16 @@ func NewArticleHandler(IArticleService services.IArticleService) *ArticleHandler
 }
 
 func (ah *ArticleHandler) CreateArticle(c echo.Context) error {
-	var input request.Article
-	c.Bind(&input)
+    var input request.Article
+    c.Bind(&input)
 
-	res, err := ah.articleService.CreateArticle(&input)
-	if err != nil {
-		return response.NewErrorResponse(c, err)
-	}
-	return response.NewSuccessResponse(c, res)
+    res, err := ah.articleService.CreateArticle(&input)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    return response.NewSuccessResponse(c, res)
 }
+
 
 func (ah *ArticleHandler) GetTrendingArticle(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
@@ -80,16 +81,18 @@ func (ah *ArticleHandler) GetAllArticle(c echo.Context) error {
 }
 
 func (ah *ArticleHandler) GetArticle(c echo.Context) error {
-	id := c.Param("id")
-	res, err := ah.articleService.GetArticle(id)
-	if err != nil {
-		return response.NewErrorResponse(c, err)
-	}
-	return response.NewSuccessResponse(c, res)
+    id := c.Param("id")
+
+    res, err := ah.articleService.GetArticle(id)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    return response.NewSuccessResponse(c, res)
 }
 
 func (ah *ArticleHandler) UpdateArticle(c echo.Context) error {
 	id := c.Param("id")
+
 	var input request.Article
 	c.Bind(&input)
 	res, err := ah.articleService.UpdateArticle(id, input)
@@ -100,10 +103,11 @@ func (ah *ArticleHandler) UpdateArticle(c echo.Context) error {
 }
 
 func (ah *ArticleHandler) DeleteArticle(c echo.Context) error {
-	id := c.Param("id")
-	res, err := ah.articleService.DeleteArticle(id)
-	if err != nil {
-		return response.NewErrorResponse(c, err)
-	}
-	return response.NewSuccessResponse(c, res)
+    delete := c.Param("id")
+
+    res, err := ah.articleService.DeleteArticle(delete)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    return response.NewSuccessResponse(c, res)
 }

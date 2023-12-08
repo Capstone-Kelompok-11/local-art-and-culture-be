@@ -5,7 +5,7 @@ import (
 	"lokasani/entity/response"
 	"lokasani/features/services"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type WishlistHandler struct {

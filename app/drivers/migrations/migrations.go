@@ -27,4 +27,5 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.Rating{})
 	db.AutoMigrate(&models.Wishlist{})
 	db.AutoMigrate(&models.Files{})
+	db.AutoMigrate(&models.SaveChatbot{})
 }

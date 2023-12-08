@@ -6,13 +6,12 @@ import (
 	"lokasani/features/repositories"
 	"lokasani/helpers/bcrypt"
 	"lokasani/helpers/errors"
-	"lokasani/helpers/middleware"
 	"math"
 )
 
 type IUserService interface {
 	RegisterUser(data *request.User) (response.User, error)
-	LoginUser(data *request.User) (response.User, error)
+	LoginUser(data *request.User) (response.Creators, error)
 	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
 	GetUser(id string) (response.User, error)
 	UpdateUser(id string, input request.User) (response.User, error)
@@ -44,51 +43,43 @@ func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
 		return response.User{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
 	}
 
-	hashPass, err := bcrypt.Hash(data.Password)
+	hashPass, err := bcrypt.HashPassword(data.Password)
 	if err != nil {
 		return response.User{}, errors.ERR_BCRYPT_PASSWORD
 	}
 
 	data.Password = hashPass
 	res, err := u.UserRepo.RegisterUser(data)
-	if err != nil {
-		return response.User{}, errors.ERR_REGISTER_USER_DATABASE
-	}
 
-	token, err := middleware.CreateToken(int(data.Id), data.Email)
-	if err != nil {
-		return response.User{}, errors.ERR_TOKEN
-	}
-
-	res.Token = token
 	return res, nil
 }
 
-func (u *UserService) LoginUser(data *request.User) (response.User, error) {
+func (u *UserService) LoginUser(data *request.User) (response.Creators, error) {
 	if data.Email == "" {
-		return response.User{}, errors.ERR_EMAIL_IS_EMPTY
-	} else if data.Password == "" {
-		return response.User{}, errors.ERR_PASSWORD_IS_EMPTY
+		return response.Creators{}, errors.ERR_EMAIL_IS_EMPTY
+	}
+	if data.Password == "" {
+		return response.Creators{}, errors.ERR_PASSWORD_IS_EMPTY
 	}
 
 	res, err := u.UserRepo.LoginUser(data)
 	if err != nil {
-		return response.User{}, err
+		return response.Creators{}, err
 	}
+	
+	// token, err := middleware.CreateToken(uint(res.Id), uint(res.RoleId), res.Email, "")
+	// if err != nil {
+	// 	return response.Creators{}, errors.ERR_TOKEN
+	// }
 
-	token, err := middleware.CreateToken(int(data.Id), data.Email)
-	if err != nil {
-		return response.User{}, errors.ERR_TOKEN
-	}
-
-	res.Token = token
+	// res.Token = token
 	return res, nil
 }
 
 func (u *UserService) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error) {
 	err, allItems, res := u.UserRepo.GetAllUser(nameFilter, page, pageSize)
 	if err != nil {
-		return err, 0,  nil
+		return err, 0, nil
 	}
 	return nil, allItems, res
 }

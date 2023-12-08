@@ -4,8 +4,10 @@ import (
 	"lokasani/features/handler"
 	"lokasani/features/repositories"
 	"lokasani/features/services"
+	"os"
 
-	"github.com/labstack/echo"
+	echojwt "github.com/labstack/echo-jwt/v4"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
@@ -14,9 +16,12 @@ func TicketRoute(e *echo.Echo, db *gorm.DB) {
 	service := services.NewTicketService(repository)
 	handler := handler.NewTicketHandler(service)
 
-	e.POST("/ticket", handler.CreateTicket)
-	e.GET("/ticket", handler.GetAllTicket)
-	e.GET("/ticket/:id", handler.GetTicket)
-	e.PUT("/ticket/:id", handler.UpdateTicket)
-	e.DELETE("/ticket/:id", handler.DeleteTicket)
+	eJwt := e.Group("")
+	eJwt.Use(echojwt.JWT([]byte(os.Getenv("SECRET_JWT"))))
+
+	eJwt.POST("/ticket", handler.CreateTicket)
+	eJwt.GET("/ticket", handler.GetAllTicket)
+	eJwt.GET("/ticket/:id", handler.GetTicket)
+	eJwt.PUT("/ticket/:id", handler.UpdateTicket)
+	eJwt.DELETE("/ticket/:id", handler.DeleteTicket)
 }

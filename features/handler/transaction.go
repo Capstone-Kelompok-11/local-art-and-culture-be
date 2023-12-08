@@ -4,8 +4,9 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	"time"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type TransactionHandler struct {
@@ -62,4 +63,34 @@ func (ah *TransactionHandler) DeleteTransaction(c echo.Context) error {
 		return response.NewErrorResponse(c, err)
 	}
 	return response.NewSuccessResponse(c, res)
+}
+
+func (pr *TransactionHandler) GetTransactionReport(c echo.Context) error {
+    startDateStr := c.QueryParam("start_date")
+    endDateStr := c.QueryParam("end_date")
+
+    if startDateStr == "" || endDateStr == "" {
+        return response.NewErrorResponse(c, echo.ErrBadGateway)
+    }
+
+    startDate, err := time.Parse("2006-01-02", startDateStr)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+
+    endDate, err := time.Parse("2006-01-02", endDateStr)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+
+    if endDate.Before(startDate) {
+        return response.NewErrorResponse(c, err)
+    }
+
+    transactions, err := pr.transactionService.GetTransactionReport(startDate, endDate)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+
+    return response.NewSuccessResponse(c, transactions)
 }

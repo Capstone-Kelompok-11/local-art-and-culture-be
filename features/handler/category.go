@@ -5,7 +5,7 @@ import (
 	"lokasani/entity/response"
 	"lokasani/features/services"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type CategoryHandler struct {
@@ -39,6 +39,15 @@ func (ca *CategoryHandler) GetAllCategory(c echo.Context) error {
 func (ca *CategoryHandler) GetCategory(c echo.Context) error {
 	id := c.Param("id")
 	res, err := ca.categoryService.GetCategory(id)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	return response.NewSuccessResponse(c, res)
+}
+
+func (ca *CategoryHandler) GetTypeCategory(c echo.Context) error {
+	Type := c.Param("Type")
+	res, err := ca.categoryService.GetTypeCategory(Type)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

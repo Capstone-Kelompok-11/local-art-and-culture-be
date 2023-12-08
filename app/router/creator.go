@@ -5,7 +5,7 @@ import (
 	"lokasani/features/repositories"
 	"lokasani/features/services"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
@@ -16,8 +16,8 @@ func CreatorRoute(e *echo.Echo, db *gorm.DB) {
 
 	e.POST("/creator", handler.CreateCreator)
 	e.GET("/creator", handler.GetAllCreator)
+	e.GET("/creator/role/:role", handler.GetAllCreatorByRole)
 	e.GET("/creator/:id", handler.GetCreator)
 	e.PUT("/creator/:id", handler.UpdateCreator)
 	e.DELETE("/creator/:id", handler.DeleteCreator)
 }
-	

@@ -39,3 +39,14 @@ func ConvertFromModelToTransactionRes(data models.Transaction) *response.Transac
 		TransactionDetail: *ConvertFromModelsToTransactionDetailRes(data.TransactionDetail),
 	}
 }
+
+func ConvertModelTransactionsToResponse(transactions []models.Transaction) []response.Transaction {
+    var responseTransactions []response.Transaction
+
+    for _, modelTransaction := range transactions {
+        responseTransaction := ConvertFromModelToTransactionRes(modelTransaction)
+        responseTransactions = append(responseTransactions, *responseTransaction)
+    }
+
+    return responseTransactions
+}

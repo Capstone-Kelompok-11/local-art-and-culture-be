@@ -1,11 +1,13 @@
 package services
 
 import (
+	"lokasani/entity/domain"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
 	"lokasani/helpers/errors"
 	"lokasani/helpers/midtrans"
+	"time"
 )
 
 type ITransactionService interface {
@@ -14,6 +16,7 @@ type ITransactionService interface {
 	GetTransaction(id string) (response.Transaction, error)
 	UpdateTransaction(id string, data request.Transaction) (response.Transaction, error)
 	DeleteTransaction(id string) (response.Transaction, error)
+	GetTransactionReport(transactionStartDate, transactionEndDate time.Time) ([]response.Transaction, error)
 }
 
 type TransactionService struct {
@@ -108,4 +111,14 @@ func (rs *TransactionService) DeleteTransaction(id string) (response.Transaction
 	}
 
 	return res, nil
+}
+
+func (rs *TransactionService) GetTransactionReport(transactionStartDate, transactionEndDate time.Time) ([]response.Transaction, error) {
+    transactions, err := rs.transactionRepository.GetTransactionReport(transactionStartDate, transactionEndDate)
+    if err != nil {
+        return nil, errors.ERR_GET_DATA
+    }
+
+    responseTransactions := domain.ConvertModelTransactionsToResponse(transactions)
+    return responseTransactions, nil
 }
