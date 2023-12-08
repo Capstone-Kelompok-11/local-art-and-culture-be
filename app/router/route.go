@@ -13,6 +13,7 @@ import (
 func Route(db *gorm.DB) *echo.Echo {
 	godotenv.Load(".env")
 	e := echo.New()
+	e.Use(middleware.CORS())
 	eJwt := e.Group("/")
 	eJwt.Use(middleware.JWT([]byte(os.Getenv("SECRET_JWT"))))
 	eJwt.Use(middleware.CORS())
