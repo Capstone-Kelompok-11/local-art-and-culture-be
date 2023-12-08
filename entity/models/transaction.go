@@ -11,7 +11,7 @@ type Transaction struct {
 	TransactionDate   time.Time
 	UserId            uint
 	PaymentMethodId   uint
-	ShippingMethodId  uint
+	ShippingMethodId  *uint
 	Status            string
 	User              Users               `gorm:"foreignKey:UserId"`
 	Payment           Payment             `gorm:"foreignKey:PaymentMethodId"`
