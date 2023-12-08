@@ -18,7 +18,7 @@ func main() {
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
   		AllowOrigins: []string{"*", "*"},
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodPatch, http.MethodOptions},
-  		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+  		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))
 
 	e.Logger.Fatal(e.Start(":80"))
