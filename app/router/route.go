@@ -10,13 +10,13 @@ import (
 	"gorm.io/gorm"
 )
 
-func Route(db *gorm.DB) *echo.Echo {
+func Route(e *echo.Echo, db *gorm.DB) {
 	godotenv.Load(".env")
-	e := echo.New()
-	e.Use(middleware.CORS())
+	//e := echo.New()
+	//e.Use(middleware.CORS())
 	eJwt := e.Group("/")
 	eJwt.Use(middleware.JWT([]byte(os.Getenv("SECRET_JWT"))))
-	eJwt.Use(middleware.CORS())
+	//eJwt.Use(middleware.CORS())
 	RoleRoute(e, db)
 	AdminRoute(e, db)
 	ArticleRoute(e, db)
@@ -38,5 +38,4 @@ func Route(db *gorm.DB) *echo.Echo {
 	TransactionDetailRoute(e, db)
 	FilesRoute(e, db)
 	ChatbotRoute(e)
-	return e
 }
