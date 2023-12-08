@@ -11,6 +11,7 @@ type ICategoryService interface {
 	CreateCategory(data *request.Category) (response.Category, error)
 	GetAllCategory(nameFilter string) ([]response.Category, error)
 	GetCategory(id string) (response.Category, error)
+	GetTypeCategory(Type string) (response.Category, error)
 	UpdateCategory(id string, input request.Category) (response.Category, error)
 	DeleteCategory(id string) (response.Category, error)
 }
@@ -51,6 +52,18 @@ func (ca *CategoryService) GetCategory(id string) (response.Category, error) {
 	}
 	
 	res, err := ca.categoryRepository.GetCategory(id)
+	if err != nil {
+		return response.Category{}, err
+	}
+	return res, nil
+}
+
+func (ca *CategoryService) GetTypeCategory(Type string) (response.Category, error) {
+	if Type == "" {
+		return response.Category{}, errors.ERR_GET_CATEGORY_BAD_REQUEST_TYPE
+	}
+	
+	res, err := ca.categoryRepository.GetTypeCategory(Type)
 	if err != nil {
 		return response.Category{}, err
 	}

@@ -13,11 +13,13 @@ import (
 
 type IUserRepository interface {
 	RegisterUser(data *request.User) (response.User, error)
-	LoginUser(data *request.User) (response.User, error)
+	LoginUser(data *request.User) (response.Creators, error)
 	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
 	GetUser(id string) (response.User, error)
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
+	FindByEmail(email string) (*models.Users, error)
+	CreateUser(user *models.Users) (*models.Users, error)
 }
 
 type userRepository struct {
@@ -35,22 +37,30 @@ func (u *userRepository) RegisterUser(data *request.User) (response.User, error)
 		return response.User{}, err
 	}
 	err = u.db.Preload("Role").First(&dataUser, "id = ?", dataUser.ID).Error
+	if err != nil {
+		return response.User{}, errors.ERR_LOGIN
+	}
 	return *domain.ConvertFromModelToUserRes(*dataUser), nil
 }
 
-func (u *userRepository) LoginUser(data *request.User) (response.User, error) {
+func (u *userRepository) LoginUser(data *request.User) (response.Creators, error) {
 	dataUser := domain.ConvertFromUserReqToModel(*data)
-	err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
-	if err != nil {
-		return response.User{}, errors.ERR_EMAIL_NOT_FOUND
-	}
+    err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
+    if err != nil {
+        return response.Creators{}, errors.ERR_EMAIL_NOT_FOUND
+    }
 
-	err = bcrypt.CheckPassword(data.Password, dataUser.Password)
-	if err != nil {
-		return response.User{}, errors.ERR_WRONG_PASSWORD
-	}
-	err = u.db.Preload("Role").First(&dataUser, "id = ?", dataUser.ID).Error
-	return *domain.ConvertFromModelToUserRes(*dataUser), nil
+    err = bcrypt.CheckPassword(data.Password, dataUser.Password)
+    if err != nil {
+        return response.Creators{}, errors.ERR_WRONG_PASSWORD
+    }
+    var creator models.Creator
+    err = u.db.Preload("Role").Preload("Users").First(&creator, "user_id = ?", dataUser.ID).Error
+    if err != nil {
+        creator.Users = *dataUser
+        return *domain.ConvertFromModelToCreatorsRes(creator), nil
+    }
+    return *domain.ConvertFromModelToCreatorsRes(creator), nil
 }
 
 func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error) {
@@ -105,6 +115,9 @@ func (u *userRepository) UpdateUser(id string, input request.User) (response.Use
 	if input.LastName != "" {
 		userData.LastName = input.LastName
 	} 
+	if input.Username != "" {
+		userData.Username = input.Username
+	} 
 	if input.Email != "" {
 		userData.Email = input.Email
 	} 
@@ -142,4 +155,21 @@ func (u *userRepository) DeleteUser(id string) (response.User, error) {
 		return response.User{}, err
 	}
 	return res, nil
+}
+
+func (u *userRepository) FindByEmail(email string) (*models.Users, error) {
+	user := models.Users{}
+	res := u.db.Where("email = ?", email).First(&user).Error
+	if res != nil {
+		return nil, res
+	}
+	return &user, nil
+}
+
+func (u *userRepository) CreateUser(user *models.Users) (*models.Users, error) {
+	result := u.db.Create(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return user, nil
 }

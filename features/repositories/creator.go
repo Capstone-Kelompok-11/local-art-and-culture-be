@@ -12,7 +12,7 @@ import (
 
 type ICreatorRepository interface {
 	CreateCreator(data *request.Creator) (response.Creator, error)
-	GetAllCreator(nameFilter string) ([]response.Creators, error)
+	GetAllCreator(filter request.Creator) ([]response.Creators, error)
 	GetCreator(id string) (response.Creators, error)
 	UpdateCreator(id string, input request.Creator) (response.Creator, error)
 	DeleteCreator(id string) (response.Creator, error)
@@ -36,13 +36,21 @@ func (cr *creatorRepository) CreateCreator(data *request.Creator) (response.Crea
 	return *domain.ConvertFromModelToCreatorRes(*dataCreator), nil
 }
 
-func (cr *creatorRepository) GetAllCreator(nameFilter string) ([]response.Creators, error) {
+func (cr *creatorRepository) GetAllCreator(filter request.Creator) ([]response.Creators, error) {
 	var allCreator []models.Creator
 	var resAllCreator []response.Creators
 
-	query := cr.db.Preload("Role").Preload("Users", func(db *gorm.DB) *gorm.DB {
-		if nameFilter != "" {
-			return db.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
+	query := cr.db.Preload("Role", func(db *gorm.DB) *gorm.DB {
+		if filter.RoleId != 0 {
+			return db.Where("role_id = ?", filter.RoleId)
+		}
+		if filter.Role.Role != "" {
+			return db.Where("role LIKE ?", "%"+filter.Role.Role+"%")
+		}
+		return db
+	}).Preload("Users", func(db *gorm.DB) *gorm.DB {
+		if filter.Users.Username != "" {
+			return db.Where("username LIKE ?", "%"+filter.Users.Username+"%")
 		}
 		return db
 	})
