@@ -11,6 +11,7 @@ type Transaction struct {
 	PaymentMethodId   uint                `json:"paymentMethodId"`
 	ShippingMethodId  *uint               `json:"shippingMethodId"`
 	Status            string              `json:"status"`
+	TransactionNumber string              `json:"transactionNumber"`
 	User              User                `json:"user"`
 	Shipping          Shipping            `json:"shippingMethod"`
 	Payment           Payment             `json:"paymentMethod"`

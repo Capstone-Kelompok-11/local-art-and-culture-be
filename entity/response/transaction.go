@@ -9,6 +9,7 @@ type Transaction struct {
 	TransactionDate   time.Time           `json:"transactionDate"`
 	UserId            uint                `json:"userId"`
 	PaymentMethodId   uint                `json:"paymentMethodId"`
+	TransactionNumber string              `json:"transactionNumber"`
 	ShippingMethodId  *uint               `json:"shippingMethodId"`
 	Status            string              `json:"status"`
 	SnapUrl           string              `json:"snapUrl"`

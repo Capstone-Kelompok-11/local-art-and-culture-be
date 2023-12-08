@@ -9,6 +9,7 @@ import (
 type Transaction struct {
 	gorm.Model
 	TransactionDate   time.Time
+	TransactionNumber string
 	UserId            uint
 	PaymentMethodId   uint
 	ShippingMethodId  *uint

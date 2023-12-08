@@ -4,7 +4,8 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
-	"lokasani/helpers/consts"
+
+	consts "lokasani/helpers/const"
 	"lokasani/helpers/errors"
 	"lokasani/helpers/middleware"
 
