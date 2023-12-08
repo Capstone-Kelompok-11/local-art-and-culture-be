@@ -46,11 +46,17 @@ require (
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+	github.com/rs/cors v1.10.1 // indirect
+	golang.org/x/time v0.3.0 // indirect
 )
 
 require (
 	github.com/jinzhu/gorm v1.9.16
-	github.com/labstack/echo-jwt/v4 v4.2.0
+	github.com/labstack/echo/v4 v4.11.3
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
