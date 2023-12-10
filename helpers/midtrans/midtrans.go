@@ -1,6 +1,7 @@
 package midtrans
 
 import (
+	"fmt"
 	"lokasani/app/drivers/config"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
@@ -62,11 +63,19 @@ func (m midtransService) Verification(orderId string) (error, response.Transacti
 					// e.g: 'Payment status challenged. Please take action on your Merchant Administration Portal
 				} else if transactionStatusResp.FraudStatus == "accept" {
 					err, res := m.transactionRepository.UpdateTransaction("", transaction)
-					return err, res
+					fmt.Println(1)
+					if err != nil {
+						return err, response.Transaction{}
+					}
+					return nil, res
 				}
 			} else if transactionStatusResp.TransactionStatus == "settlement" {
 				err, res := m.transactionRepository.UpdateTransaction("", transaction)
-				return err, res
+				fmt.Println(1)
+				if err != nil {
+					return err, response.Transaction{}
+				}
+				return nil, res
 			} else if transactionStatusResp.TransactionStatus == "deny" {
 				// TODO you can ignore 'deny', because most of the time it allows payment retries
 				// and later can become success

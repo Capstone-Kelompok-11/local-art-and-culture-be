@@ -110,7 +110,13 @@ func (ar *transactionRepository) GetTransaction(id string) (error, response.Tran
 
 func (ar *transactionRepository) UpdateTransaction(id string, input request.Transaction) (error, response.Transaction) {
 	transactionData := models.Transaction{}
-	err := ar.db.Where("id = ? ", id).Or("transaction_number = ", input.TransactionNumber).First(&transactionData).Error
+	err := ar.db.First(&transactionData, func(db *gorm.DB) {
+		if input.TransactionNumber != "" {
+			db.Where("transaction_number = ?", input.TransactionNumber)
+		} else {
+			db.Where("id = ? ", id)
+		}
+	}).Error
 
 	if err != nil {
 		return err, response.Transaction{}
