@@ -14,6 +14,8 @@ type User struct {
 	NIK			string 		`json:"nik"`
 	Gender		string		`json:"gender"`
 	BirthDate   time.Time 	`json:"birthday"`
+	Status 		string		`json:"status"`
+	DeletedAt   time.Time	`json:"deletedAt,omitempty"`
 	RoleId 		uint		`json:"roleId"`
 	Role Role				`json:"role"`
 }
@@ -30,6 +32,8 @@ type UserCreatorResponse struct {
 	NIK			string 		`json:"nik"`
 	Gender		string		`json:"gender"`
 	BirthDate   time.Time 	`json:"birthday"`
+	// Status 		string		`json:"status"`
+	// Deleted_at  time.Time	`json:"deletedAt,omitempty"`
 	RoleId 		uint		`json:"roleId"`
 	Role Role				`json:"role"`
 	Creator     Creator		`json:"creator"`

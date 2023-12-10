@@ -38,7 +38,7 @@ func (ah *AdminHandler) LoginAdmin(c echo.Context) error {
 		return response.NewErrorResponse(c, err)
 	}
 
-	token, err := middleware.CreateToken(uint(res.Id), 0, 0, res.Name, "")
+	token, err := middleware.CreateToken(uint(res.Id), 0, 0)
 	if err != nil {
 		return response.NewErrorResponse(c, errors.ERR_TOKEN)
 	}

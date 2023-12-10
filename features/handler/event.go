@@ -2,9 +2,13 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+
+	//"lokasani/helpers/consts"
+	"lokasani/helpers/middleware"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -19,15 +23,23 @@ func NewEventHandler(iEventService services.IEventService) *EventHandler {
 }
 
 func (pr *EventHandler) CreateEvent(c echo.Context) error {
-	var input request.Event
-	c.Bind(&input)
-	res, err := pr.eventService.CreateEvent(&input)
-	if err != nil {
-		fmt.Println(input)
-		return response.NewErrorResponse(c, err)
+	_, roleId, _, err := middleware.ExtractToken(c)
+    if err != nil {
+		log.Println("Error extracting token:", err)
+        return response.NewErrorResponse(c, err)
+    }
+    if roleId != 3 {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
-	fmt.Println(input)
-	return response.NewSuccessResponse(c, res)
+
+    var input request.Event
+    c.Bind(&input)
+    res, err := pr.eventService.CreateEvent(&input)
+    if err != nil {
+        fmt.Println(input)
+        return response.NewErrorResponse(c, err)
+    }
+    return response.NewSuccessResponse(c, res)
 }
 
 func (pr *EventHandler) GetAllEvent(c echo.Context) error {
@@ -103,6 +115,15 @@ func (pr *EventHandler) GetEvent(c echo.Context) error {
 }
 
 func (pr *EventHandler) UpdateEvent(c echo.Context) error {
+	_, roleId, _, err := middleware.ExtractToken(c)
+    if err != nil {
+		log.Println("Error extracting token:", err)
+        return response.NewErrorResponse(c, err)
+    }
+    if roleId != 3 {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+
 	id := c.Param("id")
 	var input request.Event
 	c.Bind(&input)
@@ -115,6 +136,15 @@ func (pr *EventHandler) UpdateEvent(c echo.Context) error {
 }
 
 func (pr *EventHandler) DeleteEvent(c echo.Context) error {
+	_, roleId, _, err := middleware.ExtractToken(c)
+    if err != nil {
+		log.Println("Error extracting token:", err)
+        return response.NewErrorResponse(c, err)
+    }
+    if roleId != 3 {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+	
 	id := c.Param("id")
 	res, err := pr.eventService.DeleteEvent(id)
 	if err != nil {

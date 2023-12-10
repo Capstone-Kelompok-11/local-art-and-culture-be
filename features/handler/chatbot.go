@@ -33,7 +33,7 @@ func (ch *ChatbotHandler) Chatbot(c echo.Context) error {
 	c.Bind(&input)
 	client := config.OpenAiClient()
 
-	userID, _, _, _, _, err := middleware.ExtractToken(c)
+	userID, _, _, err := middleware.ExtractToken(c)
 
 	if err != nil {
 		return response.NewErrorResponse(c, err)
@@ -51,7 +51,7 @@ func (ch *ChatbotHandler) Chatbot(c echo.Context) error {
 }
 
 func (ch *ChatbotHandler) GetAllChatbot(c echo.Context) error {
-	userID, _, _, _, _, err := middleware.ExtractToken(c)
+	userID, _, _, err := middleware.ExtractToken(c)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

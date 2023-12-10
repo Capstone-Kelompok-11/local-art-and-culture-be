@@ -6,5 +6,4 @@ type SuperAdmin struct {
 	Email       string `json:"email"`
 	Password    string `json:"password"`
 	PhoneNumber string `json:"phoneNumber"`
-	Role		string `json:"role"`
 }

@@ -1,10 +1,10 @@
 package handler
 
 import (
+	"log"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
-	"lokasani/helpers/consts"
 	"lokasani/helpers/errors"
 	"lokasani/helpers/middleware"
 
@@ -28,7 +28,7 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 		return response.NewErrorResponse(e, err)
 	}
 
-	token, err := middleware.CreateToken(uint(res.Id), uint(res.RoleId), uint(res.Id), res.Email, consts.UserRole)
+	token, err := middleware.CreateToken(uint(res.Id), uint(res.RoleId), uint(res.Id))
 	if err != nil {
 		return response.NewErrorResponse(e, errors.ERR_TOKEN)
 	}
@@ -39,22 +39,23 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 }
 
 func (u *UserHandler) LoginUsers(e echo.Context) error {
-	var input request.User
-	e.Bind(&input)
+    var input request.User
+    e.Bind(&input)
 
-	res, err := u.userService.LoginUser(&input)
-	if err != nil {
-		return response.NewErrorResponse(e, err)
-	}
+    res, err := u.userService.LoginUser(&input)
+    if err != nil {
+        return response.NewErrorResponse(e, err)
+    }
 
-	token, err := middleware.CreateToken(uint(res.Users.Id), uint(res.RoleId), uint(res.Id), res.Email, consts.UserRole)
-	if err != nil {
-		return response.NewErrorResponse(e, errors.ERR_TOKEN)
-	}
-	res.Users.Token = token
+	log.Println("users data : ", res.Id)
 
-	middleware.SetTokenCookie(e, token)
+    token, err := middleware.CreateToken(uint(res.Users.Id), uint(res.RoleId), uint(res.Id))
+    if err != nil {
+        return response.NewErrorResponse(e, errors.ERR_TOKEN)
+    }
+    res.Users.Token = token
 
+    middleware.SetTokenCookie(e, token)
 	return response.NewSuccessResponse(e, res)
 }
 
