@@ -21,7 +21,7 @@ type ITransactionRepository interface {
 	GetTransaction(id string) (error, response.Transaction)
 	UpdateTransaction(id string, input request.Transaction) (error, response.Transaction)
 	DeleteTransaction(id string) (error, response.Transaction)
-	GetTransactionReport(userID uint) ([]*response.Transaction, error)
+	GetTransactionReport(userID uint, page, pageSize int) ([]*response.Transaction, int, error)
 }
 
 type transactionRepository struct {
@@ -159,17 +159,34 @@ func (ar *transactionRepository) DeleteTransaction(id string) (error, response.T
 	return nil, res
 }
 
-func (ar *transactionRepository) GetTransactionReport(userID uint) ([]*response.Transaction, error) {
+func (ar *transactionRepository) GetTransactionReport(userID uint, page, pageSize int) ([]*response.Transaction, int, error) {
 	var transactions []models.Transaction
-	err := ar.db.
-		Preload("TransactionDetail").Preload("TransactionDetail.Product").Preload("TransactionDetail.Product.Creator").
-		Preload("TransactionDetail.Product.Category").Preload("TransactionDetail.Ticket").Preload("TransactionDetail.Ticket.Event").
-		Preload("User").Preload("User.Role").Preload("Shipping").Preload("Payment").Find(&transactions, "user_id = ?", userID).Error
-	if err != nil {
-		return nil, err
+
+	query := ar.db.Where("user_id = ?", userID)
+
+	var count int64
+	if err := query.Model(&models.Transaction{}).Count(&count).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * pageSize
+	query = query.Limit(pageSize).Offset(offset).
+		Preload("TransactionDetail").
+		Preload("TransactionDetail.Product").
+		Preload("TransactionDetail.Product.Creator").
+		Preload("TransactionDetail.Product.Category").
+		Preload("TransactionDetail.Ticket").
+		Preload("TransactionDetail.Ticket.Event").
+		Preload("User").
+		Preload("User.Role").
+		Preload("Shipping").
+		Preload("Payment")
+
+	if err := query.Find(&transactions).Error; err != nil {
+		return nil, 0, err
 	}
 
 	resAllHistory := domain.ConvertModelTransactionsToResponse(transactions)
 
-	return resAllHistory, nil
+	return resAllHistory, int(count), nil
 }

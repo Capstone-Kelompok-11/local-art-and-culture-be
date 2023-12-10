@@ -90,15 +90,32 @@ func (ah *TransactionHandler) ConfirmPayment(c echo.Context) error {
 	return response.NewSuccessResponse(c, res)
 }
 
-func (pr *TransactionHandler) GetTransactionReport(c echo.Context) error {
+func (ah *TransactionHandler) GetTransactionReport(c echo.Context) error {
     userId, _, _, err := middleware.ExtractToken(c)
     if err != nil {
         return response.NewErrorResponse(c, err)
     }	
 
-    transactions, err := pr.transactionService.GetTransactionReport(userId)
+	page, pageSize := 1, 10
+
+	res, transactions, err := ah.transactionService.GetTransactionReport(userId, page, pageSize)
     if err != nil {
         return response.NewErrorResponse(c, err)
     }
-    return response.NewSuccessResponse(c, transactions)
+
+	currentPage, allPages := ah.transactionService.CalculatePaginationValues(page, pageSize, transactions)
+	nextPage := ah.transactionService.GetNextPage(currentPage, allPages)
+	prevPage := ah.transactionService.GetPrevPage(currentPage)
+
+	responseData := map[string]interface{}{
+		"data": res,
+		"pagination": map[string]int{
+			"currentPage": currentPage,
+			"nextPage":    nextPage,
+			"prevPage":    prevPage,
+			"allPages":    allPages,
+		},
+	}
+
+    return response.NewSuccessResponse(c, responseData)
 }

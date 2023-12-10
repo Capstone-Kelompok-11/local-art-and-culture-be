@@ -7,6 +7,7 @@ import (
 	"lokasani/features/repositories"
 	"lokasani/helpers/errors"
 	"lokasani/helpers/midtrans"
+	"math"
 )
 
 type ITransactionService interface {
@@ -16,7 +17,10 @@ type ITransactionService interface {
 	GetTransaction(id string) (response.Transaction, error)
 	UpdateTransaction(id string, data request.Transaction) (response.Transaction, error)
 	DeleteTransaction(id string) (response.Transaction, error)
-	GetTransactionReport(userID uint) ([]*response.Transaction, error)
+	GetTransactionReport(userID uint, page, pageSize int) ([]*response.Transaction, int, error)
+	CalculatePaginationValues(page, pageSize, allItmes int) (int, int)
+	GetNextPage(currentPage, allPages int) int
+	GetPrevPage(currentPage int) int
 }
 
 type TransactionService struct {
@@ -131,15 +135,44 @@ func (rs *TransactionService) ConfirmPayment(id string) (response.Transaction, e
 	return res, nil
 }
 
-func (rs *TransactionService) GetTransactionReport(userID uint) ([]*response.Transaction, error) {
+func (rs *TransactionService) GetTransactionReport(userID uint, page, pageSize int) ([]*response.Transaction, int, error) {
 	if userID == 0 {
-		return []*response.Transaction{}, errors.ERR_GET_TRANSACTION_BAD_REQUEST_ID
+		return []*response.Transaction{}, 0, errors.ERR_GET_TRANSACTION_BAD_REQUEST_ID
 	}
 
-	transactions, err := rs.transactionRepository.GetTransactionReport(userID)
+	res, transactions, err := rs.transactionRepository.GetTransactionReport(userID, page, pageSize)
 	if err != nil {
-		return []*response.Transaction{}, errors.ERR_GET_DATA
+		return []*response.Transaction{}, 0, errors.ERR_GET_DATA
 	}
 
-	return transactions, nil
+	return res, transactions, nil
+}
+
+func (rs *TransactionService) CalculatePaginationValues(page, pageSize, allItmes int) (int, int) {
+	pageInt := page
+	if pageInt <= 0 {
+		pageInt = 1
+	}
+
+	allPages := int(math.Ceil(float64(allItmes) / float64(pageSize)))
+
+	if pageInt > allPages {
+		pageInt = allPages
+	}
+
+	return pageInt, allPages
+}
+
+func (rs *TransactionService) GetNextPage(currentPage, allPages int) int {
+	if currentPage < allPages {
+		return currentPage + 1
+	}
+	return allPages
+}
+
+func (rs *TransactionService) GetPrevPage(currentPage int) int {
+	if currentPage > 1 {
+		return currentPage - 1
+	}
+	return 1
 }
