@@ -26,6 +26,15 @@ func (ah *AdminHandler) RegisterAdmin(c echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
+
+	token, err := middleware.CreateToken(uint(res.Id), uint(res.RoleId), 0)
+	if err != nil {
+		return response.NewErrorResponse(c, errors.ERR_TOKEN)
+	}
+	res.Token = token
+
+	middleware.SetTokenCookie(c, token)
+
 	return response.NewSuccessResponse(c, res)
 }
 
@@ -38,10 +47,11 @@ func (ah *AdminHandler) LoginAdmin(c echo.Context) error {
 		return response.NewErrorResponse(c, err)
 	}
 
-	token, err := middleware.CreateToken(uint(res.Id), 0, 0)
-	if err != nil {
-		return response.NewErrorResponse(c, errors.ERR_TOKEN)
-	}
+	token, err := middleware.CreateToken(0, uint(res.RoleId), uint(res.Id))
+    if err != nil {
+        return response.NewErrorResponse(c, errors.ERR_TOKEN)
+    }
+    res.Token = token
 
 	middleware.SetTokenCookie(c, token)
 	return response.NewSuccessResponse(c, res)

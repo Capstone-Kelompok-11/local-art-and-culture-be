@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
@@ -46,8 +45,6 @@ func (u *UserHandler) LoginUsers(e echo.Context) error {
     if err != nil {
         return response.NewErrorResponse(e, err)
     }
-
-	log.Println("users data : ", res.Id)
 
     token, err := middleware.CreateToken(uint(res.Users.Id), uint(res.RoleId), uint(res.Id))
     if err != nil {

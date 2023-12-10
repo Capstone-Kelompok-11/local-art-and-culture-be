@@ -4,6 +4,7 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	"lokasani/helpers/middleware"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,6 +18,14 @@ func NewArticleHandler(IArticleService services.IArticleService) *ArticleHandler
 }
 
 func (ah *ArticleHandler) CreateArticle(c echo.Context) error {
+	_, roleId, _, err := middleware.ExtractToken(c)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    if roleId != 4 {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+	
     var input request.Article
     c.Bind(&input)
 
@@ -91,6 +100,14 @@ func (ah *ArticleHandler) GetArticle(c echo.Context) error {
 }
 
 func (ah *ArticleHandler) UpdateArticle(c echo.Context) error {
+	_, roleId, _, err := middleware.ExtractToken(c)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    if roleId != 4 {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+
 	id := c.Param("id")
 
 	var input request.Article
@@ -103,6 +120,14 @@ func (ah *ArticleHandler) UpdateArticle(c echo.Context) error {
 }
 
 func (ah *ArticleHandler) DeleteArticle(c echo.Context) error {
+	_, roleId, _, err := middleware.ExtractToken(c)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    if roleId != 4 {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+	
     delete := c.Param("id")
 
     res, err := ah.articleService.DeleteArticle(delete)

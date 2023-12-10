@@ -37,7 +37,7 @@ func (ar *articleRepository) CreateArticle(data *request.Article) (response.Arti
 	if err != nil {
 		return response.Article{}, err
 	}
-	err = ar.db.Preload("Admin").First(&dataArticle, "id = ? ", dataArticle.ID).Error
+	err = ar.db.Preload("Admin").Preload("Admin.Role").First(&dataArticle, "id = ? ", dataArticle.ID).Error
 	return *domain.ConvertFromModelToArticleRes(*dataArticle), nil
 }
 
@@ -45,7 +45,7 @@ func (ar *articleRepository) GetTrendingArticle(nameFilter string, page, pageSiz
     var allArticle []models.Article
     var resAllArticle []response.Article
 
-	query := ar.db.Preload("Admin").Preload("Like")
+	query := ar.db.Preload("Admin").Preload("Admin.Role").Preload("Like")
 
 	if nameFilter != "" {
 		query = query.Where("title LIKE ?", "%"+nameFilter+"%")
@@ -99,7 +99,6 @@ func (ar *articleRepository) GetTrendingArticle(nameFilter string, page, pageSiz
     var allItems int64
     query.Count(&allItems)
 
-		// sort by like
 		sort.Slice(resAllArticle, func(i, j int) bool {
 			return resAllArticle[i].TotalLike > resAllArticle[j].TotalLike
 		})
@@ -111,7 +110,7 @@ func (ar *articleRepository) GetAllArticle(nameFilter string, page, pageSize int
 	var allArticle []models.Article
 	var resAllArticle []response.Article
 
-	query := ar.db.Preload("Admin")
+	query := ar.db.Preload("Admin").Preload("Admin.Role")
 
 	if nameFilter != "" {
 		query = query.Where("title LIKE ?", "%"+nameFilter+"%")
@@ -139,7 +138,7 @@ func (ar *articleRepository) GetAllArticle(nameFilter string, page, pageSize int
 
 func (ar *articleRepository) GetArticle(id string) (response.Article, error) {
 	var articleData models.Article
-	err := ar.db.Preload("Admin").Preload("Like").First(&articleData, "id = ?", id).Error
+	err := ar.db.Preload("Admin").Preload("Admin.Role").Preload("Like").First(&articleData, "id = ?", id).Error
 	if err != nil {
 		return response.Article{}, err
 	}
@@ -167,7 +166,7 @@ func (ar *articleRepository) GetTotalLikesLastTwoWeeks(SourceId uint, SourceStr 
 
 func (ar *articleRepository) UpdateArticle(id string, input request.Article) (response.Article, error) {
 	articleData := models.Article{}
-	err := ar.db.Preload("Admin").First(&articleData, "id = ?", id).Error
+	err := ar.db.Preload("Admin").Preload("Admin.Role").First(&articleData, "id = ?", id).Error
 	if err != nil {
 		return response.Article{}, err
 	}
@@ -194,7 +193,7 @@ func (ar *articleRepository) UpdateArticle(id string, input request.Article) (re
 func (ar *articleRepository) DeleteArticle(id string) (response.Article, error) {
 	articleData := models.Article{}
 	res := response.Article{}
-	find := ar.db.Preload("Admin").First(&articleData, "id = ?", id).Error
+	find := ar.db.Preload("Admin").Preload("Admin.Role").First(&articleData, "id = ?", id).Error
 	if find == nil {
 		res = *domain.ConvertFromModelToArticleRes(articleData)
 	}
