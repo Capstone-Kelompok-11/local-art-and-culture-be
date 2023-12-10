@@ -2,13 +2,11 @@ package services
 
 import (
 	"fmt"
-	"lokasani/entity/domain"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
 	"lokasani/helpers/errors"
 	"lokasani/helpers/midtrans"
-	"time"
 )
 
 type ITransactionService interface {
@@ -18,7 +16,7 @@ type ITransactionService interface {
 	GetTransaction(id string) (response.Transaction, error)
 	UpdateTransaction(id string, data request.Transaction) (response.Transaction, error)
 	DeleteTransaction(id string) (response.Transaction, error)
-	GetTransactionReport(transactionStartDate, transactionEndDate time.Time) ([]response.Transaction, error)
+	GetTransactionReport(userID uint) ([]*response.Transaction, error)
 }
 
 type TransactionService struct {
@@ -133,12 +131,15 @@ func (rs *TransactionService) ConfirmPayment(id string) (response.Transaction, e
 	return res, nil
 }
 
-func (rs *TransactionService) GetTransactionReport(transactionStartDate, transactionEndDate time.Time) ([]response.Transaction, error) {
-	transactions, err := rs.transactionRepository.GetTransactionReport(transactionStartDate, transactionEndDate)
-	if err != nil {
-		return nil, errors.ERR_GET_DATA
+func (rs *TransactionService) GetTransactionReport(userID uint) ([]*response.Transaction, error) {
+	if userID == 0 {
+		return []*response.Transaction{}, errors.ERR_GET_TRANSACTION_BAD_REQUEST_ID
 	}
 
-	responseTransactions := domain.ConvertModelTransactionsToResponse(transactions)
-	return responseTransactions, nil
+	transactions, err := rs.transactionRepository.GetTransactionReport(userID)
+	if err != nil {
+		return []*response.Transaction{}, errors.ERR_GET_DATA
+	}
+
+	return transactions, nil
 }

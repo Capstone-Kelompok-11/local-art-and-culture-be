@@ -4,10 +4,9 @@ import (
 	"lokasani/features/handler"
 	"lokasani/features/repositories"
 	"lokasani/features/services"
+	"lokasani/helpers/middleware"
 	"lokasani/helpers/midtrans"
-	"os"
-
-	echojwt "github.com/labstack/echo-jwt/v4"
+	
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -19,7 +18,7 @@ func TransactionRoute(e *echo.Echo, db *gorm.DB) {
 	handler := handler.NewTransactionHandler(service)
 
 	eJwt := e.Group("")
-	eJwt.Use(echojwt.JWT([]byte(os.Getenv("SECRET_JWT"))))
+	eJwt.Use(middleware.JWTMiddleware())
 
 	eJwt.POST("/transaction", handler.CreateTransaction)
 	e.POST("/transaction/payment-callback", handler.ConfirmPayment)

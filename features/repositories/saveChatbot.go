@@ -31,7 +31,6 @@ func (sv *saveRepository) SaveChatbot(data models.SaveChatbot) (response.SaveCha
 	   fmt.Println("error saving chatbot data:", err)
 	   return response.SaveChatbot{}, err
 	}
-	fmt.Println("userId:", data.UserId)
 	return *domain.ConvertFromModelToSaveRes(*dataSave), nil
  } 
 

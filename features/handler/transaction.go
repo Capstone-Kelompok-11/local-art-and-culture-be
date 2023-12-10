@@ -7,7 +7,6 @@ import (
 	"lokasani/features/services"
 	"lokasani/helpers/errors"
 	"lokasani/helpers/middleware"
-	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -92,31 +91,14 @@ func (ah *TransactionHandler) ConfirmPayment(c echo.Context) error {
 }
 
 func (pr *TransactionHandler) GetTransactionReport(c echo.Context) error {
-	startDateStr := c.QueryParam("start_date")
-	endDateStr := c.QueryParam("end_date")
+    userId, _, _, err := middleware.ExtractToken(c)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }	
 
-	if startDateStr == "" || endDateStr == "" {
-		return response.NewErrorResponse(c, echo.ErrBadGateway)
-	}
-
-	startDate, err := time.Parse("2006-01-02", startDateStr)
-	if err != nil {
-		return response.NewErrorResponse(c, err)
-	}
-
-	endDate, err := time.Parse("2006-01-02", endDateStr)
-	if err != nil {
-		return response.NewErrorResponse(c, err)
-	}
-
-	if endDate.Before(startDate) {
-		return response.NewErrorResponse(c, err)
-	}
-
-	transactions, err := pr.transactionService.GetTransactionReport(startDate, endDate)
-	if err != nil {
-		return response.NewErrorResponse(c, err)
-	}
-
-	return response.NewSuccessResponse(c, transactions)
+    transactions, err := pr.transactionService.GetTransactionReport(userId)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    return response.NewSuccessResponse(c, transactions)
 }
