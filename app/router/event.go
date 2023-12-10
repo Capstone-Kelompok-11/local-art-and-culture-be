@@ -4,9 +4,8 @@ import (
 	"lokasani/features/handler"
 	"lokasani/features/repositories"
 	"lokasani/features/services"
-	"os"
+	"lokasani/helpers/middleware"
 
-	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -17,13 +16,15 @@ func EventRoute(e *echo.Echo, db *gorm.DB) {
 	handler := handler.NewEventHandler(service)
 
 	eJwt := e.Group("")
-	eJwt.Use(echojwt.JWT([]byte(os.Getenv("SECRET_JWT"))))
-	
-	eJwt.GET("/event", handler.GetAllEvent)
-	eJwt.GET("/event/home", handler.GetAllAvailableEvent)
-	eJwt.GET("/event/:id", handler.GetEvent)
+	eJwt.Use(middleware.JWTMiddleware())
 
-	e.PUT("/event/:id", handler.UpdateEvent)
-	e.DELETE("/event/:id", handler.DeleteEvent)
-	e.POST("/event", handler.CreateEvent)
+	//event creator can access
+	eJwt.PUT("/event/:id", handler.UpdateEvent)
+	eJwt.DELETE("/event/:id", handler.DeleteEvent)
+	eJwt.POST("/event", handler.CreateEvent)
+
+	//without token
+	e.GET("/event", handler.GetAllEvent)
+	e.GET("/event/home", handler.GetAllAvailableEvent)
+	e.GET("/event/:id", handler.GetEvent)
 }

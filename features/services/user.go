@@ -66,13 +66,6 @@ func (u *UserService) LoginUser(data *request.User) (response.Creators, error) {
 	if err != nil {
 		return response.Creators{}, err
 	}
-	
-	// token, err := middleware.CreateToken(uint(res.Id), uint(res.RoleId), res.Email, "")
-	// if err != nil {
-	// 	return response.Creators{}, errors.ERR_TOKEN
-	// }
-
-	// res.Token = token
 	return res, nil
 }
 

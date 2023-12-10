@@ -47,7 +47,6 @@ func (er *EventService) CreateEvent(data *request.Event) (response.Event, error)
 	if err != nil {
 		return response.Event{}, errors.ERR_CREATE_EVENT_DATABASE
 	}
-	fmt.Println(data)
 	return res, nil
 }
 

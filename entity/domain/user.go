@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"log"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
@@ -27,19 +28,30 @@ func ConvertFromUserReqToModel(data request.User) *models.Users {
 }
 
 func ConvertFromModelToUserRes(data models.Users) *response.User {
-	return &response.User{
+	userRes := &response.User{
 		Id:          data.ID,
 		FirstName:   data.FirstName,
 		LastName:    data.LastName,
-		Username: 	 data.Username,
+		Username:    data.Username,
 		Email:       data.Email,
 		PhoneNumber: data.PhoneNumber,
-		NIK: 		 data.NIK,
-		Gender: 	 data.Gender,
+		NIK:         data.NIK,
+		Gender:      data.Gender,
 		BirthDate:   data.BirthDate,
-		RoleId: 	 data.RoleId,
-		Role: 		 *ConvertFromModelToRoleRes(data.Role),
+		RoleId:      data.RoleId,
+		Role:        *ConvertFromModelToRoleRes(data.Role),
 	}
+
+	log.Printf("Before panic check: %v", data)
+	if data.DeletedAt != nil && !data.DeletedAt.IsZero() {
+    	log.Printf("Setting status: inactive")
+    	userRes.Status = "inactive"
+    	userRes.DeletedAt = *data.DeletedAt
+	} else {
+    	log.Printf("Setting status: active")
+    	userRes.Status = "active"
+	}	
+	return userRes
 }
 
 func ConvertFromModelToUsersRes(data models.Users) *response.Users {

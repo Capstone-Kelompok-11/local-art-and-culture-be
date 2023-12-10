@@ -24,8 +24,8 @@ func UserRoute(e *echo.Echo, db *gorm.DB) {
 	e.POST("/users/login", handler.LoginUsers)
 
 	//access with token
-	eJwt.GET("/users", handler.GetAllUser)
-	eJwt.GET("/users/:id", handler.GetUser)
+	e.GET("/users", handler.GetAllUser)
+	e.GET("/users/:id", handler.GetUser)
 	eJwt.PUT("/users/:id", handler.UpdateUser)
 	eJwt.DELETE("/users/:id", handler.DeleteUser)
 }

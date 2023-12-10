@@ -8,5 +8,6 @@ type SuperAdmin struct {
 	Email       string `gorm:"unique;not null"`
 	Password    string `gorm:"not null"`
 	PhoneNumber string `gorm:"unique;not null"`
-	Role 		string `gorm:"default:superadmin"`
+	RoleId      uint   `gorm:"not null"`
+	Role        Role   `gorm:"foreignKey:RoleId"`
 }
