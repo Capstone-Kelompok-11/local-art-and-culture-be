@@ -23,7 +23,7 @@ func NewTransactionHandler(ITransactionService services.ITransactionService) *Tr
 func (ah *TransactionHandler) CreateTransaction(c echo.Context) error {
 	var input request.Transaction
 	c.Bind(&input)
-	userID, _, _, _, _, err := middleware.ExtractToken(c)
+	userID, _, _, err := middleware.ExtractToken(c)
 	input.UserId = userID
 	res, err := ah.transactionService.CreateTransaction(&input)
 	if err != nil {
