@@ -81,4 +81,5 @@ var (
 	ERR_CATEGORY_NOT_FOUND                    = errors.New("category not found")
 	ERR_INVALID_PAYLOAD                       = errors.New("invalid payload")
 	ERR_TRANSACTION_DETAIL_EMPTY              = errors.New("can't find any item in transaction detail")
+	ERR_PAYMENT_FAILED                        = errors.New("payment failed")
 )

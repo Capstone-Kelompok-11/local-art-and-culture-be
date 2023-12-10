@@ -123,7 +123,7 @@ func (rs *TransactionService) ConfirmPayment(id string) (response.Transaction, e
 	if id == "" {
 		return response.Transaction{}, errors.ERR_GET_TRANSACTION_BAD_REQUEST_ID
 	}
-
+	fmt.Println(id)
 	err, res := rs.midtransService.Verification(id)
 
 	if err != nil {

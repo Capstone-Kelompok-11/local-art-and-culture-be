@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"fmt"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
@@ -110,10 +111,13 @@ func (ar *transactionRepository) GetTransaction(id string) (error, response.Tran
 
 func (ar *transactionRepository) UpdateTransaction(id string, input request.Transaction) (error, response.Transaction) {
 	transactionData := models.Transaction{}
+	fmt.Println("repo transaksi" + input.TransactionNumber)
 	err := ar.db.First(&transactionData, func(db *gorm.DB) {
 		if input.TransactionNumber != "" {
+			fmt.Println(2)
 			db.Where("transaction_number = ?", input.TransactionNumber)
 		} else {
+			fmt.Println(2)
 			db.Where("id = ? ", id)
 		}
 	}).Error

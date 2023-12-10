@@ -7,6 +7,7 @@ import (
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
 	consts "lokasani/helpers/const"
+	"lokasani/helpers/errors"
 
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/coreapi"
@@ -42,7 +43,7 @@ func Payment(input *response.Transaction) error {
 	return nil
 }
 
-func (m midtransService) Verification(orderId string) (error, response.Transaction) {
+func (m *midtransService) Verification(orderId string) (error, response.Transaction) {
 	var client coreapi.Client
 	var transaction request.Transaction
 	_, serverKey := config.MidtransCredential()
@@ -50,10 +51,12 @@ func (m midtransService) Verification(orderId string) (error, response.Transacti
 
 	transaction.Status = consts.OrderStatusPaid
 	transaction.TransactionNumber = orderId
+	fmt.Println("cek order id di midtrans " + orderId)
 	// 4. Check transaction to Midtrans with param orderId
 	transactionStatusResp, e := client.CheckTransaction(orderId)
 	if e != nil {
-		return e, response.Transaction{}
+		fmt.Println("error di cek transaction")
+		return errors.ERR_PAYMENT_FAILED, response.Transaction{}
 	} else {
 		if transactionStatusResp != nil {
 			// 5. Do set transaction status based on response from check transaction status
@@ -62,16 +65,16 @@ func (m midtransService) Verification(orderId string) (error, response.Transacti
 					// TODO set transaction status on your database to 'challenge'
 					// e.g: 'Payment status challenged. Please take action on your Merchant Administration Portal
 				} else if transactionStatusResp.FraudStatus == "accept" {
-					err, res := m.transactionRepository.UpdateTransaction("", transaction)
 					fmt.Println(1)
+					err, res := m.transactionRepository.UpdateTransaction("", transaction)
 					if err != nil {
 						return err, response.Transaction{}
 					}
 					return nil, res
 				}
 			} else if transactionStatusResp.TransactionStatus == "settlement" {
-				err, res := m.transactionRepository.UpdateTransaction("", transaction)
 				fmt.Println(1)
+				err, res := m.transactionRepository.UpdateTransaction("", transaction)
 				if err != nil {
 					return err, response.Transaction{}
 				}

@@ -158,6 +158,8 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_TRANSACTION_DETAIL_EMPTY:
 		return http.StatusBadRequest
+	case ERR_PAYMENT_FAILED:
+		return http.StatusFailedDependency
 	default:
 		return http.StatusInternalServerError
 	}

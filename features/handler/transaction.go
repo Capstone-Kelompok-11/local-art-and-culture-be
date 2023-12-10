@@ -71,14 +71,12 @@ func (ah *TransactionHandler) DeleteTransaction(c echo.Context) error {
 
 func (ah *TransactionHandler) ConfirmPayment(c echo.Context) error {
 	var paymentPayload map[string]interface{}
-	fmt.Println("call back")
 	err := c.Bind(&paymentPayload)
 	if err != nil {
-		fmt.Println("tessst")
 		return response.NewErrorResponse(c, err)
 	}
 	orderId, exists := paymentPayload["order_id"].(string)
-
+	fmt.Println(orderId)
 	if !exists {
 		fmt.Println(paymentPayload)
 		return response.NewErrorResponse(c, errors.ERR_INVALID_PAYLOAD)
