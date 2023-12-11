@@ -45,7 +45,6 @@ func ConvertFromModelToProductsRes(data models.Product) *response.Products {
 		Status:      data.Status,
 		CategoryId:  data.CategoryId,
 		CreatorId:   data.CreatorId,
-		TotalLike: 	 data.TotalLike,
 		Category:    *ConvertFromModelToCategoryRes(data.Category),
 		Like: 	 *ConvertFromModelsToLikeRes(data.Like),
 	}
