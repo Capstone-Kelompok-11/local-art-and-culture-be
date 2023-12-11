@@ -27,6 +27,9 @@ func (pr *ProductHandler) CreateProduct(c echo.Context) error {
     if role != consts.ProductCreator {
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
+	// if roleId != 1 {
+	// return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	// }
 
 	var input request.Product
 	c.Bind(&input)
@@ -137,7 +140,7 @@ func (pr *ProductHandler) DeleteProduct(c echo.Context) error {
     if role != consts.ProductCreator {
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
-	
+
 	id := c.Param("id")
 	res, err := pr.productService.DeleteProduct(id)
 	if err != nil {
