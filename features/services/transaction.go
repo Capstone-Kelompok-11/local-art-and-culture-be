@@ -17,7 +17,8 @@ type ITransactionService interface {
 	GetTransaction(id string) (response.Transaction, error)
 	UpdateTransaction(id string, data request.Transaction) (response.Transaction, error)
 	DeleteTransaction(id string) (response.Transaction, error)
-	GetTransactionReport(userID uint, page, pageSize int) ([]*response.Transaction, int, error)
+	GetHistoryTransaction(userID uint, page, pageSize int) ([]*response.Transaction, int, error)
+	GetReportTransaction(creatorId uint, role string) ([]response.Transaction, error)
 	CalculatePaginationValues(page, pageSize, allItmes int) (int, int)
 	GetNextPage(currentPage, allPages int) int
 	GetPrevPage(currentPage int) int
@@ -135,17 +136,25 @@ func (rs *TransactionService) ConfirmPayment(id string) (response.Transaction, e
 	return res, nil
 }
 
-func (rs *TransactionService) GetTransactionReport(userID uint, page, pageSize int) ([]*response.Transaction, int, error) {
+func (rs *TransactionService) GetHistoryTransaction(userID uint, page, pageSize int) ([]*response.Transaction, int, error) {
 	if userID == 0 {
 		return []*response.Transaction{}, 0, errors.ERR_GET_TRANSACTION_BAD_REQUEST_ID
 	}
 
-	res, transactions, err := rs.transactionRepository.GetTransactionReport(userID, page, pageSize)
+	res, transactions, err := rs.transactionRepository.GetHistoryTransaction(userID, page, pageSize)
 	if err != nil {
 		return []*response.Transaction{}, 0, errors.ERR_GET_DATA
 	}
 
 	return res, transactions, nil
+}
+
+func (rs *TransactionService) GetReportTransaction(creatorId uint, role string) ([]response.Transaction, error) {
+	res, err := rs.transactionRepository.GetReportTransaction(creatorId, role)
+	if err != nil {
+		return nil, errors.ERR_GET_DATA
+	}
+	return res, nil
 }
 
 func (rs *TransactionService) CalculatePaginationValues(page, pageSize, allItmes int) (int, int) {

@@ -18,4 +18,7 @@ type User struct {
 	Role Role
 }
 
-
+type EmailRequest struct {
+	Email		string		`json:"email" form:"email"`
+	OTP			string		`json:"otp" form:"otp"`
+}

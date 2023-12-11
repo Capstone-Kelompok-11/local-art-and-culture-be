@@ -16,6 +16,7 @@ type User struct {
 	BirthDate   time.Time 	`json:"birthday"`
 	Status 		string		`json:"status"`
 	DeletedAt   time.Time	`json:"deletedAt,omitempty"`
+	CreatedAt 	time.Time	`json:"createdAt,omitempty"`
 	RoleId 		uint		`json:"roleId"`
 	Role Role				`json:"role"`
 }

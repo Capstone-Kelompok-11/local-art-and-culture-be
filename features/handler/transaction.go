@@ -5,6 +5,7 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	consts "lokasani/helpers/const"
 	"lokasani/helpers/errors"
 	"lokasani/helpers/middleware"
 
@@ -90,7 +91,7 @@ func (ah *TransactionHandler) ConfirmPayment(c echo.Context) error {
 	return response.NewSuccessResponse(c, res)
 }
 
-func (ah *TransactionHandler) GetTransactionReport(c echo.Context) error {
+func (ah *TransactionHandler) GetHistoryTransaction(c echo.Context) error {
     userId, _, _, err := middleware.ExtractToken(c)
     if err != nil {
         return response.NewErrorResponse(c, err)
@@ -98,7 +99,7 @@ func (ah *TransactionHandler) GetTransactionReport(c echo.Context) error {
 
 	page, pageSize := 1, 10
 
-	res, transactions, err := ah.transactionService.GetTransactionReport(userId, page, pageSize)
+	res, transactions, err := ah.transactionService.GetHistoryTransaction(userId, page, pageSize)
     if err != nil {
         return response.NewErrorResponse(c, err)
     }
@@ -118,4 +119,24 @@ func (ah *TransactionHandler) GetTransactionReport(c echo.Context) error {
 	}
 
     return response.NewSuccessResponse(c, responseData)
+}
+
+func (ah *TransactionHandler) GetReportTransaction(c echo.Context) error {
+	_, role, creatorId, err := middleware.ExtractToken(c)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }	
+	fmt.Println(role)
+	var constRole string
+	constRole = consts.ProductCreator
+	if role != constRole || role != constRole {
+		fmt.Println("test")
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	} 
+
+	res, err := ah.transactionService.GetReportTransaction(creatorId, role)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	return response.NewSuccessResponse(c, res)
 }

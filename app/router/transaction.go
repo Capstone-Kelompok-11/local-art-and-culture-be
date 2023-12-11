@@ -20,11 +20,15 @@ func TransactionRoute(e *echo.Echo, db *gorm.DB) {
 	eJwt := e.Group("")
 	eJwt.Use(middleware.JWTMiddleware())
 
-	eJwt.POST("/transaction", handler.CreateTransaction)
+	
 	e.POST("/transaction/payment-callback", handler.ConfirmPayment)
+
+	//with token
+	eJwt.POST("/transaction", handler.CreateTransaction)
 	eJwt.GET("/transaction", handler.GetAllTransaction)
 	eJwt.GET("/transaction/:id", handler.GetTransaction)
-	eJwt.GET("/report/transaction", handler.GetTransactionReport)
+	eJwt.GET("/transaction/history", handler.GetHistoryTransaction)
+	eJwt.GET("/transaction/report", handler.GetReportTransaction)
 	eJwt.PUT("/transaction/:id", handler.UpdateTransaction)
 	eJwt.DELETE("/transaction/:id", handler.DeleteTransaction)
 }

@@ -5,6 +5,7 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	consts "lokasani/helpers/const"
 	"lokasani/helpers/middleware"
 
 	"github.com/labstack/echo/v4"
@@ -19,11 +20,11 @@ func NewProductHandler(iProductService services.IProductService) *ProductHandler
 }
 
 func (pr *ProductHandler) CreateProduct(c echo.Context) error {
-	_, roleId, _, err := middleware.ExtractToken(c)
+	_, role, _, err := middleware.ExtractToken(c)
     if err != nil {
         return response.NewErrorResponse(c, err)
     }
-    if roleId != 1 {
+    if role != consts.ProductCreator {
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
 
@@ -109,11 +110,11 @@ func (pr *ProductHandler) GetProduct(c echo.Context) error {
 }
 
 func (pr *ProductHandler) UpdateProduct(c echo.Context) error {
-	_, roleId, _, err := middleware.ExtractToken(c)
+	_, role, _, err := middleware.ExtractToken(c)
     if err != nil {
         return response.NewErrorResponse(c, err)
     }
-    if roleId != 1 {
+    if role != consts.ProductCreator {
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
 
@@ -129,11 +130,11 @@ func (pr *ProductHandler) UpdateProduct(c echo.Context) error {
 }
 
 func (pr *ProductHandler) DeleteProduct(c echo.Context) error {
-	_, roleId, _, err := middleware.ExtractToken(c)
+	_, role, _, err := middleware.ExtractToken(c)
     if err != nil {
         return response.NewErrorResponse(c, err)
     }
-    if roleId != 1 {
+    if role != consts.ProductCreator {
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
 	

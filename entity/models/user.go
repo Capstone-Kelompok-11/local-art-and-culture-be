@@ -20,3 +20,11 @@ type Users struct {
 	RoleId      uint      `gorm:"not null"`
 	Role        Role      `gorm:"foreignKey:RoleId"`
 }
+
+type OTP struct {
+	gorm.Model
+	UserId 		uint 	`gorm:"index;unique" json:"user_id"`
+	User        Users   `gorm:"foreignKey:UserId"`
+	OTP 		string	`gorm:"column:otp;type:varchar(255)" json:"otp"`
+	ExpiredOTP	int64	`gorm:"column:expired_otp;type:bigint" json:"expired_otp"`
+}

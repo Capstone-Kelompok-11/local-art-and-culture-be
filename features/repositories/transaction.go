@@ -21,7 +21,8 @@ type ITransactionRepository interface {
 	GetTransaction(id string) (error, response.Transaction)
 	UpdateTransaction(id string, input request.Transaction) (error, response.Transaction)
 	DeleteTransaction(id string) (error, response.Transaction)
-	GetTransactionReport(userID uint, page, pageSize int) ([]*response.Transaction, int, error)
+	GetHistoryTransaction(userID uint, page, pageSize int) ([]*response.Transaction, int, error)
+	GetReportTransaction(creatorId uint, role string) ([]response.Transaction, error)
 }
 
 type transactionRepository struct {
@@ -159,7 +160,7 @@ func (ar *transactionRepository) DeleteTransaction(id string) (error, response.T
 	return nil, res
 }
 
-func (ar *transactionRepository) GetTransactionReport(userID uint, page, pageSize int) ([]*response.Transaction, int, error) {
+func (ar *transactionRepository) GetHistoryTransaction(userID uint, page, pageSize int) ([]*response.Transaction, int, error) {
 	var transactions []models.Transaction
 
 	query := ar.db.Where("user_id = ?", userID)
@@ -189,4 +190,30 @@ func (ar *transactionRepository) GetTransactionReport(userID uint, page, pageSiz
 	resAllHistory := domain.ConvertModelTransactionsToResponse(transactions)
 
 	return resAllHistory, int(count), nil
+}
+
+func (ar *transactionRepository) GetReportTransaction(creatorId uint, role string) ([]response.Transaction, error) {
+	var allTransaction []models.Transaction
+	var resAllTransaction []response.Transaction
+
+	query := ar.db.Preload("TransactionDetail")
+	if role == consts.ProductCreator {
+		fmt.Println("s"+role)
+		query.Preload("TransactionDetail.Product", "creator_id = ? ", creatorId).Preload("TransactionDetail.Product.Creator").
+		Preload("TransactionDetail.Product.Category")
+	} else if role == consts.EventCreator{
+		fmt.Println("s"+role)
+		query.Preload("TransactionDetail.Ticket.Event", "creator_id = ? ", creatorId).Preload("TransactionDetail.Ticket.Event")
+	}
+
+	err := query.Find(&allTransaction).Error
+	if err != nil {
+		return nil, errors.ERR_GET_DATA
+	}
+
+	for i := 0; i < len(allTransaction); i++ {
+		transactionVm := domain.ConvertFromModelToTransactionRes(allTransaction[i])
+		resAllTransaction = append(resAllTransaction, *transactionVm)
+	}
+	return resAllTransaction, nil
 }
