@@ -3,6 +3,6 @@ package request
 type Wishlist struct {
 	Id			uint	`json:"id"`
 	Quantity	uint	`json:"quantity"`
-	ProductId 	uint	`json:"productId"`
-	TicketId 	uint	`json:"ticketId"`
+	ProductId 	uint	`json:"product_id"`
+	TicketId 	uint	`json:"ticket_id"`
 }

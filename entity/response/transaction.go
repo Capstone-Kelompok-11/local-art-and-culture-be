@@ -6,16 +6,15 @@ import (
 
 type Transaction struct {
 	Id                uint                `json:"id"`
-	TransactionDate   time.Time           `json:"transactionDate"`
-	UserId            uint                `json:"userId"`
-	PaymentMethodId   uint                `json:"paymentMethodId"`
-	TransactionNumber string              `json:"transactionNumber"`
-	ShippingMethodId  *uint               `json:"shippingMethodId"`
+	TransactionDate   time.Time           `json:"transaction_date"`
+	UserId            uint                `json:"user_id"`
+	PaymentMethodId   uint                `json:"payment_method_id"`
+	ShippingMethodId  *uint               `json:"shipping_method_id"`
 	Status            string              `json:"status"`
-	SnapUrl           string              `json:"snapUrl"`
+	SnapUrl           string              `json:"snap_url"`
 	User              User                `json:"user"`
-	Shipping          Shipping            `json:"shippingMethod"`
-	Payment           Payment             `json:"paymentMethod"`
+	Shipping          Shipping            `json:"shipping_method"`
+	Payment           Payment             `json:"payment_method"`
 	Total             float64             `json:"total"`
-	TransactionDetail []TransactionDetail `json:"transactionDetail"`
+	TransactionDetail []TransactionDetail `json:"transaction_detail"`
 }
