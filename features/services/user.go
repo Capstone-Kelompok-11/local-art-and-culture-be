@@ -12,11 +12,11 @@ import (
 type IUserService interface {
 	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.Creators, error)
-	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
+	GetAllUser(nameFilter string, page, pageSize int) (map[string][]response.User, map[string]int, error)
 	GetUser(id string) (response.User, error)
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
-	CalculatePaginationValues(page, pageSize, allItmes int) (int, int)
+	CalculatePaginationValues(page, pageSize, allItems  int) (int, int)
 	GetNextPage(currentPage, allPages int) int
 	GetPrevPage(currentPage int) int
 }
@@ -69,12 +69,12 @@ func (u *UserService) LoginUser(data *request.User) (response.Creators, error) {
 	return res, nil
 }
 
-func (u *UserService) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error) {
-	err, allItems, res := u.UserRepo.GetAllUser(nameFilter, page, pageSize)
-	if err != nil {
-		return err, 0, nil
-	}
-	return nil, allItems, res
+func (u *UserService) GetAllUser(nameFilter string, page, pageSize int) (map[string][]response.User, map[string]int, error) {
+    resAllUser, allItems, err := u.UserRepo.GetAllUser(nameFilter, page, pageSize)
+    if err != nil {
+        return nil, nil, err
+    }
+    return resAllUser, allItems, nil
 }
 
 func (u *UserService) GetUser(id string) (response.User, error) {
@@ -113,13 +113,13 @@ func (u *UserService) DeleteUser(id string) (response.User, error) {
 	return res, nil
 }
 
-func (pr *UserService) CalculatePaginationValues(page, pageSize, allItmes int) (int, int) {
+func (pr *UserService) CalculatePaginationValues(page, pageSize, allItems int) (int, int) {
 	pageInt := page
 	if pageInt <= 0 {
 		pageInt = 1
 	}
 
-	allPages := int(math.Ceil(float64(allItmes) / float64(pageSize)))
+	allPages := int(math.Ceil(float64(allItems) / float64(pageSize)))
 
 	if pageInt > allPages {
 		pageInt = allPages

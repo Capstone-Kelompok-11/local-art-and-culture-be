@@ -14,8 +14,9 @@ import (
 type IUserRepository interface {
 	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.Creators, error)
-	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
+	GetAllUser(nameFilter string, page, pageSize int) (map[string][]response.User, map[string]int, error)
 	GetUser(id string) (response.User, error)
+	getRoleName(roleID uint) string
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
 	FindByEmail(email string) (*models.Users, error)
@@ -24,6 +25,11 @@ type IUserRepository interface {
 
 type userRepository struct {
 	db *gorm.DB
+}
+
+// getRoleName implements IUserRepository.
+func (*userRepository) getRoleName(roleID uint) string {
+	panic("unimplemented")
 }
 
 func NewUsersRepository(db *gorm.DB) *userRepository {
@@ -45,51 +51,60 @@ func (u *userRepository) RegisterUser(data *request.User) (response.User, error)
 
 func (u *userRepository) LoginUser(data *request.User) (response.Creators, error) {
 	dataUser := domain.ConvertFromUserReqToModel(*data)
-    err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
-    if err != nil {
-        return response.Creators{}, errors.ERR_EMAIL_NOT_FOUND
-    }
+	err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
+	if err != nil {
+		return response.Creators{}, errors.ERR_EMAIL_NOT_FOUND
+	}
 
-    err = bcrypt.CheckPassword(data.Password, dataUser.Password)
-    if err != nil {
-        return response.Creators{}, errors.ERR_WRONG_PASSWORD
-    }
-    var creator models.Creator
-    err = u.db.Preload("Role").Preload("Users").First(&creator, "user_id = ?", dataUser.ID).Error
-    if err != nil {
-        creator.Users = *dataUser
-        return *domain.ConvertFromModelToCreatorsRes(creator), nil
-    }
-    return *domain.ConvertFromModelToCreatorsRes(creator), nil
+	err = bcrypt.CheckPassword(data.Password, dataUser.Password)
+	if err != nil {
+		return response.Creators{}, errors.ERR_WRONG_PASSWORD
+	}
+	var creator models.Creator
+	err = u.db.Preload("Role").Preload("Users").First(&creator, "user_id = ?", dataUser.ID).Error
+	if err != nil {
+		creator.Users = *dataUser
+		return *domain.ConvertFromModelToCreatorsRes(creator), nil
+	}
+	return *domain.ConvertFromModelToCreatorsRes(creator), nil
 }
 
-func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error) {
-	var allUser []models.Users
-	var resAllUser []response.User
+func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) (map[string][]response.User, map[string]int, error) {
+	var resAllUser = make(map[string][]response.User)
+	var totalItems = make(map[string]int)
 
+	var allUsers []models.Users
 	query := u.db.Preload("Role")
 	if nameFilter != "" {
-    	query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
+		query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
 	}
-
 	offset := (page - 1) * pageSize
-
 	query = query.Limit(pageSize).Offset(offset)
-
-	err := query.Find(&allUser).Error
+	err := query.Find(&allUsers).Error
 	if err != nil {
-		return nil, 0, errors.ERR_GET_DATA
+		return nil, nil, errors.ERR_GET_DATA
 	}
 
-	for i := 0; i < len(allUser); i++ {
-		userVm := domain.ConvertFromModelToUserRes(allUser[i])
-		resAllUser = append(resAllUser, *userVm)
+	for _, user := range allUsers {
+		roleName := getRoleName(user.RoleId)
+		userVm := domain.ConvertFromModelToUserRes(user)
+		resAllUser[roleName] = append(resAllUser[roleName], *userVm)
+		totalItems[roleName]++
 	}
+	return resAllUser, totalItems, nil
+}
 
-	var allItems int64
-	query.Count(&allItems)
-
-	return resAllUser, int(allItems), nil
+func getRoleName(roleID uint) string {
+	switch roleID {
+	case 1:
+		return "Product Creator"
+	case 2:
+		return "User"
+	case 3:
+		return "Event Creator"
+	default:
+		return "Unknown Role"
+	}
 }
 
 func (u *userRepository) GetUser(id string) (response.User, error) {
@@ -108,19 +123,19 @@ func (u *userRepository) UpdateUser(id string, input request.User) (response.Use
 	if err != nil {
 		return response.User{}, err
 	}
-	
+
 	if input.FirstName != "" {
 		userData.FirstName = input.FirstName
-	} 
+	}
 	if input.LastName != "" {
 		userData.LastName = input.LastName
-	} 
+	}
 	if input.Username != "" {
 		userData.Username = input.Username
-	} 
+	}
 	if input.Email != "" {
 		userData.Email = input.Email
-	} 
+	}
 	if input.Password != "" {
 		userData.Password = input.Password
 	}
