@@ -1,15 +1,17 @@
 package repositories
 
 import (
+	"fmt"
 	"lokasani/entity/domain"
 	"lokasani/entity/models"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"time"
 
-	"lokasani/helpers/consts"
+	consts "lokasani/helpers/const"
 	"lokasani/helpers/errors"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -31,16 +33,19 @@ func NewTransactionRepository(db *gorm.DB) *transactionRepository {
 }
 
 func (ar *transactionRepository) CreateTransaction(data *request.Transaction) (response.Transaction, error) {
+	newUUID := uuid.New()
+	uuidString := newUUID.String()
 	dataTransaction := domain.ConvertFromTransactionReqToModel(*data)
 	dataTransaction.TransactionDate = time.Now()
 	dataTransaction.Status = consts.OrderStatusUnpaid
+	dataTransaction.TransactionNumber = "LKSNI/" + uuidString
 
 	if dataTransaction.PaymentMethodId == 0 {
 		dataTransaction.PaymentMethodId = *getPaymentMethod(ar.db, data.PaymentMethodId, "payment")
 	}
-	if dataTransaction.ShippingMethodId == nil {
-		dataTransaction.ShippingMethodId = getPaymentMethod(ar.db, *data.ShippingMethodId, "shipping")
-	}
+	// if dataTransaction.ShippingMethodId == nil {
+	// 	dataTransaction.ShippingMethodId = getPaymentMethod(ar.db, *data.ShippingMethodId, "shipping")
+	// }
 	err := ar.db.Create(&dataTransaction).Error
 	if err != nil {
 		return response.Transaction{}, err
@@ -106,7 +111,16 @@ func (ar *transactionRepository) GetTransaction(id string) (error, response.Tran
 
 func (ar *transactionRepository) UpdateTransaction(id string, input request.Transaction) (error, response.Transaction) {
 	transactionData := models.Transaction{}
-	err := ar.db.First(&transactionData, "id = ?", id).Error
+	fmt.Println("repo transaksi" + input.TransactionNumber)
+	err := ar.db.First(&transactionData, func(db *gorm.DB) {
+		if input.TransactionNumber != "" {
+			fmt.Println(2)
+			db.Where("transaction_number = ?", input.TransactionNumber)
+		} else {
+			fmt.Println(2)
+			db.Where("id = ? ", id)
+		}
+	}).Error
 
 	if err != nil {
 		return err, response.Transaction{}

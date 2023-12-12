@@ -4,7 +4,7 @@ import "errors"
 
 var (
 	ERR_EMAIL_IS_EMPTY                        = errors.New("email is empty")
-	ERR_LOGIN                       		  = errors.New("failed to signing")
+	ERR_LOGIN                                 = errors.New("failed to signing")
 	ERR_MESSAGE_IS_EMPTY                      = errors.New("message is empty")
 	ERR_RESPONSE_IS_EMPTY                     = errors.New("response is empty")
 	ERR_IMAGE_IS_EMPTY                        = errors.New("image is empty")
@@ -80,4 +80,6 @@ var (
 	ERR_SOURCE_IS_EMPTY                       = errors.New("source is empty`")
 	ERR_CATEGORY_NOT_FOUND                    = errors.New("category not found")
 	ERR_INVALID_PAYLOAD                       = errors.New("invalid payload")
+	ERR_TRANSACTION_DETAIL_EMPTY              = errors.New("can't find any item in transaction detail")
+	ERR_PAYMENT_FAILED                        = errors.New("payment failed")
 )
