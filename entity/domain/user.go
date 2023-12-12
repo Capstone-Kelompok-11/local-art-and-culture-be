@@ -42,6 +42,8 @@ func ConvertFromModelToUserRes(data models.Users) *response.User {
 		Role:        *ConvertFromModelToRoleRes(data.Role),
 	}
 
+	userRes.Date = data.CreatedAt.Format("2006-01-02 15:04:05")
+
 	log.Printf("Before panic check: %v", data)
 	if data.DeletedAt != nil && !data.DeletedAt.IsZero() {
     	log.Printf("Setting status: inactive")
