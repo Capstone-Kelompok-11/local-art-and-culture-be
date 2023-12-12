@@ -1,11 +1,12 @@
 package midtrans
 
 import (
+	"fmt"
 	"lokasani/app/drivers/config"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
-	"lokasani/helpers/consts"
+	consts "lokasani/helpers/const"
 	"lokasani/helpers/errors"
 
 	"github.com/midtrans/midtrans-go"
@@ -14,7 +15,7 @@ import (
 )
 
 type IMidtransService interface {
-	Verification(data map[string]interface{}) (error, *string)
+	Verification(orderId string) (error, response.Transaction)
 }
 
 type midtransService struct {
@@ -32,8 +33,8 @@ func Payment(input *response.Transaction) error {
 
 	req := &snap.Request{
 		TransactionDetails: midtrans.TransactionDetails{
-			OrderID:  "LKSNI/" + string(input.Id),
-			GrossAmt: 100000,
+			OrderID:  input.TransactionNumber,
+			GrossAmt: int64(input.Total),
 		},
 	}
 
@@ -42,22 +43,20 @@ func Payment(input *response.Transaction) error {
 	return nil
 }
 
-func (m midtransService) Verification(data map[string]interface{}) (error, *string) {
+func (m *midtransService) Verification(orderId string) (error, response.Transaction) {
 	var client coreapi.Client
 	var transaction request.Transaction
 	_, serverKey := config.MidtransCredential()
 	client.New(serverKey, midtrans.Sandbox)
 
-	orderId, exists := data["order_id"].(string)
-	if !exists {
-		// do something when key `order_id` not found
-		return errors.ERR_INVALID_PAYLOAD, nil
-	}
-
+	transaction.Status = consts.OrderStatusPaid
+	transaction.TransactionNumber = orderId
+	fmt.Println("cek order id di midtrans " + orderId)
 	// 4. Check transaction to Midtrans with param orderId
 	transactionStatusResp, e := client.CheckTransaction(orderId)
 	if e != nil {
-		return e, nil
+		fmt.Println("error di cek transaction")
+		return errors.ERR_PAYMENT_FAILED, response.Transaction{}
 	} else {
 		if transactionStatusResp != nil {
 			// 5. Do set transaction status based on response from check transaction status
@@ -66,12 +65,20 @@ func (m midtransService) Verification(data map[string]interface{}) (error, *stri
 					// TODO set transaction status on your database to 'challenge'
 					// e.g: 'Payment status challenged. Please take action on your Merchant Administration Portal
 				} else if transactionStatusResp.FraudStatus == "accept" {
-					transaction.Status = consts.OrderStatusPaid
-					m.transactionRepository.UpdateTransaction(orderId, transaction)
+					fmt.Println(1)
+					err, res := m.transactionRepository.UpdateTransaction("", transaction)
+					if err != nil {
+						return err, response.Transaction{}
+					}
+					return nil, res
 				}
 			} else if transactionStatusResp.TransactionStatus == "settlement" {
-				transaction.Status = consts.OrderStatusPaid
-				m.transactionRepository.UpdateTransaction(orderId, transaction)
+				fmt.Println(1)
+				err, res := m.transactionRepository.UpdateTransaction("", transaction)
+				if err != nil {
+					return err, response.Transaction{}
+				}
+				return nil, res
 			} else if transactionStatusResp.TransactionStatus == "deny" {
 				// TODO you can ignore 'deny', because most of the time it allows payment retries
 				// and later can become success
@@ -82,5 +89,5 @@ func (m midtransService) Verification(data map[string]interface{}) (error, *stri
 			}
 		}
 	}
-	return nil, nil
+	return nil, response.Transaction{}
 }
