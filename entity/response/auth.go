@@ -10,7 +10,7 @@ type Auth struct {
 type UserGoogleInfo struct {
 	Id				string `json:"id"`
 	Email			string `json:"email"`
-	VerifiedEmail	string `json:"verifiedEmail"`
+	VerifiedEmail	string `json:"verified_email"`
 	Name 			string `json:"name"`
 }
 

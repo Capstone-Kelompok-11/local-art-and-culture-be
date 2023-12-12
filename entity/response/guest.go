@@ -5,5 +5,5 @@ type Guest struct {
 	Name		string	`json:"name"`
 	Role		string	`json:"role"`
 	//PictureId	*uint	`json:"pictureId"`
-	EventId		uint	`json:"eventId"`
+	EventId		uint	`json:"event_id"`
 }

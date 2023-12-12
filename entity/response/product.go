@@ -9,8 +9,8 @@ type Product struct {
 	Description string  `json:"description"`
 	Status      string  `json:"status"`
 	//AddressId	uint	`json:"addressId"``
-	CategoryId uint      `json:"categoryId"`
-	CreatorId  uint      `json:"creatorId"`
+	CategoryId uint      `json:"category_id"`
+	CreatorId  uint      `json:"creator_id"`
 	Creator    Creator   `json:"creator"`
 	Category   Category  `json:"category"`
 }
@@ -22,10 +22,10 @@ type Products struct {
 	Description string  `json:"description"`
 	Status      string  `json:"status"`
 	//AddressId	uint	`json:"addressId"``
-	CategoryId uint     `json:"categoryId"`
-	CreatorId  uint     `json:"creatorId"`
+	CategoryId uint     `json:"category_id"`
+	CreatorId  uint     `json:"creator_id"`
 	Category   Category `json:"category"`
-	CreatedAt  time.Time `json:"postedAt"`
-	TotalLike  uint     `json:"totalLike"`
+	CreatedAt  time.Time `json:"posted_at"`
+	TotalLike  uint     `json:"total_like"`
 	Like       []Like   `json:"like"`
 }

@@ -2,8 +2,8 @@ package response
 
 type Like struct {
 	Id        	uint 	`json:"id"`
-	UserId    	uint 	`json:"userId"`
-	SourceId  	uint 	`json:"sourceId"`
-	SourceStr	string	`json:"sourceStr"`
+	UserId    	uint 	`json:"user_id"`
+	SourceId  	uint 	`json:"source_id"`
+	SourceStr	string	`json:"source_str"`
 	Active    	bool 	`json:"like"`
 }
