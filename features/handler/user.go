@@ -58,29 +58,34 @@ func (u *UserHandler) LoginUsers(e echo.Context) error {
 }
 
 func (u *UserHandler) GetAllUser(c echo.Context) error {
-	nameFilter := c.QueryParam("name")
-	page, pageSize := 1, 10
+    nameFilter := c.QueryParam("name")
+    page, pageSize := 1, 10
 
-	res, allItems, err := u.userService.GetAllUser(nameFilter, page, pageSize)
-	if err != nil {
-		return response.NewErrorResponse(c, err)
-	}
+    resAllUser, _, err := u.userService.GetAllUser(nameFilter, page, pageSize)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
 
-	currentPage, allPages := u.userService.CalculatePaginationValues(page, pageSize, allItems)
-	nextPage := u.userService.GetNextPage(currentPage, allPages)
-	prevPage := u.userService.GetPrevPage(currentPage)
+    totalItems := make(map[string]int)
 
-	responseData := map[string]interface{}{
-		"data": res,
-		"pagination": map[string]int{
-			"currentPage": currentPage,
-			"nextPage":    nextPage,
-			"prevPage":    prevPage,
-			"allPages":    allPages,
-		},
-	}
+    for role, users := range resAllUser {
+        totalItems[role] = len(users)
+    }
 
-	return response.NewSuccessResponse(c, responseData)
+    currentPage, allPages := u.userService.CalculatePaginationValues(page, pageSize, len(resAllUser))
+    nextPage := u.userService.GetNextPage(currentPage, allPages)
+    prevPage := u.userService.GetPrevPage(currentPage)
+
+    responseData := map[string]interface{}{
+        "data": resAllUser,
+        "pagination": map[string]int{
+            "currentPage": currentPage,
+            "nextPage":    nextPage,
+            "prevPage":    prevPage,
+            "allPages":    allPages,
+        },
+    }
+    return response.NewSuccessResponse(c, responseData)
 }
 
 func (u *UserHandler) GetUser(c echo.Context) error {
