@@ -127,9 +127,9 @@ func (ah *TransactionHandler) GetReportTransaction(c echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
-	var constRole string
-	constRole = consts.ProductCreator
-	if role != constRole || role != constRole {
+
+	constRole := consts.ProductCreator
+	if role != constRole && role != consts.EventCreator {
 		fmt.Println("test")
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}

@@ -22,7 +22,7 @@ type ITransactionRepository interface {
 	UpdateTransaction(id string, input request.Transaction) (error, response.Transaction)
 	DeleteTransaction(id string) (error, response.Transaction)
 	GetHistoryTransaction(userID uint, page, pageSize int) ([]*response.Transaction, int, error)
-	GetReportTransaction(creatorId uint, role string) ([]response.Transaction, error)
+	GetReportTransaction(creatorId uint, role string) ([]response.TransactionReport, error)
 }
 
 type transactionRepository struct {
@@ -192,25 +192,20 @@ func (ar *transactionRepository) GetHistoryTransaction(userID uint, page, pageSi
 	return resAllHistory, int(count), nil
 }
 
-func (ar *transactionRepository) GetReportTransaction(creatorId uint, role string) ([]response.Transaction, error) {
-	var allTransaction []models.Transaction
-	var resAllTransaction []response.Transaction
+func (ar *transactionRepository) GetReportTransaction(creatorId uint, role string) ([]response.TransactionReport, error) {
+	var resAllTransaction []response.TransactionReport
 	var transactionReport []models.TransactionReport
 
 	if role == consts.ProductCreator {
 		ar.db.Raw("SELECT t.id, t.transaction_date, t.status, t.transaction_number, (td.qty * p.price) as nominal FROM lokasani.transactions t inner join lokasani.transaction_details td on td.transaction_id = t.id inner join lokasani.products p on p.id = td.product_id WHERE p.creator_id = ?;", creatorId).Scan(&transactionReport)
 	} else if role == consts.EventCreator {
-		ar.db.Raw("SELECT t.id, t.transaction_date, t.status, t.transaction_number, (td.qty * tck.price) as nominal FROM lokasani.transactions t inner join lokasani.transaction_details td on td.transaction_id = t.id inner join lokasani.tickets tck on tck.id = td.ticket_id where p.creator_id = ?;", creatorId).Scan(&transactionReport)
+		ar.db.Raw("SELECT t.id, t.transaction_date, t.status, t.transaction_number, (td.qty * tck.price) as nominal FROM lokasani.transactions t inner join lokasani.transaction_details td on td.transaction_id = t.id inner join lokasani.tickets tck on tck.id = td.ticket_id where tck.creator_id = ?;", creatorId).Scan(&transactionReport)
 	}
 
-	// err := query.Find(&allTransaction).Error
-	// if err != nil {
-	// 	return nil, errors.ERR_GET_DATA
-	// }
-
 	fmt.Println(transactionReport)
-	for i := 0; i < len(allTransaction); i++ {
-		transactionVm := domain.ConvertFromModelToTransactionRes(allTransaction[i])
+
+	for i := 0; i < len(transactionReport); i++ {
+		transactionVm := domain.ConvertFromModelToTransactionReport(transactionReport[i])
 		resAllTransaction = append(resAllTransaction, *transactionVm)
 	}
 	return resAllTransaction, nil

@@ -51,3 +51,14 @@ func ConvertModelTransactionsToResponse(transactions []models.Transaction) []*re
 	}
 	return list
 }
+
+func ConvertFromModelToTransactionReport(data models.TransactionReport) *response.TransactionReport {
+	return &response.TransactionReport{
+		Id: 			 data.Id,
+		TransactionDate: data.TransactionDate,
+		Status: 		 data.Status,
+		Qty: 			 data.Qty,
+		Price: 			 data.Price,
+		Nominal: 		 data.Nominal,
+	}
+}
