@@ -19,3 +19,12 @@ type Transaction struct {
 	Shipping          Shipping            `gorm:"foreignKey:ShippingMethodId"`
 	TransactionDetail []TransactionDetail `gorm:"foreignKey:TransactionId"`
 }
+
+type TransactionReport struct {
+	Id              uint
+	TransactionDate time.Time
+	Status          string
+	Qty             int32
+	Price           float64
+	Nominal         float64
+}

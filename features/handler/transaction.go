@@ -92,17 +92,17 @@ func (ah *TransactionHandler) ConfirmPayment(c echo.Context) error {
 }
 
 func (ah *TransactionHandler) GetHistoryTransaction(c echo.Context) error {
-    userId, _, _, err := middleware.ExtractToken(c)
-    if err != nil {
-        return response.NewErrorResponse(c, err)
-    }	
+	userId, _, _, err := middleware.ExtractToken(c)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
 
 	page, pageSize := 1, 10
 
 	res, transactions, err := ah.transactionService.GetHistoryTransaction(userId, page, pageSize)
-    if err != nil {
-        return response.NewErrorResponse(c, err)
-    }
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
 
 	currentPage, allPages := ah.transactionService.CalculatePaginationValues(page, pageSize, transactions)
 	nextPage := ah.transactionService.GetNextPage(currentPage, allPages)
@@ -118,21 +118,21 @@ func (ah *TransactionHandler) GetHistoryTransaction(c echo.Context) error {
 		},
 	}
 
-    return response.NewSuccessResponse(c, responseData)
+	return response.NewSuccessResponse(c, responseData)
 }
 
 func (ah *TransactionHandler) GetReportTransaction(c echo.Context) error {
 	_, role, creatorId, err := middleware.ExtractToken(c)
-    if err != nil {
-        return response.NewErrorResponse(c, err)
-    }	
 	fmt.Println(role)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
 	var constRole string
 	constRole = consts.ProductCreator
 	if role != constRole || role != constRole {
 		fmt.Println("test")
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
-	} 
+	}
 
 	res, err := ah.transactionService.GetReportTransaction(creatorId, role)
 	if err != nil {
