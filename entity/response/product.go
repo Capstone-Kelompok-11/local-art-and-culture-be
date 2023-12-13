@@ -8,6 +8,7 @@ type Product struct {
 	Price       float64 `json:"price"`
 	Description string  `json:"description"`
 	Status      string  `json:"status"`
+	TotalProduct int64	`json:"total_product" form:"total_product"`
 	//AddressId	uint	`json:"addressId"``
 	CategoryId uint      `json:"category_id"`
 	CreatorId  uint      `json:"creator_id"`
@@ -21,6 +22,7 @@ type Products struct {
 	Price       float64 `json:"price"`
 	Description string  `json:"description"`
 	Status      string  `json:"status"`
+	TotalProduct int64	`json:"total_product" form:"total_product"`
 	//AddressId	uint	`json:"addressId"``
 	CategoryId uint     `json:"category_id"`
 	CreatorId  uint     `json:"creator_id"`

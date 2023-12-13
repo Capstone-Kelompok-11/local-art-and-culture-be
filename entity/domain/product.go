@@ -17,6 +17,7 @@ func ConvertFromProductReqToModel(data request.Product) *models.Product {
 		Price:       data.Price,
 		Description: data.Description,
 		Status:      data.Status,
+		TotalProduct: data.TotalProduct,
 		CategoryId:  data.CategoryId,
 		CreatorId:   data.CreatorId,
 	}
@@ -29,6 +30,7 @@ func ConvertFromModelToProductRes(data models.Product) *response.Product {
 		Price:       data.Price,
 		Description: data.Description,
 		Status:      data.Status,
+		TotalProduct: data.TotalProduct,
 		CategoryId:  data.CategoryId,
 		CreatorId:   data.CreatorId,
 		Category:    *ConvertFromModelToCategoryRes(data.Category),
@@ -43,6 +45,7 @@ func ConvertFromModelToProductsRes(data models.Product) *response.Products {
 		Price:       data.Price,
 		Description: data.Description,
 		Status:      data.Status,
+		TotalProduct: data.TotalProduct,
 		CategoryId:  data.CategoryId,
 		CreatorId:   data.CreatorId,
 		TotalLike: 	 data.TotalLike,
