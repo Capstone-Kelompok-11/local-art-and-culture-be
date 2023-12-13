@@ -5,6 +5,7 @@ import "time"
 type Product struct {
 	Id          uint    `json:"id"`
 	Name        string  `json:"name"`
+	Stock 		bool	`json:"stock" form:"stock"`
 	Price       float64 `json:"price"`
 	Description string  `json:"description"`
 	Status      string  `json:"status"`
@@ -19,6 +20,7 @@ type Product struct {
 type Products struct {
 	Id          uint    `json:"id"`
 	Name        string  `json:"name"`
+	Stock 		bool	`json:"stock" form:"stock"`
 	Price       float64 `json:"price"`
 	Description string  `json:"description"`
 	Status      string  `json:"status"`
