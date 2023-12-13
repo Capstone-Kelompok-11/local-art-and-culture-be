@@ -14,7 +14,8 @@ import (
 type IUserRepository interface {
 	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.Creators, error)
-	GetAllUser(nameFilter string, page, pageSize int) (map[string][]response.User, map[string]int, error)
+	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
+	CountUsersByRole(roleId uint) (int, error)
 	GetUser(id string) (response.User, error)
 	getRoleName(roleID uint) string
 	UpdateUser(id string, input request.User) (response.User, error)
@@ -69,42 +70,43 @@ func (u *userRepository) LoginUser(data *request.User) (response.Creators, error
 	return *domain.ConvertFromModelToCreatorsRes(creator), nil
 }
 
-func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) (map[string][]response.User, map[string]int, error) {
-	var resAllUser = make(map[string][]response.User)
-	var totalItems = make(map[string]int)
+func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error) {
+	var allUser []models.Users
+	var resAllUser []response.User
 
-	var allUsers []models.Users
 	query := u.db.Preload("Role")
 	if nameFilter != "" {
 		query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
 	}
+
 	offset := (page - 1) * pageSize
+
 	query = query.Limit(pageSize).Offset(offset)
-	err := query.Find(&allUsers).Error
+
+	err := query.Find(&allUser).Error
 	if err != nil {
-		return nil, nil, errors.ERR_GET_DATA
+		return nil, 0, errors.ERR_GET_DATA
 	}
 
-	for _, user := range allUsers {
-		roleName := getRoleName(user.RoleId)
-		userVm := domain.ConvertFromModelToUserRes(user)
-		resAllUser[roleName] = append(resAllUser[roleName], *userVm)
-		totalItems[roleName]++
+	for i := 0; i < len(allUser); i++ {
+		userVm := domain.ConvertFromModelToUserRes(allUser[i])
+		resAllUser = append(resAllUser, *userVm)
 	}
-	return resAllUser, totalItems, nil
+
+	var allItems int64
+	query.Count(&allItems)
+
+	return resAllUser, int(allItems), nil
 }
 
-func getRoleName(roleID uint) string {
-	switch roleID {
-	case 1:
-		return "Product Creator"
-	case 2:
-		return "User"
-	case 3:
-		return "Event Creator"
-	default:
-		return "Unknown Role"
+func (u *userRepository) CountUsersByRole(roleId uint) (int, error) {
+	var count int64
+
+	err := u.db.Model(&models.Users{}).Where("role_id = ?", roleId).Count(&count).Error
+	if err != nil {
+		return 0, err
 	}
+	return int(count), nil
 }
 
 func (u *userRepository) GetUser(id string) (response.User, error) {
