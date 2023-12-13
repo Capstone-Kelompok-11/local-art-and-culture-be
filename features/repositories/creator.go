@@ -11,7 +11,7 @@ import (
 )
 
 type ICreatorRepository interface {
-	CreateCreator(data *request.Creator) (response.Creator, error)
+	CreateCreator(data *request.Creator, UserId uint) (response.Creator, error)
 	GetAllCreator(filter request.Creator) ([]response.Creators, error)
 	GetCreator(id string) (response.Creators, error)
 	UpdateCreator(id string, input request.Creator) (response.Creator, error)
@@ -26,13 +26,13 @@ func NewCreatorRepository(db *gorm.DB) *creatorRepository {
 	return &creatorRepository{db}
 }
 
-func (cr *creatorRepository) CreateCreator(data *request.Creator) (response.Creator, error) {
+func (cr *creatorRepository) CreateCreator(data *request.Creator, UserId uint) (response.Creator, error) {
 	dataCreator := domain.ConvertFromCreatorReqToModel(*data)
 	err := cr.db.Create(&dataCreator).Error
 	if err != nil {
 		return response.Creator{}, err
 	}
-	err = cr.db.Preload("Users").Preload("Role").First(&dataCreator, "id = ?", dataCreator.ID).Error
+	err = cr.db.Preload("Users").Preload("Role").First(&dataCreator, "user_id = ?", UserId).Error
 	return *domain.ConvertFromModelToCreatorRes(*dataCreator), nil
 }
 
@@ -41,9 +41,9 @@ func (cr *creatorRepository) GetAllCreator(filter request.Creator) ([]response.C
 	var resAllCreator []response.Creators
 
 	query := cr.db.Preload("Role", func(db *gorm.DB) *gorm.DB {
-		if filter.RoleId != 0 {
-			return db.Where("role_id = ?", filter.RoleId)
-		}
+		// if filter.RoleId != 0 {
+		// 	return db.Where("role_id = ?", filter.RoleId)
+		// }
 		if filter.Role.Role != "" {
 			return db.Where("role LIKE ?", "%"+filter.Role.Role+"%")
 		}

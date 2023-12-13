@@ -5,8 +5,8 @@ type Creator struct {
 	OutletName  string `json:"outlet_name"`
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phone_number"`
-	UserId      uint   `json:"user_id"`
-	RoleId      uint   `json:"role_id"`
+	UserId      uint   
+	Roles    	string   `json:"roles"`
 	AddressId   *uint  `json:"address_id"`
 	Users       User   `json:"users"`
 	Role       Role   `json:"role"`

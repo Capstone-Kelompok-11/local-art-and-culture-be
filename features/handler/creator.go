@@ -5,6 +5,7 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	"lokasani/helpers/middleware"
 
 	"github.com/labstack/echo/v4"
 )
@@ -18,10 +19,17 @@ func NewCreatorHandler(iCreatorService services.ICreatorService) *CreatorHandler
 }
 
 func (ch *CreatorHandler) CreateCreator(c echo.Context) error {
+	userID, _, _, err := middleware.ExtractToken(c)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	
 	var input request.Creator
 	c.Bind(&input)
 
-	res, err := ch.creatorService.CreateCreator(&input)
+	input.UserId = userID
+
+	res, err := ch.creatorService.CreateCreator(&input, userID)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

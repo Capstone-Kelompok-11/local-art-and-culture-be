@@ -6,7 +6,7 @@ type Creators struct {
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phone_number"`
 	UserId      uint   `json:"user_id"`
-	RoleId      uint   `json:"role_id"`
+	Roles     	string   `json:"roles"`
 	AddressId   *uint  `json:"address_id"`
 	Users       Users   `json:"users"`
 	Role       Role   `json:"role"`
@@ -18,6 +18,6 @@ type Creator struct {
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phone_number"`
 	UserId      uint   `json:"user_nd"`
-	RoleId      uint   `json:"role_id"`
+	Roles     	string  `json:"roles"`
 	AddressId   *uint  `json:"address_id"`
 }

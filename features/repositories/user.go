@@ -150,9 +150,9 @@ func (u *userRepository) UpdateUser(id string, input request.User) (response.Use
 	if input.Gender != "" {
 		userData.Gender = input.Gender
 	}
-	if input.RoleId != 0 {
-		userData.RoleId = input.RoleId
-	}
+	// if input.RoleId != 0 {
+	// 	userData.RoleId = input.RoleId
+	// }
 
 	if err = u.db.Save(&userData).Error; err != nil {
 		return response.User{}, err

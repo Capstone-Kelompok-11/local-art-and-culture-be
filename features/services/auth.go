@@ -78,7 +78,7 @@ func (auth *AuthService) GoogleCallbackService(ctx echo.Context) (*response.Auth
 			return nil, errors.New("role not found")
 		}
 
-		SetUser.RoleId = uint(GetRole.ID)
+		// SetUser.RoleId = uint(GetRole.ID)
 
 		UserConvert := domain.UserCreateRequestToUserDomain(SetUser)
 		hashedPassword, _ := bcrypt.HashPassword(SetUser.Password)
