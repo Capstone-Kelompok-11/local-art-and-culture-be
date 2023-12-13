@@ -14,6 +14,7 @@ func ConvertFromProductReqToModel(data request.Product) *models.Product {
 			ID: data.Id,
 		},
 		Name:        data.Name,
+		Stock: 		data.Stock,
 		Price:       data.Price,
 		Description: data.Description,
 		Status:      data.Status,
@@ -27,6 +28,7 @@ func ConvertFromModelToProductRes(data models.Product) *response.Product {
 	return &response.Product{
 		Id:          data.ID,
 		Name:        data.Name,
+		Stock: 		data.Stock,
 		Price:       data.Price,
 		Description: data.Description,
 		Status:      data.Status,
@@ -42,6 +44,7 @@ func ConvertFromModelToProductsRes(data models.Product) *response.Products {
 	return &response.Products{
 		Id:          data.ID,
 		Name:        data.Name,
+		Stock: 		data.Stock,
 		Price:       data.Price,
 		Description: data.Description,
 		Status:      data.Status,
