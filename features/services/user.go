@@ -137,7 +137,7 @@ func (u *UserService) GetAllUser(nameFilter string, page, pageSize int) ([]respo
 		return nil, nil, err
 	}
 
-	regularUser, err := u.CountUsersByRole(2)
+	regularUser, err := u.CountUsersByRole(0)
 	if err != nil {
 		return nil, nil, err
 	}
