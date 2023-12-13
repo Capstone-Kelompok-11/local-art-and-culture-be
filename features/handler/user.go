@@ -71,7 +71,7 @@ func (u *UserHandler) GetAllUser(c echo.Context) error {
 	prevPage := u.userService.GetPrevPage(currentPage)
 
 	responseData := map[string]interface{}{
-		"data": resAllUser,
+		"allUsers": resAllUser,
 		"counts": totalItems,
 		"pagination": map[string]int{
 			"currentPage": currentPage,
