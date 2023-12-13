@@ -8,7 +8,7 @@ import (
 )
 
 type ICreatorService interface {
-	CreateCreator(data *request.Creator) (response.Creator, error)
+	CreateCreator(data *request.Creator, UserId uint) (response.Creator, error)
 	GetAllCreator(filter request.Creator) ([]response.Creators, error)
 	GetAllCreatorByRole(filter request.Creator) ([]response.Creators, error)
 	GetCreator(id string) (response.Creators, error)
@@ -24,7 +24,7 @@ func NewCreatorService(repo repositories.ICreatorRepository) *CreatorService {
 	return &CreatorService{creatorRepository: repo}
 }
 
-func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator, error) {
+func (cs *CreatorService) CreateCreator(data *request.Creator, UserId uint) (response.Creator, error) {
 	if data.Email == "" {
 		return response.Creator{}, errors.ERR_EMAIL_IS_EMPTY
 	}
@@ -35,7 +35,7 @@ func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator
 		return response.Creator{}, errors.ERR_OUTLET_NAME_IS_EMPTY
 	}
 
-	res, err := cs.creatorRepository.CreateCreator(data)
+	res, err := cs.creatorRepository.CreateCreator(data, UserId)
 	if err != nil {
 		return response.Creator{}, errors.ERR_CREATE_CREATOR_DATABASE
 	}

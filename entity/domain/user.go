@@ -38,7 +38,6 @@ func ConvertFromModelToUserRes(data models.Users) *response.User {
 		NIK:         data.NIK,
 		Gender:      data.Gender,
 		BirthDate:   data.BirthDate,
-		RoleId:      data.RoleId,
 		Role:        *ConvertFromModelToRoleRes(data.Role),
 	}
 

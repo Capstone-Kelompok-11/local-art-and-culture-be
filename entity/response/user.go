@@ -18,7 +18,6 @@ type User struct {
 	DeletedAt   time.Time	`json:"deleted_at,omitempty"`
 	Date		string	    `json:"date"`
 	CreatedAt   time.Time	`json:"created_at,omitempty"`
-	RoleId 		uint		`json:"role_id"`
 	Role Role				`json:"role"`
 }
 

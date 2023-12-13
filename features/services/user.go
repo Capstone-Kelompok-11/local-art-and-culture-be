@@ -31,6 +31,7 @@ func NewUserService(repo repositories.IUserRepository) *UserService {
 }
 
 func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
+	data.RoleId = 2
 	if data.FirstName == "" {
 		return response.User{}, errors.ERR_NAME_IS_EMPTY
 	}
@@ -51,7 +52,9 @@ func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
 
 	data.Password = hashPass
 	res, err := u.UserRepo.RegisterUser(data)
-
+	if err != nil {
+		return response.User{}, err
+	}
 	return res, nil
 }
 
@@ -134,7 +137,7 @@ func (u *UserService) GetAllUser(nameFilter string, page, pageSize int) ([]respo
 		return nil, nil, err
 	}
 
-	regularUser, err := u.CountUsersByRole(2)
+	regularUser, err := u.CountUsersByRole(0)
 	if err != nil {
 		return nil, nil, err
 	}

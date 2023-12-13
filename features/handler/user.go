@@ -28,7 +28,7 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 		return response.NewErrorResponse(e, err)
 	}
 
-	token, err := middleware.CreateToken(uint(res.Id), uint(res.RoleId), uint(res.Id))
+	token, err := middleware.CreateToken(uint(res.Id), 0, uint(res.Id))
 	if err != nil {
 		return response.NewErrorResponse(e, errors.ERR_TOKEN)
 	}
@@ -47,7 +47,7 @@ func (u *UserHandler) LoginUsers(e echo.Context) error {
         return response.NewErrorResponse(e, err)
     }
 
-    token, err := middleware.CreateToken(uint(res.Users.Id), uint(res.RoleId), uint(res.Id))
+    token, err := middleware.CreateToken(uint(res.Users.Id), 0, uint(res.Id))
     if err != nil {
         return response.NewErrorResponse(e, errors.ERR_TOKEN)
     }
@@ -66,7 +66,7 @@ func (u *UserHandler) GetAllUser(c echo.Context) error {
 		return response.NewErrorResponse(c, err)
 	}
 
-	currentPage, allPages := u.userService.CalculatePaginationValues(page, pageSize, totalItems["RegularUser"]+totalItems["EventCreators"]+totalItems["ProductCreators"])
+	currentPage, allPages := u.userService.CalculatePaginationValues(page, pageSize, totalItems["regularUser"]+totalItems["eventCreators"]+totalItems["productCreators"])
 	nextPage := u.userService.GetNextPage(currentPage, allPages)
 	prevPage := u.userService.GetPrevPage(currentPage)
 
