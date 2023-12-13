@@ -15,5 +15,6 @@ type User struct {
 	Gender		string		`json:"gender" form:"gender"`
 	BirthDate   time.Time 	`json:"birthday" form:"birthday"`
 	RoleId 		uint		`json:"role_id"`
+	Roles 		string		`json:"role"`
 	Role Role
 }
