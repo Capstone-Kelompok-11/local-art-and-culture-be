@@ -23,13 +23,19 @@ func (ch *CreatorHandler) CreateCreator(c echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
-	
+
 	var input request.Creator
-	c.Bind(&input)
+	if err := c.Bind(&input); err != nil {
+		return response.NewErrorResponse(c, err)
+	}
 
-	input.UserId = userID
+	fmt.Println("UserID from token:", userID)
 
-	res, err := ch.creatorService.CreateCreator(&input, userID)
+	//input.UserId = userID
+
+	//fmt.Println("UserID in struct:", input.Users.Id)
+
+	res, err := ch.creatorService.CreateCreator(&input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -38,7 +44,7 @@ func (ch *CreatorHandler) CreateCreator(c echo.Context) error {
 
 func (ch *CreatorHandler) GetAllCreator(c echo.Context) error {
 	var filter request.Creator
-	filter.Users.Username = c.QueryParam("name")
+	//filter.Users.Username = c.QueryParam("name")
 	res, err := ch.creatorService.GetAllCreator(filter)
 	if err != nil {
 		return response.NewErrorResponse(c, err)

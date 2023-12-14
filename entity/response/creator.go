@@ -1,15 +1,14 @@
 package response
 
 type Creators struct {
-	Id          uint   `json:"id"`
-	OutletName  string `json:"outlet_name"`
-	Email       string `json:"email"`
-	PhoneNumber string `json:"phone_number"`
-	UserId      uint   `json:"user_id"`
-	Roles     	string   `json:"roles"`
-	AddressId   *uint  `json:"address_id"`
+	Id          uint   	`json:"id"`
+	OutletName  string 	`json:"outlet_name"`
+	Email       string 	`json:"email"`
+	PhoneNumber string 	`json:"phone_number"`
+	AddressId   *uint  	`json:"address_id"`
+	Address 	string	`json:"address"`
 	Users       Users   `json:"users"`
-	Role       Role   `json:"role"`
+	Role       	Role   	`json:"role"`
 }
 
 type Creator struct {
@@ -18,6 +17,5 @@ type Creator struct {
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phone_number"`
 	UserId      uint   `json:"user_nd"`
-	Roles     	string  `json:"roles"`
 	AddressId   *uint  `json:"address_id"`
 }

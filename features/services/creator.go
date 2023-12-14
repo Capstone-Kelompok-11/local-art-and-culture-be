@@ -8,7 +8,7 @@ import (
 )
 
 type ICreatorService interface {
-	CreateCreator(data *request.Creator, UserId uint) (response.Creator, error)
+	CreateCreator(data *request.Creator) (response.Creator, error)
 	GetAllCreator(filter request.Creator) ([]response.Creators, error)
 	GetAllCreatorByRole(filter request.Creator) ([]response.Creators, error)
 	GetCreator(id string) (response.Creators, error)
@@ -18,13 +18,17 @@ type ICreatorService interface {
 
 type CreatorService struct {
 	creatorRepository repositories.ICreatorRepository
+	roleRepo          repositories.IRoleRepository
 }
 
-func NewCreatorService(repo repositories.ICreatorRepository) *CreatorService {
-	return &CreatorService{creatorRepository: repo}
+func NewCreatorService(repo repositories.ICreatorRepository, role repositories.IRoleRepository) *CreatorService {
+	return &CreatorService{
+		creatorRepository: repo,
+		roleRepo:          role,
+	}
 }
 
-func (cs *CreatorService) CreateCreator(data *request.Creator, UserId uint) (response.Creator, error) {
+func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator, error) {
 	if data.Email == "" {
 		return response.Creator{}, errors.ERR_EMAIL_IS_EMPTY
 	}
@@ -34,16 +38,39 @@ func (cs *CreatorService) CreateCreator(data *request.Creator, UserId uint) (res
 	if data.OutletName == "" {
 		return response.Creator{}, errors.ERR_OUTLET_NAME_IS_EMPTY
 	}
+	if data.Roles == "" && data.RoleId == 0 {
+		return response.Creator{}, errors.ERR_ROLE_IS_EMPTY
+	}
+	if data.Roles == "product creator" {
+		data.RoleId = 2
+	}
+	if data.Roles == "event creator" {
+		data.RoleId = 3
+	}
 
-	res, err := cs.creatorRepository.CreateCreator(data, UserId)
+	var roles []string
+	if data.Roles != "" {
+		roles = append(roles, data.Roles)
+	}
+	resRole, err := cs.roleRepo.GetAllRole(roles[0])
+	if err != nil {
+		return response.Creator{}, errors.ERR_ROLE_IS_EMPTY
+	}
+
+	if len(resRole) == 0 {
+		return response.Creator{}, errors.ERR_ROLE_IS_EMPTY
+	}
+
+	data.RoleId = resRole[0].Id
+
+	res, err := cs.creatorRepository.CreateCreator(data)
 	if err != nil {
 		return response.Creator{}, errors.ERR_CREATE_CREATOR_DATABASE
 	}
-
 	return res, nil
 }
 
-func (cs *CreatorService) GetAllCreator(filter request.Creator) ([]response.Creators, error){
+func (cs *CreatorService) GetAllCreator(filter request.Creator) ([]response.Creators, error) {
 	res, err := cs.creatorRepository.GetAllCreator(filter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
@@ -51,7 +78,7 @@ func (cs *CreatorService) GetAllCreator(filter request.Creator) ([]response.Crea
 	return res, nil
 }
 
-func (cs *CreatorService) GetAllCreatorByRole(filter request.Creator) ([]response.Creators, error){
+func (cs *CreatorService) GetAllCreatorByRole(filter request.Creator) ([]response.Creators, error) {
 	res, err := cs.creatorRepository.GetAllCreator(filter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA

@@ -9,7 +9,6 @@ func ConvertFromSaveReqToModel(message, response string, userId uint) *models.Sa
 	return &models.SaveChatbot{
 		Message:  message,
 		Response: response,
-		UserId:   userId,
 	}
 }
 
@@ -18,7 +17,6 @@ func ConvertFromModelToSaveRes(data models.SaveChatbot) *response.SaveChatbot {
 		Id:       data.ID,
 		Message:  data.Message,
 		Response: data.Response,
-		UserId:   data.UserId,
 	}
 }
 

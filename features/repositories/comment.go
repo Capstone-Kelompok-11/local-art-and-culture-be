@@ -32,7 +32,7 @@ func (co *commentRepository) CreateComment(data *request.Comment) (response.Comm
 	if err != nil {
 		return response.Comment{}, err
 	}
-	err = co.db.Preload("User").First(&dataComment, "id = ?", dataComment.ID).Error
+	co.db.Preload("User").First(&dataComment, "id = ?", dataComment.ID)
 	return *domain.ConvertFromModelToCommentRes(*dataComment), nil
 }
 
