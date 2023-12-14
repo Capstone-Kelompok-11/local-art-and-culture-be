@@ -17,3 +17,8 @@ type User struct {
 	RoleId 		uint		
 	Role Role
 }
+
+type EmailRequest struct {
+	Email		string		`json:"email" form:"email"`
+	OTP			string		`json:"otp" form:"otp"`
+}

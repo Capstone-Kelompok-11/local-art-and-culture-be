@@ -5,9 +5,9 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	consts "lokasani/helpers/const"
 	"lokasani/helpers/errors"
 	"lokasani/helpers/middleware"
-	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -91,32 +91,52 @@ func (ah *TransactionHandler) ConfirmPayment(c echo.Context) error {
 	return response.NewSuccessResponse(c, res)
 }
 
-func (pr *TransactionHandler) GetTransactionReport(c echo.Context) error {
-	startDateStr := c.QueryParam("start_date")
-	endDateStr := c.QueryParam("end_date")
-
-	if startDateStr == "" || endDateStr == "" {
-		return response.NewErrorResponse(c, echo.ErrBadGateway)
-	}
-
-	startDate, err := time.Parse("2006-01-02", startDateStr)
+func (ah *TransactionHandler) GetHistoryTransaction(c echo.Context) error {
+	userId, _, _, err := middleware.ExtractToken(c)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
 
-	endDate, err := time.Parse("2006-01-02", endDateStr)
+	page, pageSize := 1, 10
+
+	res, transactions, err := ah.transactionService.GetHistoryTransaction(userId, page, pageSize)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
 
-	if endDate.Before(startDate) {
-		return response.NewErrorResponse(c, err)
+	currentPage, allPages := ah.transactionService.CalculatePaginationValues(page, pageSize, transactions)
+	nextPage := ah.transactionService.GetNextPage(currentPage, allPages)
+	prevPage := ah.transactionService.GetPrevPage(currentPage)
+
+	responseData := map[string]interface{}{
+		"data": res,
+		"pagination": map[string]int{
+			"currentPage": currentPage,
+			"nextPage":    nextPage,
+			"prevPage":    prevPage,
+			"allPages":    allPages,
+		},
 	}
 
-	transactions, err := pr.transactionService.GetTransactionReport(startDate, endDate)
+	return response.NewSuccessResponse(c, responseData)
+}
+
+func (ah *TransactionHandler) GetReportTransaction(c echo.Context) error {
+	_, role, creatorId, err := middleware.ExtractToken(c)
+	fmt.Println(role)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
 
-	return response.NewSuccessResponse(c, transactions)
+	constRole := consts.ProductCreator
+	if role != constRole && role != consts.EventCreator {
+		fmt.Println("test")
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+
+	res, err := ah.transactionService.GetReportTransaction(creatorId, role)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	return response.NewSuccessResponse(c, res)
 }

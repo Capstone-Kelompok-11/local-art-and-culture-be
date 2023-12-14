@@ -42,13 +42,23 @@ func ConvertFromModelToTransactionRes(data models.Transaction) *response.Transac
 	}
 }
 
-func ConvertModelTransactionsToResponse(transactions []models.Transaction) []response.Transaction {
-	var responseTransactions []response.Transaction
+func ConvertModelTransactionsToResponse(transactions []models.Transaction) []*response.Transaction {
+	list := []*response.Transaction{}
 
-	for _, modelTransaction := range transactions {
-		responseTransaction := ConvertFromModelToTransactionRes(modelTransaction)
-		responseTransactions = append(responseTransactions, *responseTransaction)
+	for _, v := range transactions {
+		res:= ConvertFromModelToTransactionRes(v)
+		list = append(list, res)
 	}
+	return list
+}
 
-	return responseTransactions
+func ConvertFromModelToTransactionReport(data models.TransactionReport) *response.TransactionReport {
+	return &response.TransactionReport{
+		Id: 			 data.Id,
+		TransactionDate: data.TransactionDate,
+		Status: 		 data.Status,
+		Qty: 			 data.Qty,
+		Price: 			 data.Price,
+		Nominal: 		 data.Nominal,
+	}
 }

@@ -4,7 +4,7 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
-
+	consts "lokasani/helpers/const"
 	"lokasani/helpers/errors"
 	"lokasani/helpers/middleware"
 
@@ -27,8 +27,14 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(e, err)
 	}
+	role := ""
+	if res.Role.Role != "" && res.Role.Role == consts.ProductCreator {
+		role = consts.ProductCreator
+	} else if res.Role.Role != "" && res.Role.Role == consts.EventCreator {
+		role = consts.EventCreator
+	}
 
-	token, err := middleware.CreateToken(uint(res.Id), 0, uint(res.Id))
+	token, err := middleware.CreateToken(uint(res.Id), role, 0)
 	if err != nil {
 		return response.NewErrorResponse(e, errors.ERR_TOKEN)
 	}
@@ -39,21 +45,26 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 }
 
 func (u *UserHandler) LoginUsers(e echo.Context) error {
-    var input request.User
-    e.Bind(&input)
+	var input request.User
+	e.Bind(&input)
 
-    res, err := u.userService.LoginUser(&input)
-    if err != nil {
-        return response.NewErrorResponse(e, err)
-    }
+	res, err := u.userService.LoginUser(&input)
+	if err != nil {
+		return response.NewErrorResponse(e, err)
+	}
+	role := ""
+	if res.Role.Role != "" && res.Role.Role == consts.ProductCreator {
+		role = consts.ProductCreator
+	} else if res.Role.Role != "" && res.Role.Role == consts.EventCreator {
+		role = consts.EventCreator
+	}
+	token, err := middleware.CreateToken(uint(res.Users.Id), role, uint(res.Id))
+	if err != nil {
+		return response.NewErrorResponse(e, errors.ERR_TOKEN)
+	}
+	res.Users.Token = token
 
-    token, err := middleware.CreateToken(uint(res.Users.Id), 0, uint(res.Id))
-    if err != nil {
-        return response.NewErrorResponse(e, errors.ERR_TOKEN)
-    }
-    res.Users.Token = token
-
-    middleware.SetTokenCookie(e, token)
+	middleware.SetTokenCookie(e, token)
 	return response.NewSuccessResponse(e, res)
 }
 
@@ -72,7 +83,7 @@ func (u *UserHandler) GetAllUser(c echo.Context) error {
 
 	responseData := map[string]interface{}{
 		"allUsers": resAllUser,
-		"counts": totalItems,
+		"counts":   totalItems,
 		"pagination": map[string]int{
 			"currentPage": currentPage,
 			"nextPage":    nextPage,

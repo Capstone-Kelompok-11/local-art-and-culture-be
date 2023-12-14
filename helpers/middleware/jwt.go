@@ -13,15 +13,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func CreateToken(userId, roleId, creatorId uint) (string, error) {
+func CreateToken(userId uint, role string, creatorId uint) (string, error) {
 	godotenv.Load()
 	claims := jwt.MapClaims{}
 	claims["id"] = userId
-	claims["role_id"] = roleId
+	claims["role_id"] = role
 	claims["creator_id"] = creatorId
 	// claims["name"] = name
-	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
-	// claims["role"] = role
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	claims["role"] = role
 
 	fmt.Println("Token Claims:", claims)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -46,15 +46,15 @@ func SetTokenCookie(e echo.Context, token string) {
 	e.SetCookie(cookie)
 }
 
-func ExtractToken(e echo.Context) (uint, uint, uint, error) {
+func ExtractToken(e echo.Context) (uint, string, uint, error) {
 	user, ok := e.Get("user").(*jwt.Token)
 	if !ok {
-		return 0, 0, 0, errors.New("invalid token")
+		return 0, "", 0, errors.New("invalid token")
 	}
 
 	claims, ok := user.Claims.(jwt.MapClaims)
 	if !ok {
-		return 0, 0, 0, errors.New("invalid token claims")
+		return 0, "", 0, errors.New("invalid token claims")
 	}
 
 	// exp, ok := claims["exp"].(float64)
@@ -64,19 +64,19 @@ func ExtractToken(e echo.Context) (uint, uint, uint, error) {
 
 	userIDFloat, ok := claims["id"].(float64)
 	if !ok {
-		return 0, 0, 0, errors.New("invalid token claims")
+		return 0, "", 0, errors.New("invalid token claims")
 	}
 	userID := uint(userIDFloat)
 
-	roleIDFloat, ok := claims["role_id"].(float64)
+	role, ok := claims["role_id"].(string)
 	if !ok {
-		return 0, 0, 0, errors.New("invalid token claims")
+		return 0, "", 0, errors.New("invalid token claims")
 	}
-	roleID := uint(roleIDFloat)
+	roleID := role
 
 	creatorIDFloat, ok := claims["creator_id"].(float64)
 	if !ok {
-		return 0, 0, 0, errors.New("invalid token claims")
+		return 0, "", 0, errors.New("invalid token claims")
 	}
 	creatorID := uint(creatorIDFloat)
 

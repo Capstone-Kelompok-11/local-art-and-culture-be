@@ -22,6 +22,7 @@ type IUserRepository interface {
 	DeleteUser(id string) (response.User, error)
 	FindByEmail(email string) (*models.Users, error)
 	CreateUser(user *models.Users) (*models.Users, error)
+	//SaveOTP(otp *models.OTP) (*models.OTP, error)
 }
 
 type userRepository struct {

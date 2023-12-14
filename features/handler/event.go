@@ -8,6 +8,7 @@ import (
 	"lokasani/features/services"
 
 	//"lokasani/helpers/consts"
+	consts "lokasani/helpers/const"
 	"lokasani/helpers/middleware"
 	"strconv"
 
@@ -28,7 +29,7 @@ func (pr *EventHandler) CreateEvent(c echo.Context) error {
 		log.Println("Error extracting token:", err)
         return response.NewErrorResponse(c, err)
     }
-    if roleId != 3 {
+    if roleId != consts.EventCreator {
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
 
@@ -120,7 +121,7 @@ func (pr *EventHandler) UpdateEvent(c echo.Context) error {
 		log.Println("Error extracting token:", err)
         return response.NewErrorResponse(c, err)
     }
-    if roleId != 3 {
+    if roleId != consts.EventCreator {
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
 
@@ -141,7 +142,7 @@ func (pr *EventHandler) DeleteEvent(c echo.Context) error {
 		log.Println("Error extracting token:", err)
         return response.NewErrorResponse(c, err)
     }
-    if roleId != 3 {
+    if roleId != consts.EventCreator {
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
 	

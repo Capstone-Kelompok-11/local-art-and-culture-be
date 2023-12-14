@@ -19,3 +19,12 @@ type Transaction struct {
 	Total             float64             `json:"total"`
 	TransactionDetail []TransactionDetail `json:"transaction_detail"`
 }
+
+type TransactionReport struct {
+	Id              uint		`json:"id"`
+	TransactionDate time.Time	`json:"transaction_date"`
+	Status          string		`json:"status"`
+	Qty             int32		`json:"qty"`
+	Price           float64		`json:"price"`
+	Nominal         float64		`json:"nominal"`
+}
