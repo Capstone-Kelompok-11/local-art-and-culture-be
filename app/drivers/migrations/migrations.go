@@ -28,4 +28,5 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.Wishlist{})
 	db.AutoMigrate(&models.Files{})
 	db.AutoMigrate(&models.SaveChatbot{})
+	db.Migrator().AddColumn(&models.Creator{}, "Address")
 }
