@@ -13,8 +13,10 @@ import (
 
 func CreatorRoute(e *echo.Echo, db *gorm.DB) {
 	repository := repositories.NewCreatorRepository(db)
-	service := services.NewCreatorService(repository)
+	roleRepository := repositories.NewRoleRepository(db) 
+	service := services.NewCreatorService(repository, roleRepository)
 	handler := handler.NewCreatorHandler(service)
+
 
 	eJwt := e.Group("")
 	eJwt.Use(echojwt.JWT([]byte(os.Getenv("SECRET_JWT"))))

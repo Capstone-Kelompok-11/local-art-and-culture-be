@@ -7,10 +7,11 @@ type Creator struct {
 	OutletName  string `gorm:"unique;not null"`
 	Email       string `gorm:"unique;not null"`
 	PhoneNumber string `gorm:"unique;not null"`
-	UserId      uint   `gorm:"not null"`
-	Roles      string   `gorm:"type:enum('event_creator', 'product_creator')"`
+	UserId      uint
+	RoleId      uint
 	AddressId   *uint
+	Address     string
 	Users       Users    `gorm:"foreignKey:UserId"`
-	Role       Role     `gorm:"foreignKey:Roles"`
+	Role        Role     `gorm:"foreignKey:RoleId"`
 	Addresses   *Address `gorm:"foreignKey:AddressId"`
 }
