@@ -18,7 +18,7 @@ func ConvertFromCreatorReqToModel(data request.Creator) *models.Creator {
 		PhoneNumber: data.PhoneNumber,
 		UserId:      data.UserId,
 		RoleId:      data.RoleId,
-		Address: data.Address,
+		Address:     data.Address,
 		// AddressId:   data.AddressId,
 	}
 }
@@ -30,8 +30,9 @@ func ConvertFromModelToCreatorsRes(data models.Creator) *response.Creators {
 		OutletName:  data.OutletName,
 		PhoneNumber: data.PhoneNumber,
 		//UserId:      data.UserId,
-		Users: *ConvertFromModelToUsersRes(data.Users),
-		Role:  *ConvertFromModelToRoleRes(data.Role),
+		Address: data.Address,
+		Users:   *ConvertFromModelToUsersRes(data.Users),
+		Role:    *ConvertFromModelToRoleRes(data.Role),
 		// AddressId:   data.AddressId,
 	}
 }
@@ -43,6 +44,7 @@ func ConvertFromModelToCreatorRes(data models.Creator) *response.Creator {
 		OutletName:  data.OutletName,
 		PhoneNumber: data.PhoneNumber,
 		UserId:      data.UserId,
+		Address:     data.Address,
 		// AddressId:   data.AddressId,
 	}
 }
