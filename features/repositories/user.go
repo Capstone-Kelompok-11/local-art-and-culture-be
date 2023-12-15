@@ -15,9 +15,9 @@ type IUserRepository interface {
 	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.Creators, error)
 	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
-	CountUsersByRole(roleId uint)(int, error)
+	//CountUsersByRole(roleId uint) (int, error)
 	GetUser(id string) (response.User, error)
-	getRoleName(roleID uint) string
+	//getRoleName(roleID uint) string
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
 	FindByEmail(email string) (*models.Users, error)
@@ -28,17 +28,12 @@ type userRepository struct {
 	db *gorm.DB
 }
 
-// getRoleName implements IUserRepository.
-func (*userRepository) getRoleName(roleID uint) string {
-	panic("unimplemented")
-}
-
 func NewUsersRepository(db *gorm.DB) *userRepository {
 	return &userRepository{db}
 }
 
 func (u *userRepository) RegisterUser(data *request.User) (response.User, error) {
-	dataUser := domain.ConvertFromUserReqToModel(*data)
+	dataUser := domain.ConvertFromUserReqToModel(*data, data.Image)
 	err := u.db.Create(&dataUser).Error
 	if err != nil {
 		return response.User{}, err
@@ -51,7 +46,7 @@ func (u *userRepository) RegisterUser(data *request.User) (response.User, error)
 }
 
 func (u *userRepository) LoginUser(data *request.User) (response.Creators, error) {
-	dataUser := domain.ConvertFromUserReqToModel(*data)
+	dataUser := domain.ConvertFromUserReqToModel(*data, data.Image)
 	err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
 	if err != nil {
 		return response.Creators{}, errors.ERR_EMAIL_NOT_FOUND
@@ -99,20 +94,20 @@ func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) ([]re
 	return resAllUser, int(allItems), nil
 }
 
-func (u *userRepository) CountUsersByRole(roleId uint) (int, error) {
-	var count int64
-	var query = u.db.Model(&models.Users{})
+// func (u *userRepository) CountUsersByRole(roleId uint) (int, error) {
+// 	var count int64
+// 	var query = u.db.Model(&models.Users{})
 
-	if roleId != 0 {
-		query = query.Where("role_id = ?", roleId)
-	}
+// 	if roleId != 0 {
+// 		query = query.Where("role_id = ?", roleId)
+// 	}
 
-	err := query.Count(&count).Error
-	if err != nil {
-		return 0, err
-	}
-	return int(count), nil
-}
+// 	err := query.Count(&count).Error
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	return int(count), nil
+// }
 
 func (u *userRepository) GetUser(id string) (response.User, error) {
 	var userData models.Users
@@ -168,14 +163,17 @@ func (u *userRepository) UpdateUser(id string, input request.User) (response.Use
 func (u *userRepository) DeleteUser(id string) (response.User, error) {
 	userData := models.Users{}
 	res := response.User{}
+
 	find := u.db.Preload("Role").First(&userData, "id = ?", id).Error
 	if find == nil {
 		res = *domain.ConvertFromModelToUserRes(userData)
 	}
+
 	err := u.db.Delete(&userData, "id = ?", id).Error
 	if err != nil {
 		return response.User{}, err
 	}
+
 	return res, nil
 }
 

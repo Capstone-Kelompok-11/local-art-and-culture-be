@@ -7,6 +7,8 @@ type Creators struct {
 	PhoneNumber string 	`json:"phone_number"`
 	AddressId   *uint  	`json:"address_id"`
 	Address 	string	`json:"address"`
+	UserId 		uint	`json:"user_id"`
+	RoleId 		uint	`json:"role_id"`
 	Users       Users   `json:"users"`
 	Role       	Role   	`json:"role"`
 }

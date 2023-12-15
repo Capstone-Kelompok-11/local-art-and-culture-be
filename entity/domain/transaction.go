@@ -19,7 +19,7 @@ func ConvertFromTransactionReqToModel(data request.Transaction) *models.Transact
 		ShippingMethodId:  data.ShippingMethodId,
 		Status:            data.Status,
 		TransactionNumber: data.TransactionNumber,
-		User:              *ConvertFromUserReqToModel(data.User),
+		User:              *ConvertFromUserReqToModel(data.User, data.User.Image),
 		Payment:           *ConvertFromPaymentReqToModel(data.Payment),
 		Shipping:          *ConvertFromShippingReqToModel(data.Shipping),
 		TransactionDetail: *ConvertFromTransactionDetailReqToModels(data.TransactionDetail),

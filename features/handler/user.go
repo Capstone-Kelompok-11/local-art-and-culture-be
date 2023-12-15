@@ -7,6 +7,7 @@ import (
 
 	"lokasani/helpers/errors"
 	"lokasani/helpers/middleware"
+	"lokasani/helpers/upload"
 
 	"github.com/labstack/echo/v4"
 )
@@ -27,6 +28,13 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(e, err)
 	}
+
+	file, err := e.FormFile("image")
+	if err != nil {
+		return response.NewErrorResponse(e, err)
+	}
+	client := upload.ConfigCloud()
+	upload.UploadFile(file, client)
 
 	token, err := middleware.CreateToken(uint(res.Id), 0, uint(res.Id))
 	if err != nil {
@@ -61,18 +69,17 @@ func (u *UserHandler) GetAllUser(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
 	page, pageSize := 1, 10
 
-	resAllUser, totalItems, err := u.userService.GetAllUser(nameFilter, page, pageSize)
+	res, allItems, err := u.userService.GetAllUser(nameFilter, page, pageSize)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
 
-	currentPage, allPages := u.userService.CalculatePaginationValues(page, pageSize, totalItems["regularUser"]+totalItems["eventCreators"]+totalItems["productCreators"])
+	currentPage, allPages := u.userService.CalculatePaginationValues(page, pageSize, allItems)
 	nextPage := u.userService.GetNextPage(currentPage, allPages)
 	prevPage := u.userService.GetPrevPage(currentPage)
 
 	responseData := map[string]interface{}{
-		"allUsers": resAllUser,
-		"counts": totalItems,
+		"allUsers": res,
 		"pagination": map[string]int{
 			"currentPage": currentPage,
 			"nextPage":    nextPage,
@@ -104,6 +111,14 @@ func (u *UserHandler) UpdateUser(c echo.Context) error {
 }
 
 func (u *UserHandler) DeleteUser(c echo.Context) error {
+	_, roleId, _, err := middleware.ExtractToken(c)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    if roleId != 4 {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+	
 	id := c.Param("id")
 	res, err := u.userService.DeleteUser(id)
 	if err != nil {
