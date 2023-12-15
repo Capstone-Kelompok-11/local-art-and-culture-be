@@ -119,7 +119,7 @@ func (u *UserHandler) DeleteUser(c echo.Context) error {
     if err != nil {
         return response.NewErrorResponse(c, err)
     }
-    if roleId != 4 {
+    if roleId != "ADMIN" {
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
 	

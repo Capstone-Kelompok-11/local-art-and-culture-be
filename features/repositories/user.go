@@ -17,7 +17,7 @@ type IUserRepository interface {
 	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
 	CountUsersByRole(roleId uint)(int, error)
 	GetUser(id string) (response.User, error)
-	getRoleName(roleID uint) string
+	//getRoleName(roleID uint) string
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
 	FindByEmail(email string) (*models.Users, error)
@@ -27,11 +27,6 @@ type IUserRepository interface {
 
 type userRepository struct {
 	db *gorm.DB
-}
-
-// getRoleName implements IUserRepository.
-func (*userRepository) getRoleName(roleID uint) string {
-	panic("unimplemented")
 }
 
 func NewUsersRepository(db *gorm.DB) *userRepository {
@@ -175,13 +170,18 @@ func (u *userRepository) DeleteUser(id string) (response.User, error) {
 		res = *domain.ConvertFromModelToUserRes(userData)
 	}
 
-	err := u.db.Delete(&userData, "id = ?", id).Error
+	err := u.db.Delete(&models.Creator{}, "user_id = ?", id).Error
 	if err != nil {
 		return response.User{}, err
 	}
 
+	err = u.db.Delete(&userData, "id = ?", id).Error
+	if err != nil {
+		return response.User{}, err
+	}
 	return res, nil
 }
+
 
 func (u *userRepository) FindByEmail(email string) (*models.Users, error) {
 	user := models.Users{}
