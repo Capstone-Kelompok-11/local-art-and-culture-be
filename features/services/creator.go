@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
@@ -41,18 +42,8 @@ func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator
 	if data.Roles == "" && data.RoleId == 0 {
 		return response.Creator{}, errors.ERR_ROLE_IS_EMPTY
 	}
-	if data.Roles == "product creator" {
-		data.RoleId = 2
-	}
-	if data.Roles == "event creator" {
-		data.RoleId = 3
-	}
 
-	var roles []string
-	if data.Roles != "" {
-		roles = append(roles, data.Roles)
-	}
-	resRole, err := cs.roleRepo.GetAllRole(roles[0])
+	resRole, err := cs.roleRepo.GetAllRole(data.Roles)
 	if err != nil {
 		return response.Creator{}, errors.ERR_ROLE_IS_EMPTY
 	}
@@ -62,7 +53,8 @@ func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator
 	}
 
 	data.RoleId = resRole[0].Id
-
+	fmt.Println(data.RoleId)
+	fmt.Println(data)
 	res, err := cs.creatorRepository.CreateCreator(data)
 	if err != nil {
 		return response.Creator{}, errors.ERR_CREATE_CREATOR_DATABASE

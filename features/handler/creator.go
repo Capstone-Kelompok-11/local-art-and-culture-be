@@ -28,10 +28,10 @@ func (ch *CreatorHandler) CreateCreator(c echo.Context) error {
 	if err := c.Bind(&input); err != nil {
 		return response.NewErrorResponse(c, err)
 	}
+	input.UserId = userID
 
 	fmt.Println("UserID from token:", userID)
 
-	//input.UserId = userID
 
 	//fmt.Println("UserID in struct:", input.Users.Id)
 

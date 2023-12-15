@@ -20,7 +20,7 @@ func CreateToken(userId, roleId, creatorId uint) (string, error) {
 	claims["role_id"] = roleId
 	claims["creator_id"] = creatorId
 	// claims["name"] = name
-	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 48).Unix()
 	// claims["role"] = role
 
 	fmt.Println("Token Claims:", claims)

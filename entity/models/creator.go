@@ -12,6 +12,6 @@ type Creator struct {
 	AddressId   *uint
 	Address     string
 	Users       Users    `gorm:"foreignKey:UserId"`
-	Role       	Role     `gorm:"foreignKey:RoleId"`
+	Role        Role     `gorm:"foreignKey:RoleId"`
 	Addresses   *Address `gorm:"foreignKey:AddressId"`
 }
