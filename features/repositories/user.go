@@ -72,7 +72,7 @@ func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) ([]re
 
 	query := u.db.Preload("Role")
 	if nameFilter != "" {
-		query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
+    	query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
 	}
 
 	offset := (page - 1) * pageSize
@@ -99,10 +99,8 @@ func (u *userRepository) CountUsersByRole(roleId uint) (int, error) {
 	var count int64
 	var query = u.db.Model(&models.Users{})
 
-	if roleId != 0 {
-		query = query.Where("role_id = ?", roleId)
-	}
-
+	query = query.Where("role_id = ?", roleId)
+	
 	err := query.Count(&count).Error
 	if err != nil {
 		return 0, err

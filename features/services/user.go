@@ -12,11 +12,11 @@ import (
 type IUserService interface {
 	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.Creators, error)
-	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, map[string]int, error) 
+	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, map[string]int, error)
 	GetUser(id string) (response.User, error)
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
-	CalculatePaginationValues(page, pageSize, allItems  int) (int, int)
+	CalculatePaginationValues(page, pageSize, allItmes int) (int, int)
 	GetNextPage(currentPage, allPages int) int
 	GetPrevPage(currentPage int) int
 	CountUsersByRole(roleId uint) (int, error)
@@ -72,15 +72,6 @@ func (u *UserService) LoginUser(data *request.User) (response.Creators, error) {
 	}
 	return res, nil
 }
-
-// func (u *UserService) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error) {
-// 	err, allItems, res := u.UserRepo.GetAllUser(nameFilter, page, pageSize)
-// 	if err != nil {
-// 		return err, 0,  nil
-// 	}
-// 	return nil, allItems, res
-// }
-
 
 func (u *UserService) GetUser(id string) (response.User, error) {
 	if id == "" {
@@ -155,13 +146,13 @@ func (u *UserService) GetAllUser(nameFilter string, page, pageSize int) ([]respo
 	return allUsers, rolesCount, nil
 }
 
-func (pr *UserService) CalculatePaginationValues(page, pageSize, allItems int) (int, int) {
+func (u *UserService) CalculatePaginationValues(page, pageSize, allItmes int) (int, int) {
 	pageInt := page
 	if pageInt <= 0 {
 		pageInt = 1
 	}
 
-	allPages := int(math.Ceil(float64(allItems) / float64(pageSize)))
+	allPages := int(math.Ceil(float64(allItmes) / float64(pageSize)))
 
 	if pageInt > allPages {
 		pageInt = allPages
@@ -170,14 +161,14 @@ func (pr *UserService) CalculatePaginationValues(page, pageSize, allItems int) (
 	return pageInt, allPages
 }
 
-func (pr *UserService) GetNextPage(currentPage, allPages int) int {
+func (u *UserService) GetNextPage(currentPage, allPages int) int {
 	if currentPage < allPages {
 		return currentPage + 1
 	}
 	return allPages
 }
 
-func (pr *UserService) GetPrevPage(currentPage int) int {
+func (u *UserService) GetPrevPage(currentPage int) int {
 	if currentPage > 1 {
 		return currentPage - 1
 	}

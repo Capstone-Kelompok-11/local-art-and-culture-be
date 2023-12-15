@@ -7,6 +7,7 @@ import (
 	consts "lokasani/helpers/const"
 	"lokasani/helpers/errors"
 	"lokasani/helpers/middleware"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -69,29 +70,39 @@ func (u *UserHandler) LoginUsers(e echo.Context) error {
 }
 
 func (u *UserHandler) GetAllUser(c echo.Context) error {
-	nameFilter := c.QueryParam("name")
-	page, pageSize := 1, 10
+    nameFilter := c.QueryParam("name")
+    page, _ := strconv.Atoi(c.QueryParam("page"))
+    pageSize, _ := strconv.Atoi(c.QueryParam("pageSize"))
 
-	resAllUser, totalItems, err := u.userService.GetAllUser(nameFilter, page, pageSize)
-	if err != nil {
-		return response.NewErrorResponse(c, err)
-	}
+    if page <= 0 {
+        page = 1
+    }
 
-	currentPage, allPages := u.userService.CalculatePaginationValues(page, pageSize, totalItems["regularUser"]+totalItems["eventCreators"]+totalItems["productCreators"])
-	nextPage := u.userService.GetNextPage(currentPage, allPages)
-	prevPage := u.userService.GetPrevPage(currentPage)
+    if pageSize <= 0 {
+        pageSize = 10
+    }
 
-	responseData := map[string]interface{}{
-		"allUsers": resAllUser,
-		"counts":   totalItems,
-		"pagination": map[string]int{
-			"currentPage": currentPage,
-			"nextPage":    nextPage,
-			"prevPage":    prevPage,
-			"allPages":    allPages,
-		},
-	}
-	return response.NewSuccessResponse(c, responseData)
+    resAllUser, totalItems, err := u.userService.GetAllUser(nameFilter, page, pageSize)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+
+    allItems := totalItems["RegularUser"] + totalItems["EventCreators"] + totalItems["ProductCreators"]
+    currentPage, allPages := u.userService.CalculatePaginationValues(page, pageSize, allItems)
+    nextPage := u.userService.GetNextPage(currentPage, allPages)
+    prevPage := u.userService.GetPrevPage(currentPage)
+
+    responseData := map[string]interface{}{
+        "allUsers": resAllUser,
+        "counts":   totalItems,
+        "pagination": map[string]int{
+            "currentPage": currentPage,
+            "nextPage":    nextPage,
+            "prevPage":    prevPage,
+            "allPages":    allPages,
+        },
+    }
+    return response.NewSuccessResponse(c, responseData)
 }
 
 func (u *UserHandler) GetUser(c echo.Context) error {
