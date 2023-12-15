@@ -104,6 +104,14 @@ func (u *UserHandler) UpdateUser(c echo.Context) error {
 }
 
 func (u *UserHandler) DeleteUser(c echo.Context) error {
+	_, roleId, _, err := middleware.ExtractToken(c)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    if roleId != 4 {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+	
 	id := c.Param("id")
 	res, err := u.userService.DeleteUser(id)
 	if err != nil {

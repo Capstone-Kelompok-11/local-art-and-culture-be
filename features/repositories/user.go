@@ -146,14 +146,17 @@ func (u *userRepository) UpdateUser(id string, input request.User) (response.Use
 func (u *userRepository) DeleteUser(id string) (response.User, error) {
 	userData := models.Users{}
 	res := response.User{}
+
 	find := u.db.Preload("Role").First(&userData, "id = ?", id).Error
 	if find == nil {
 		res = *domain.ConvertFromModelToUserRes(userData)
 	}
+
 	err := u.db.Delete(&userData, "id = ?", id).Error
 	if err != nil {
 		return response.User{}, err
 	}
+
 	return res, nil
 }
 
