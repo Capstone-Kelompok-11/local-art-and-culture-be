@@ -28,11 +28,19 @@ func NewCreatorRepository(db *gorm.DB) *creatorRepository {
 
 func (cr *creatorRepository) CreateCreator(data *request.Creator) (response.Creator, error) {
 	dataCreator := domain.ConvertFromCreatorReqToModel(*data)
+
 	err := cr.db.Create(&dataCreator).Error
 	if err != nil {
 		return response.Creator{}, err
 	}
-	err = cr.db.Preload("Users").Preload("Role").First(&dataCreator, "id = ?", dataCreator.ID).Error
+	// Misalkan 'yourModel' adalah model yang Anda inginkan
+	var user models.Users
+	cr.db.Model(&user).Updates(map[string]interface{}{"role_id": data.RoleId})
+
+	err = cr.db.Preload("Users").Preload("Role").First(&dataCreator).Error
+	if err !=nil{
+		return *domain.ConvertFromModelToCreatorRes(*dataCreator), nil
+	}
 	return *domain.ConvertFromModelToCreatorRes(*dataCreator), nil
 }
 
@@ -41,17 +49,17 @@ func (cr *creatorRepository) GetAllCreator(filter request.Creator) ([]response.C
 	var resAllCreator []response.Creators
 
 	query := cr.db.Preload("Role", func(db *gorm.DB) *gorm.DB {
-		if filter.RoleId != 0 {
-			return db.Where("role_id = ?", filter.RoleId)
-		}
+		// if filter.RoleId != 0 {
+		// 	return db.Where("role_id = ?", filter.RoleId)
+		// }
 		if filter.Role.Role != "" {
 			return db.Where("role LIKE ?", "%"+filter.Role.Role+"%")
 		}
 		return db
 	}).Preload("Users", func(db *gorm.DB) *gorm.DB {
-		if filter.Users.Username != "" {
-			return db.Where("username LIKE ?", "%"+filter.Users.Username+"%")
-		}
+		// if filter.Users.Username != "" {
+		// 	return db.Where("username LIKE ?", "%"+filter.Users.Username+"%")
+		// }
 		return db
 	})
 

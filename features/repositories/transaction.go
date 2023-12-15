@@ -21,7 +21,8 @@ type ITransactionRepository interface {
 	GetTransaction(id string) (error, response.Transaction)
 	UpdateTransaction(id string, input request.Transaction) (error, response.Transaction)
 	DeleteTransaction(id string) (error, response.Transaction)
-	GetTransactionReport(transactionStartDate, transactionEndDate time.Time) ([]models.Transaction, error)
+	GetHistoryTransaction(userID uint, page, pageSize int) ([]*response.Transaction, int, error)
+	GetReportTransaction(creatorId uint, role string) ([]response.TransactionReport, error)
 }
 
 type transactionRepository struct {
@@ -159,11 +160,53 @@ func (ar *transactionRepository) DeleteTransaction(id string) (error, response.T
 	return nil, res
 }
 
-func (ar *transactionRepository) GetTransactionReport(transactionStartDate, transactionEndDate time.Time) ([]models.Transaction, error) {
+func (ar *transactionRepository) GetHistoryTransaction(userID uint, page, pageSize int) ([]*response.Transaction, int, error) {
 	var transactions []models.Transaction
-	err := ar.db.Where("transaction_date BETWEEN ? AND ?", transactionStartDate, transactionEndDate).Find(&transactions).Error
-	if err != nil {
-		return nil, err
+
+	query := ar.db.Where("user_id = ?", userID)
+
+	var count int64
+	if err := query.Model(&models.Transaction{}).Count(&count).Error; err != nil {
+		return nil, 0, err
 	}
-	return transactions, nil
+
+	offset := (page - 1) * pageSize
+	query = query.Limit(pageSize).Offset(offset).
+		Preload("TransactionDetail").
+		Preload("TransactionDetail.Product").
+		Preload("TransactionDetail.Product.Creator").
+		Preload("TransactionDetail.Product.Category").
+		Preload("TransactionDetail.Ticket").
+		Preload("TransactionDetail.Ticket.Event").
+		Preload("User").
+		Preload("User.Role").
+		Preload("Shipping").
+		Preload("Payment")
+
+	if err := query.Find(&transactions).Error; err != nil {
+		return nil, 0, err
+	}
+
+	resAllHistory := domain.ConvertModelTransactionsToResponse(transactions)
+
+	return resAllHistory, int(count), nil
+}
+
+func (ar *transactionRepository) GetReportTransaction(creatorId uint, role string) ([]response.TransactionReport, error) {
+	var resAllTransaction []response.TransactionReport
+	var transactionReport []models.TransactionReport
+
+	if role == consts.ProductCreator {
+		ar.db.Raw("SELECT t.id, t.transaction_date, t.status, t.transaction_number, (td.qty * p.price) as nominal FROM lokasani.transactions t inner join lokasani.transaction_details td on td.transaction_id = t.id inner join lokasani.products p on p.id = td.product_id WHERE p.creator_id = ?;", creatorId).Scan(&transactionReport)
+	} else if role == consts.EventCreator {
+		ar.db.Raw("SELECT t.id, t.transaction_date, t.status, t.transaction_number, (td.qty * tck.price) as nominal FROM lokasani.transactions t inner join lokasani.transaction_details td on td.transaction_id = t.id inner join lokasani.tickets tck on tck.id = td.ticket_id where tck.creator_id = ?;", creatorId).Scan(&transactionReport)
+	}
+
+	fmt.Println(transactionReport)
+
+	for i := 0; i < len(transactionReport); i++ {
+		transactionVm := domain.ConvertFromModelToTransactionReport(transactionReport[i])
+		resAllTransaction = append(resAllTransaction, *transactionVm)
+	}
+	return resAllTransaction, nil
 }

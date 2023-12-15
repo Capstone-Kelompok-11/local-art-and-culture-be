@@ -15,15 +15,23 @@ type IUserRepository interface {
 	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.Creators, error)
 	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
+	CountUsersByRole(roleId uint)(int, error)
 	GetUser(id string) (response.User, error)
+	getRoleName(roleID uint) string
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
 	FindByEmail(email string) (*models.Users, error)
 	CreateUser(user *models.Users) (*models.Users, error)
+	//SaveOTP(otp *models.OTP) (*models.OTP, error)
 }
 
 type userRepository struct {
 	db *gorm.DB
+}
+
+// getRoleName implements IUserRepository.
+func (*userRepository) getRoleName(roleID uint) string {
+	panic("unimplemented")
 }
 
 func NewUsersRepository(db *gorm.DB) *userRepository {
@@ -45,22 +53,22 @@ func (u *userRepository) RegisterUser(data *request.User) (response.User, error)
 
 func (u *userRepository) LoginUser(data *request.User) (response.Creators, error) {
 	dataUser := domain.ConvertFromUserReqToModel(*data)
-    err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
-    if err != nil {
-        return response.Creators{}, errors.ERR_EMAIL_NOT_FOUND
-    }
+	err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
+	if err != nil {
+		return response.Creators{}, errors.ERR_EMAIL_NOT_FOUND
+	}
 
-    err = bcrypt.CheckPassword(data.Password, dataUser.Password)
-    if err != nil {
-        return response.Creators{}, errors.ERR_WRONG_PASSWORD
-    }
-    var creator models.Creator
-    err = u.db.Preload("Role").Preload("Users").First(&creator, "user_id = ?", dataUser.ID).Error
-    if err != nil {
-        creator.Users = *dataUser
-        return *domain.ConvertFromModelToCreatorsRes(creator), nil
-    }
-    return *domain.ConvertFromModelToCreatorsRes(creator), nil
+	err = bcrypt.CheckPassword(data.Password, dataUser.Password)
+	if err != nil {
+		return response.Creators{}, errors.ERR_WRONG_PASSWORD
+	}
+	var creator models.Creator
+	err = u.db.Preload("Role").Preload("Users").First(&creator, "user_id = ?", dataUser.ID).Error
+	if err != nil {
+		creator.Users = *dataUser
+		return *domain.ConvertFromModelToCreatorsRes(creator), nil
+	}
+	return *domain.ConvertFromModelToCreatorsRes(creator), nil
 }
 
 func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error) {
@@ -69,7 +77,7 @@ func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) ([]re
 
 	query := u.db.Preload("Role")
 	if nameFilter != "" {
-    	query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
+		query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
 	}
 
 	offset := (page - 1) * pageSize
@@ -92,6 +100,21 @@ func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) ([]re
 	return resAllUser, int(allItems), nil
 }
 
+func (u *userRepository) CountUsersByRole(roleId uint) (int, error) {
+	var count int64
+	var query = u.db.Model(&models.Users{})
+
+	if roleId != 0 {
+		query = query.Where("role_id = ?", roleId)
+	}
+
+	err := query.Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return int(count), nil
+}
+
 func (u *userRepository) GetUser(id string) (response.User, error) {
 	var userData models.Users
 	err := u.db.Preload("Role").First(&userData, "id = ?", id).Error
@@ -108,19 +131,19 @@ func (u *userRepository) UpdateUser(id string, input request.User) (response.Use
 	if err != nil {
 		return response.User{}, err
 	}
-	
+
 	if input.FirstName != "" {
 		userData.FirstName = input.FirstName
-	} 
+	}
 	if input.LastName != "" {
 		userData.LastName = input.LastName
-	} 
+	}
 	if input.Username != "" {
 		userData.Username = input.Username
-	} 
+	}
 	if input.Email != "" {
 		userData.Email = input.Email
-	} 
+	}
 	if input.Password != "" {
 		userData.Password = input.Password
 	}
@@ -133,9 +156,9 @@ func (u *userRepository) UpdateUser(id string, input request.User) (response.Use
 	if input.Gender != "" {
 		userData.Gender = input.Gender
 	}
-	if input.RoleId != 0 {
-		userData.RoleId = input.RoleId
-	}
+	// if input.RoleId != 0 {
+	// 	userData.RoleId = input.RoleId
+	// }
 
 	if err = u.db.Save(&userData).Error; err != nil {
 		return response.User{}, err

@@ -14,6 +14,11 @@ type User struct {
 	NIK			string 		`json:"nik" form:"nik"`
 	Gender		string		`json:"gender" form:"gender"`
 	BirthDate   time.Time 	`json:"birthday" form:"birthday"`
-	RoleId 		uint		`json:"role_id"`
+	RoleId 		uint		
 	Role Role
+}
+
+type EmailRequest struct {
+	Email		string		`json:"email" form:"email"`
+	OTP			string		`json:"otp" form:"otp"`
 }

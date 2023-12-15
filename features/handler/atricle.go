@@ -4,6 +4,7 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	consts "lokasani/helpers/const"
 	"lokasani/helpers/middleware"
 
 	"github.com/labstack/echo/v4"
@@ -18,11 +19,11 @@ func NewArticleHandler(IArticleService services.IArticleService) *ArticleHandler
 }
 
 func (ah *ArticleHandler) CreateArticle(c echo.Context) error {
-	_, roleId, _, err := middleware.ExtractToken(c)
+	_, role, _, err := middleware.ExtractToken(c)
     if err != nil {
         return response.NewErrorResponse(c, err)
     }
-    if roleId != 4 {
+    if role != consts.AdminRole {
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
 	
@@ -104,7 +105,7 @@ func (ah *ArticleHandler) UpdateArticle(c echo.Context) error {
     if err != nil {
         return response.NewErrorResponse(c, err)
     }
-    if roleId != 4 {
+    if roleId != consts.AdminRole {
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
 
@@ -124,7 +125,7 @@ func (ah *ArticleHandler) DeleteArticle(c echo.Context) error {
     if err != nil {
         return response.NewErrorResponse(c, err)
     }
-    if roleId != 4 {
+    if roleId != consts.AdminRole {
 		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
 	

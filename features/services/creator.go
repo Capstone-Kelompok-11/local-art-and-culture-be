@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
@@ -18,10 +19,14 @@ type ICreatorService interface {
 
 type CreatorService struct {
 	creatorRepository repositories.ICreatorRepository
+	roleRepo          repositories.IRoleRepository
 }
 
-func NewCreatorService(repo repositories.ICreatorRepository) *CreatorService {
-	return &CreatorService{creatorRepository: repo}
+func NewCreatorService(repo repositories.ICreatorRepository, role repositories.IRoleRepository) *CreatorService {
+	return &CreatorService{
+		creatorRepository: repo,
+		roleRepo:          role,
+	}
 }
 
 func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator, error) {
@@ -34,16 +39,30 @@ func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator
 	if data.OutletName == "" {
 		return response.Creator{}, errors.ERR_OUTLET_NAME_IS_EMPTY
 	}
+	if data.Roles == "" && data.RoleId == 0 {
+		return response.Creator{}, errors.ERR_ROLE_IS_EMPTY
+	}
 
+	resRole, err := cs.roleRepo.GetAllRole(data.Roles)
+	if err != nil {
+		return response.Creator{}, errors.ERR_ROLE_IS_EMPTY
+	}
+
+	if len(resRole) == 0 {
+		return response.Creator{}, errors.ERR_ROLE_IS_EMPTY
+	}
+
+	data.RoleId = resRole[0].Id
+	fmt.Println(data.RoleId)
+	fmt.Println(data)
 	res, err := cs.creatorRepository.CreateCreator(data)
 	if err != nil {
 		return response.Creator{}, errors.ERR_CREATE_CREATOR_DATABASE
 	}
-
 	return res, nil
 }
 
-func (cs *CreatorService) GetAllCreator(filter request.Creator) ([]response.Creators, error){
+func (cs *CreatorService) GetAllCreator(filter request.Creator) ([]response.Creators, error) {
 	res, err := cs.creatorRepository.GetAllCreator(filter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
@@ -51,7 +70,7 @@ func (cs *CreatorService) GetAllCreator(filter request.Creator) ([]response.Crea
 	return res, nil
 }
 
-func (cs *CreatorService) GetAllCreatorByRole(filter request.Creator) ([]response.Creators, error){
+func (cs *CreatorService) GetAllCreatorByRole(filter request.Creator) ([]response.Creators, error) {
 	res, err := cs.creatorRepository.GetAllCreator(filter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA

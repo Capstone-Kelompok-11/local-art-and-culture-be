@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"lokasani/app/drivers/config"
 	"lokasani/entity/domain"
 	"lokasani/entity/request"
@@ -9,9 +8,6 @@ import (
 	"lokasani/features/services"
 	"lokasani/helpers/middleware"
 	"strconv"
-
-	// "lokasani/helpers/middleware"
-	// "strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -55,7 +51,6 @@ func (ch *ChatbotHandler) GetAllChatbot(c echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
-	fmt.Println(userID)
 	userIDString := strconv.FormatUint(uint64(userID), 10)
 
 	userIDUint, err := strconv.ParseUint(userIDString, 10, 64)

@@ -5,6 +5,7 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	"lokasani/helpers/middleware"
 
 	"github.com/labstack/echo/v4"
 )
@@ -18,8 +19,21 @@ func NewCreatorHandler(iCreatorService services.ICreatorService) *CreatorHandler
 }
 
 func (ch *CreatorHandler) CreateCreator(c echo.Context) error {
+	userID, _, _, err := middleware.ExtractToken(c)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+
 	var input request.Creator
-	c.Bind(&input)
+	if err := c.Bind(&input); err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+	input.UserId = userID
+
+	fmt.Println("UserID from token:", userID)
+
+
+	//fmt.Println("UserID in struct:", input.Users.Id)
 
 	res, err := ch.creatorService.CreateCreator(&input)
 	if err != nil {
@@ -30,7 +44,7 @@ func (ch *CreatorHandler) CreateCreator(c echo.Context) error {
 
 func (ch *CreatorHandler) GetAllCreator(c echo.Context) error {
 	var filter request.Creator
-	filter.Users.Username = c.QueryParam("name")
+	//filter.Users.Username = c.QueryParam("name")
 	res, err := ch.creatorService.GetAllCreator(filter)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
