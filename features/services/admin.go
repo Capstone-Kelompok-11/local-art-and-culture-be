@@ -30,7 +30,6 @@ func NewAdminService(repo repositories.IAdminRepository) *AdminService {
 }
 
 func (as *AdminService) RegisterAdmin(data *request.SuperAdmin) (response.SuperAdmin, error) {
-	data.RoleId = 4
 	if data.Name == "" {
 		return response.SuperAdmin{}, errors.ERR_NAME_IS_EMPTY
 	}
@@ -57,7 +56,6 @@ func (as *AdminService) RegisterAdmin(data *request.SuperAdmin) (response.SuperA
 }
 
 func (as *AdminService) LoginAdmin(data *request.SuperAdmin) (response.SuperAdmin, error) {
-	data.RoleId = 4
 	if data.Email == "" {
 		return response.SuperAdmin{}, errors.ERR_EMAIL_IS_EMPTY
 	} else if data.Password == "" {

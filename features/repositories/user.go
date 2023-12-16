@@ -15,7 +15,7 @@ type IUserRepository interface {
 	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.Creators, error)
 	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
-	//CountUsersByRole(roleId uint) (int, error)
+	CountUsersByRole(roleId uint) (int, error)
 	GetUser(id string) (response.User, error)
 	//getRoleName(roleID uint) string
 	UpdateUser(id string, input request.User) (response.User, error)
