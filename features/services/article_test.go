@@ -54,14 +54,19 @@ func TestCreateArticle_Failure(t *testing.T) {
         Status:  "true",
     }
 
-    expectedError := errors.New("failed to create new article") 
+    expectedError := errors.New("failed to create new article")
 
     mockArticleRepository.EXPECT().CreateArticle(mockRequestArticle).Return(response.Article{}, expectedError)
 
     articleService := NewArticleService(mockArticleRepository)
-    result, _ := articleService.CreateArticle(mockRequestArticle)
 
-    if result.Title != "" || result.Content != "" || result.Status != "" {
+    result, err := articleService.CreateArticle(mockRequestArticle)
+
+    if err == nil || err.Error() != expectedError.Error() {
+        t.Errorf("Expected error '%v', but got '%v'", expectedError, err)
+    }
+
+    if result.Id != uint(0) || result.Title != "" || result.Content != "" || result.Status != "" {
         t.Errorf("Expected empty response, but got: %v", result)
     }
 }
