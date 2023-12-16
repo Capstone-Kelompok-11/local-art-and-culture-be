@@ -27,7 +27,7 @@ func (ah *ShippingHandler) CreateShipping(c echo.Context) error {
 }
 
 func (ah *ShippingHandler) GetAllShipping(c echo.Context) error {
-	err, res := ah.shippingService.GetAllShipping()
+	res, err := ah.shippingService.GetAllShipping()
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -36,7 +36,7 @@ func (ah *ShippingHandler) GetAllShipping(c echo.Context) error {
 
 func (ah *ShippingHandler) GetShipping(c echo.Context) error {
 	id := c.Param("id")
-	err, res := ah.shippingService.GetShipping(id)
+	res, err := ah.shippingService.GetShipping(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -47,7 +47,7 @@ func (ah *ShippingHandler) UpdateShipping(c echo.Context) error {
 	id := c.Param("id")
 	var input request.Shipping
 	c.Bind(&input)
-	err, res := ah.shippingService.UpdateShipping(id, input)
+	res, err := ah.shippingService.UpdateShipping(id, input)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
@@ -56,7 +56,7 @@ func (ah *ShippingHandler) UpdateShipping(c echo.Context) error {
 
 func (ah *ShippingHandler) DeleteShipping(c echo.Context) error {
 	id := c.Param("id")
-	err, res := ah.shippingService.DeleteShipping(id)
+	res, err := ah.shippingService.DeleteShipping(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}

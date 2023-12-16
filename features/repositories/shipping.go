@@ -13,10 +13,10 @@ import (
 
 type IShippingRepository interface {
 	CreateShippingMethod(data *request.Shipping) (response.Shipping, error)
-	GetAllShipping() (error, []response.Shipping)
-	GetShipping(id string) (error, response.Shipping)
-	UpdateShipping(id string, input request.Shipping) (error, response.Shipping)
-	DeleteShipping(id string) (error, response.Shipping)
+	GetAllShipping() ([]response.Shipping, error)
+	GetShipping(id string) (response.Shipping, error)
+	UpdateShipping(id string, input request.Shipping) (response.Shipping, error)
+	DeleteShipping(id string) (response.Shipping, error)
 }
 
 type shippingRepository struct {
@@ -36,38 +36,38 @@ func (ar *shippingRepository) CreateShippingMethod(data *request.Shipping) (resp
 	return *domain.ConvertFromModelToShippingRes(*dataShipping), nil
 }
 
-func (ar *shippingRepository) GetAllShipping() (error, []response.Shipping) {
+func (ar *shippingRepository) GetAllShipping() ([]response.Shipping, error) {
 	var allShipping []models.Shipping
 	var resAllShipping []response.Shipping
 	err := ar.db.Find(&allShipping).Error
 	if err != nil {
-		return errors.ERR_GET_DATA, nil
+		return nil, errors.ERR_GET_DATA
 	}
 
 	for i := 0; i < len(allShipping); i++ {
 		shippingVm := domain.ConvertFromModelToShippingRes(allShipping[i])
 		resAllShipping = append(resAllShipping, *shippingVm)
 	}
-	return nil, resAllShipping
+	return resAllShipping, nil
 }
 
-func (ar *shippingRepository) GetShipping(id string) (error, response.Shipping) {
+func (ar *shippingRepository) GetShipping(id string) (response.Shipping, error) {
 	var shippingData models.Shipping
 	err := ar.db.First(&shippingData, "id = ?", id).Error
 
 	if err != nil {
-		return err, response.Shipping{}
+		return response.Shipping{}, err
 	}
 
-	return nil, *domain.ConvertFromModelToShippingRes(shippingData)
+	return *domain.ConvertFromModelToShippingRes(shippingData), nil
 }
 
-func (ar *shippingRepository) UpdateShipping(id string, input request.Shipping) (error, response.Shipping) {
+func (ar *shippingRepository) UpdateShipping(id string, input request.Shipping) (response.Shipping, error) {
 	shippingData := models.Shipping{}
 	err := ar.db.First(&shippingData, "id = ?", id).Error
 
 	if err != nil {
-		return err, response.Shipping{}
+		return response.Shipping{}, err
 	}
 
 	if input.Name != "" {
@@ -75,12 +75,12 @@ func (ar *shippingRepository) UpdateShipping(id string, input request.Shipping) 
 	}
 
 	if err = ar.db.Save(&shippingData).Error; err != nil {
-		return err, response.Shipping{}
+		return response.Shipping{}, err
 	}
-	return nil, *domain.ConvertFromModelToShippingRes(shippingData)
+	return *domain.ConvertFromModelToShippingRes(shippingData), nil
 }
 
-func (ar *shippingRepository) DeleteShipping(id string) (error, response.Shipping) {
+func (ar *shippingRepository) DeleteShipping(id string) (response.Shipping, error) {
 	shippingData := models.Shipping{}
 	res := response.Shipping{}
 	find := ar.db.First(&shippingData, "id = ?", id).Error
@@ -89,7 +89,7 @@ func (ar *shippingRepository) DeleteShipping(id string) (error, response.Shippin
 	}
 	err := ar.db.Delete(&shippingData, "id = ?", id).Error
 	if err != nil {
-		return err, response.Shipping{}
+		return response.Shipping{}, err
 	}
-	return nil, res
+	return res, nil
 }

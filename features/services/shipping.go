@@ -1,22 +1,19 @@
 package services
 
 import (
-	"fmt"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
 
-	// "lokasani/helpers/bcrypt"
 	"lokasani/helpers/errors"
-	// "lokasani/helpers/middleware"
 )
 
 type IShippingService interface {
 	CreateShippingMethod(data *request.Shipping) (response.Shipping, error)
-	GetAllShipping() (error, []response.Shipping)
-	GetShipping(id string) (error, response.Shipping)
-	UpdateShipping(id string, input request.Shipping) (error, response.Shipping)
-	DeleteShipping(id string) (error, response.Shipping)
+	GetAllShipping() ([]response.Shipping, error)
+	GetShipping(id string) (response.Shipping, error)
+	UpdateShipping(id string, input request.Shipping) (response.Shipping, error)
+	DeleteShipping(id string) (response.Shipping, error)
 }
 
 type ShippingService struct {
@@ -40,7 +37,7 @@ func (sms *ShippingService) CreateShippingMethod(data *request.Shipping) (respon
 	return res, nil
 }
 
-func (sms *ShippingService) GetAllShipping() (error, []response.Shipping) {
+func (sms *ShippingService) GetAllShipping() ([]response.Shipping, error) {
 	err, res := sms.shippingRepository.GetAllShipping()
 	if err != nil {
 		return err, nil
@@ -48,37 +45,35 @@ func (sms *ShippingService) GetAllShipping() (error, []response.Shipping) {
 	return nil, res
 }
 
-func (sms *ShippingService) GetShipping(id string) (error, response.Shipping) {
+func (sms *ShippingService) GetShipping(id string) (response.Shipping, error) {
 	if id == "" {
-		return errors.ERR_GET_SHIPPING_BAD_REQUEST_ID, response.Shipping{}
+		return response.Shipping{}, errors.ERR_GET_SHIPPING_BAD_REQUEST_ID
 	}
-	err, res := sms.shippingRepository.GetShipping(id)
+	res, err := sms.shippingRepository.GetShipping(id)
 	if err != nil {
-		return err, response.Shipping{}
+		return response.Shipping{}, err
 	}
-	return nil, res
+	return res, nil
 }
 
-func (sms *ShippingService) UpdateShipping(id string, data request.Shipping) (error, response.Shipping) {
+func (sms *ShippingService) UpdateShipping(id string, data request.Shipping) (response.Shipping, error) {
 	if id == "" {
-		return errors.ERR_GET_SHIPPING_BAD_REQUEST_ID, response.Shipping{}
+		return response.Shipping{}, errors.ERR_GET_SHIPPING_BAD_REQUEST_ID
 	}
-	err, res := sms.shippingRepository.UpdateShipping(id, data)
+	res, err := sms.shippingRepository.UpdateShipping(id, data)
 	if err != nil {
-		return errors.ERR_UPDATE_DATA, response.Shipping{}
+		return response.Shipping{}, errors.ERR_UPDATE_DATA
 	}
-	return nil, res
+	return res, nil
 }
 
-func (sms *ShippingService) DeleteShipping(id string) (error, response.Shipping) {
+func (sms *ShippingService) DeleteShipping(id string) (response.Shipping, error) {
 	if id == "" {
-		return errors.ERR_GET_SHIPPING_BAD_REQUEST_ID, response.Shipping{}
+		return response.Shipping{}, errors.ERR_GET_SHIPPING_BAD_REQUEST_ID
 	}
-	err, res := sms.shippingRepository.DeleteShipping(id)
-	fmt.Println(res)
+	res, err := sms.shippingRepository.DeleteShipping(id)
 	if err != nil {
-		return errors.ERR_DELETE_SHIPPING, response.Shipping{}
+		return response.Shipping{}, errors.ERR_DELETE_SHIPPING
 	}
-
-	return nil, res
+	return res, nil
 }
