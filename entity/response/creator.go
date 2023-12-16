@@ -19,4 +19,5 @@ type Creator struct {
 	PhoneNumber string `json:"phone_number"`
 	UserId      uint   `json:"user_id"`
 	AddressId   *uint  `json:"address_id"`
+	Address     string `json:"address"`
 }
