@@ -68,7 +68,7 @@ func (pr *EventHandler) GetAllEvent(c echo.Context) error {
 	prevPage := pr.eventService.GetPrevPage(currentPage)
 
 	responseData := map[string]interface{}{
-		"data": res,
+		"allEvents": res,
 		"pagination": map[string]int{
 			"currentPage": currentPage,
 			"nextPage":    nextPage,
@@ -103,7 +103,7 @@ func (pr *EventHandler) GetAllAvailableEvent(c echo.Context) error {
 	prevPage := pr.eventService.GetPrevPage(currentPage)
 
 	responseData := map[string]interface{}{
-		"data": res,
+		"allEvents": res,
 		"pagination": map[string]int{
 			"currentPage": currentPage,
 			"nextPage":    nextPage,
