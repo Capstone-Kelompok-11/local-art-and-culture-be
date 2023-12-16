@@ -7,6 +7,7 @@ import (
 	"lokasani/features/services"
 	consts "lokasani/helpers/const"
 	"lokasani/helpers/middleware"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -53,7 +54,16 @@ func (pr *ProductHandler) CreateProduct(c echo.Context) error {
 
 func (pr *ProductHandler) GetAllProduct(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
-	page, pageSize := 1, 10
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+    pageSize, _ := strconv.Atoi(c.QueryParam("pageSize"))
+
+    if page <= 0 {
+        page = 1
+    }
+
+    if pageSize <= 0 {
+        pageSize = 10
+    }
 
 	res, totalItems, err := pr.productService.GetAllProduct(nameFilter, page, pageSize)
 	if err != nil {
@@ -65,7 +75,7 @@ func (pr *ProductHandler) GetAllProduct(c echo.Context) error {
 	prevPage := pr.productService.GetPrevPage(currentPage)
 
 	responseData := map[string]interface{}{
-		"data": res,
+		"allProduct": res,
 		"pagination": map[string]int{
 			"currentPage": currentPage,
 			"nextPage":    nextPage,
@@ -79,7 +89,16 @@ func (pr *ProductHandler) GetAllProduct(c echo.Context) error {
 
 func (pr *ProductHandler) GetTrendingProduct(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
-	page, pageSize := 1, 10
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+    pageSize, _ := strconv.Atoi(c.QueryParam("pageSize"))
+
+    if page <= 0 {
+        page = 1
+    }
+
+    if pageSize <= 0 {
+        pageSize = 10
+    }
 
 	res, totalItems, err := pr.productService.GetTrendingProduct(nameFilter, page, pageSize)
 	if err != nil {
@@ -91,7 +110,7 @@ func (pr *ProductHandler) GetTrendingProduct(c echo.Context) error {
 	prevPage := pr.productService.GetPrevPage(currentPage)
 
 	responseData := map[string]interface{}{
-		"data": res,
+		"allProduct": res,
 		"pagination": map[string]int{
 			"currentPage": currentPage,
 			"nextPage":    nextPage,

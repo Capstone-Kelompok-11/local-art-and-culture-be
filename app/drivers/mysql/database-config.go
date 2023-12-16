@@ -52,11 +52,11 @@ func LoadDB() *DBConfig {
 }
 
 func StartDB(cfg *DBConfig) *gorm.DB {
-	// cfg.DB_HOST = "lokasani.cwevgll7wo4u.ap-southeast-1.rds.amazonaws.com"
-	// cfg.DB_NAME = "lokasani"
-	// cfg.DB_PASSWORD = "lokasani"
-	// cfg.DB_PORT = 3306
-	// cfg.DB_USER = "admin"
+	cfg.DB_HOST = "lokasani.cwevgll7wo4u.ap-southeast-1.rds.amazonaws.com"
+	cfg.DB_NAME = "lokasani"
+	cfg.DB_PASSWORD = "lokasani"
+	cfg.DB_PORT = 3306
+	cfg.DB_USER = "admin"
 	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
 		cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_HOST, cfg.DB_PORT, cfg.DB_NAME)
 

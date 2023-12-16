@@ -47,7 +47,16 @@ func (pr *EventHandler) GetAllEvent(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
 	startDate := c.QueryParam("startDate")
     endDate := c.QueryParam("endDate")
-	page, pageSize := 1, 10
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+    pageSize, _ := strconv.Atoi(c.QueryParam("pageSize"))
+
+    if page <= 0 {
+        page = 1
+    }
+
+    if pageSize <= 0 {
+        pageSize = 10
+    }
 
 	res, allItems, err := pr.eventService.GetAllEvent(nameFilter, startDate, endDate, page, pageSize)
 	if err != nil {
@@ -59,7 +68,7 @@ func (pr *EventHandler) GetAllEvent(c echo.Context) error {
 	prevPage := pr.eventService.GetPrevPage(currentPage)
 
 	responseData := map[string]interface{}{
-		"data": res,
+		"allEvents": res,
 		"pagination": map[string]int{
 			"currentPage": currentPage,
 			"nextPage":    nextPage,
@@ -94,7 +103,7 @@ func (pr *EventHandler) GetAllAvailableEvent(c echo.Context) error {
 	prevPage := pr.eventService.GetPrevPage(currentPage)
 
 	responseData := map[string]interface{}{
-		"data": res,
+		"allEvents": res,
 		"pagination": map[string]int{
 			"currentPage": currentPage,
 			"nextPage":    nextPage,

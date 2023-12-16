@@ -22,7 +22,7 @@ type IProductService interface {
 	CalculatePaginationValues(page, pageSize, allItmes int) (int, int)
 	GetNextPage(currentPage, allPages int) int
 	GetPrevPage(currentPage int) int
-  getCategoryId(category string) uint
+  	getCategoryId(category string) uint
 }
 
 type ProductService struct {
