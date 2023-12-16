@@ -19,7 +19,7 @@ type IUserService interface {
 	CalculatePaginationValues(page, pageSize, allItmes int) (int, int)
 	GetNextPage(currentPage, allPages int) int
 	GetPrevPage(currentPage int) int
-	CountUsersByRole(roleId uint) (int, error)
+	//CountUsersByRole(roleId uint) (int, error)
 }
 
 type UserService struct {
@@ -31,7 +31,6 @@ func NewUserService(repo repositories.IUserRepository) *UserService {
 }
 
 func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
-	data.RoleId = 2
 	if data.FirstName == "" {
 		return response.User{}, errors.ERR_NAME_IS_EMPTY
 	}
@@ -109,42 +108,42 @@ func (u *UserService) DeleteUser(id string) (response.User, error) {
 	return res, nil
 }
 
-func (u *UserService) CountUsersByRole(roleId uint) (int, error) {
-	count, err := u.UserRepo.CountUsersByRole(roleId)
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
-}
+// func (u *UserService) CountUsersByRole(roleId uint) (int, error) {
+// 	count, err := u.UserRepo.CountUsersByRole(roleId)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	return count, nil
+// }
 
-func (u *UserService) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, map[string]int, error) {
-	allUsers, _, err := u.UserRepo.GetAllUser(nameFilter, page, pageSize)
-	if err != nil {
-		return nil, nil, err
-	}
+// func (u *UserService) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, map[string]int, error) {
+// 	allUsers, _, err := u.UserRepo.GetAllUser(nameFilter, page, pageSize)
+// 	if err != nil {
+// 		return nil, nil, err
+// 	}
 
-	productCreators, err := u.CountUsersByRole(1)
-	if err != nil {
-		return nil, nil, err
-	}
+// 	productCreators, err := u.CountUsersByRole(1)
+// 	if err != nil {
+// 		return nil, nil, err
+// 	}
 
-	regularUser, err := u.CountUsersByRole(0)
-	if err != nil {
-		return nil, nil, err
-	}
+// 	regularUser, err := u.CountUsersByRole(0)
+// 	if err != nil {
+// 		return nil, nil, err
+// 	}	
 
-	eventCreators, err := u.CountUsersByRole(3)
-	if err != nil {
-		return nil, nil, err
-	}
+// 	eventCreators, err := u.CountUsersByRole(3)
+// 	if err != nil {
+// 		return nil, nil, err
+// 	}
 
-	rolesCount := make(map[string]int)
-	rolesCount["RegularUser"] = regularUser
-	rolesCount["EventCreators"] = eventCreators
-	rolesCount["ProductCreators"] = productCreators
+// 	rolesCount := make(map[string]int)
+// 	rolesCount["RegularUser"] = regularUser
+// 	rolesCount["EventCreators"] = eventCreators
+// 	rolesCount["ProductCreators"] = productCreators
 
-	return allUsers, rolesCount, nil
-}
+// 	return allUsers, rolesCount, nil
+// }
 
 func (u *UserService) CalculatePaginationValues(page, pageSize, allItmes int) (int, int) {
 	pageInt := page

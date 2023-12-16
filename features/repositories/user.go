@@ -15,7 +15,7 @@ type IUserRepository interface {
 	RegisterUser(data *request.User) (response.User, error)
 	LoginUser(data *request.User) (response.Creators, error)
 	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, int, error)
-	CountUsersByRole(roleId uint)(int, error)
+	//CountUsersByRole(roleId uint) (int, error)
 	GetUser(id string) (response.User, error)
 	//getRoleName(roleID uint) string
 	UpdateUser(id string, input request.User) (response.User, error)
@@ -99,7 +99,7 @@ func (u *userRepository) CountUsersByRole(roleId uint) (int, error) {
 	var count int64
 	var query = u.db.Model(&models.Users{})
 
-	query = query.Where("role_id = ?", roleId)
+	query.Where("role_id = ?", roleId)
 	
 	err := query.Count(&count).Error
 	if err != nil {
@@ -177,6 +177,7 @@ func (u *userRepository) DeleteUser(id string) (response.User, error) {
 	if err != nil {
 		return response.User{}, err
 	}
+
 	return res, nil
 }
 

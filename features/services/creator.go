@@ -9,7 +9,7 @@ import (
 )
 
 type ICreatorService interface {
-	CreateCreator(data *request.Creator) (response.Creator, error)
+	CreateCreator(data *request.Creator) (response.Creators, error)
 	GetAllCreator(filter request.Creator) ([]response.Creators, error)
 	GetAllCreatorByRole(filter request.Creator) ([]response.Creators, error)
 	GetCreator(id string) (response.Creators, error)
@@ -29,27 +29,27 @@ func NewCreatorService(repo repositories.ICreatorRepository, role repositories.I
 	}
 }
 
-func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator, error) {
+func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creators, error) {
 	if data.Email == "" {
-		return response.Creator{}, errors.ERR_EMAIL_IS_EMPTY
+		return response.Creators{}, errors.ERR_EMAIL_IS_EMPTY
 	}
 	if data.PhoneNumber == "" {
-		return response.Creator{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
+		return response.Creators{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
 	}
 	if data.OutletName == "" {
-		return response.Creator{}, errors.ERR_OUTLET_NAME_IS_EMPTY
+		return response.Creators{}, errors.ERR_OUTLET_NAME_IS_EMPTY
 	}
 	if data.Roles == "" && data.RoleId == 0 {
-		return response.Creator{}, errors.ERR_ROLE_IS_EMPTY
+		return response.Creators{}, errors.ERR_ROLE_IS_EMPTY
 	}
 
 	resRole, err := cs.roleRepo.GetAllRole(data.Roles)
 	if err != nil {
-		return response.Creator{}, errors.ERR_ROLE_IS_EMPTY
+		return response.Creators{}, errors.ERR_ROLE_IS_EMPTY
 	}
 
 	if len(resRole) == 0 {
-		return response.Creator{}, errors.ERR_ROLE_IS_EMPTY
+		return response.Creators{}, errors.ERR_ROLE_IS_EMPTY
 	}
 
 	data.RoleId = resRole[0].Id
@@ -57,7 +57,7 @@ func (cs *CreatorService) CreateCreator(data *request.Creator) (response.Creator
 	fmt.Println(data)
 	res, err := cs.creatorRepository.CreateCreator(data)
 	if err != nil {
-		return response.Creator{}, errors.ERR_CREATE_CREATOR_DATABASE
+		return response.Creators{}, errors.ERR_CREATE_CREATOR_DATABASE
 	}
 	return res, nil
 }

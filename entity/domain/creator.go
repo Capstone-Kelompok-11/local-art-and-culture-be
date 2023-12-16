@@ -29,7 +29,7 @@ func ConvertFromModelToCreatorsRes(data models.Creator) *response.Creators {
 		Email:       data.Email,
 		OutletName:  data.OutletName,
 		PhoneNumber: data.PhoneNumber,
-		//UserId:      data.UserId,
+		Roles: 		 data.Role.Role,
 		Users: *ConvertFromModelToUsersRes(data.Users),
 		Role:  *ConvertFromModelToRoleRes(data.Role),
 		// AddressId:   data.AddressId,
