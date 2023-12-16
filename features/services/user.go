@@ -26,6 +26,11 @@ type UserService struct {
 	UserRepo repositories.IUserRepository
 }
 
+// GetAllUser implements IUserService.
+func (*UserService) GetAllUser(nameFilter string, page int, pageSize int) ([]response.User, map[string]int, error) {
+	panic("unimplemented")
+}
+
 func NewUserService(repo repositories.IUserRepository) *UserService {
 	return &UserService{UserRepo: repo}
 }
@@ -130,7 +135,7 @@ func (u *UserService) DeleteUser(id string) (response.User, error) {
 // 	regularUser, err := u.CountUsersByRole(0)
 // 	if err != nil {
 // 		return nil, nil, err
-// 	}	
+// 	}
 
 // 	eventCreators, err := u.CountUsersByRole(3)
 // 	if err != nil {
