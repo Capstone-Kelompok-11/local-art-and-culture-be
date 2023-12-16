@@ -7,7 +7,6 @@ import (
 
 	"lokasani/helpers/errors"
 	"lokasani/helpers/middleware"
-	"lokasani/helpers/upload"
 
 	"github.com/labstack/echo/v4"
 )
@@ -28,13 +27,6 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(e, err)
 	}
-
-	file, err := e.FormFile("image")
-	if err != nil {
-		return response.NewErrorResponse(e, err)
-	}
-	client := upload.ConfigCloud()
-	upload.UploadFile(file, client)
 
 	token, err := middleware.CreateToken(uint(res.Id), 0, uint(res.Id))
 	if err != nil {

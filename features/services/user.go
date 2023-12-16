@@ -32,7 +32,6 @@ func NewUserService(repo repositories.IUserRepository) *UserService {
 }
 
 func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
-	data.RoleId = 2
 	if data.FirstName == "" {
 		return response.User{}, errors.ERR_NAME_IS_EMPTY
 	}

@@ -9,7 +9,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func ConvertFromUserReqToModel(data request.User, imageUrl string) *models.Users {
+func ConvertFromUserReqToModel(data request.User) *models.Users {
 	return &models.Users{
 		Model: gorm.Model{
 			ID: data.Id,
@@ -17,7 +17,6 @@ func ConvertFromUserReqToModel(data request.User, imageUrl string) *models.Users
 		FirstName:   data.FirstName,
 		LastName:    data.LastName,
 		Username: 	 data.Username,
-		Image:		 imageUrl,
 		Email:       data.Email,
 		Password:    data.Password,
 		PhoneNumber: data.PhoneNumber,
@@ -34,7 +33,6 @@ func ConvertFromModelToUserRes(data models.Users) *response.User {
 		FirstName:   data.FirstName,
 		LastName:    data.LastName,
 		Username:    data.Username,
-		Image: 		 data.Image,
 		Email:       data.Email,
 		PhoneNumber: data.PhoneNumber,
 		NIK:         data.NIK,
@@ -63,7 +61,6 @@ func ConvertFromModelToUsersRes(data models.Users) *response.Users {
 		FirstName:   data.FirstName,
 		LastName:    data.LastName,
 		Username: 	 data.Username,
-		Image: 		 data.Image,
 		Email:       data.Email,
 		PhoneNumber: data.PhoneNumber,
 		NIK: 		 data.NIK,
@@ -77,7 +74,6 @@ func UserCreateRequestToUserDomain(request request.User) *models.Users {
 		FirstName: 		request.FirstName,
 		LastName:  		request.LastName,
 		Username: 	 	request.Username,
-		Image: 			request.Image,
 		Email:     		request.Email,
 		PhoneNumber:   	request.PhoneNumber,
 		NIK:           	request.NIK,

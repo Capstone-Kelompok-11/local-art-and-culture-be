@@ -11,7 +11,6 @@ type Users struct {
 	FirstName   string    `gorm:"not null"`
 	LastName    string    `gorm:"not null"`
 	Username	string	  `gorm:"not null"`
-	Image 		string	 
 	Email       string    `gorm:"unique;not null"`
 	Password    string    `gorm:"not null"`
 	PhoneNumber string    `gorm:"unique;not null"`

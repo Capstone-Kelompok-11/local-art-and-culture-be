@@ -33,7 +33,7 @@ func NewUsersRepository(db *gorm.DB) *userRepository {
 }
 
 func (u *userRepository) RegisterUser(data *request.User) (response.User, error) {
-	dataUser := domain.ConvertFromUserReqToModel(*data, data.Image)
+	dataUser := domain.ConvertFromUserReqToModel(*data)
 	err := u.db.Create(&dataUser).Error
 	if err != nil {
 		return response.User{}, err
@@ -46,7 +46,7 @@ func (u *userRepository) RegisterUser(data *request.User) (response.User, error)
 }
 
 func (u *userRepository) LoginUser(data *request.User) (response.Creators, error) {
-	dataUser := domain.ConvertFromUserReqToModel(*data, data.Image)
+	dataUser := domain.ConvertFromUserReqToModel(*data)
 	err := u.db.Where("email = ? ", data.Email).First(&dataUser).Error
 	if err != nil {
 		return response.Creators{}, errors.ERR_EMAIL_NOT_FOUND

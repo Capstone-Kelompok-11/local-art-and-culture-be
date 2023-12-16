@@ -7,8 +7,7 @@ type Creators struct {
 	PhoneNumber string 	`json:"phone_number"`
 	AddressId   *uint  	`json:"address_id"`
 	Address 	string	`json:"address"`
-	UserId 		uint	`json:"user_id"`
-	RoleId 		uint	`json:"role_id"`
+	Roles		string	`json:"roles"`
 	Users       Users   `json:"users"`
 	Role       	Role   	`json:"role"`
 }
@@ -18,6 +17,6 @@ type Creator struct {
 	OutletName  string `json:"outlet_name"`
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phone_number"`
-	UserId      uint   `json:"user_nd"`
+	UserId      uint   `json:"user_id"`
 	AddressId   *uint  `json:"address_id"`
 }
