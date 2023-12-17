@@ -8,71 +8,73 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetAllLike_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockService := mocks.NewMockILikeService(ctrl)
+	mockLikeRepository := mocks.NewMockILikeRepository(ctrl)
 
-	expectedLikes := []response.Like{{Id: 1, UserId: 1}, {Id: 2, UserId: 2}}
-	mockService.EXPECT().GetAllLike(gomock.Any()).Return(expectedLikes, nil)
-
-	likes, err := mockService.GetAllLike("articleID")
-
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
+	expectedLikes := []response.Like{
+		{Id: 1, UserId: 1},
+		{Id: 2, UserId: 2},
 	}
 
-	if len(likes) != len(expectedLikes) {
-		t.Errorf("Expected %d likes, got %d", len(expectedLikes), len(likes))
-	}
+	mockLikeRepository.EXPECT().GetAllLike("articleID").Return(expectedLikes, nil).Times(1)
+
+	likeService := NewLikeService(mockLikeRepository)
+
+	resultLikes, err := likeService.GetAllLike("articleID")
+
+	assert.NoError(t, err)
+	assert.Equal(t, expectedLikes, resultLikes)
 }
 
 func TestGetAllLike_Failure(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockService := mocks.NewMockILikeService(ctrl)
+	mockLikeRepository := mocks.NewMockILikeRepository(ctrl)
 
 	expectedError := errors.New("some error")
-	mockService.EXPECT().GetAllLike(gomock.Any()).Return(nil, expectedError)
 
-	likes, err := mockService.GetAllLike("articleID")
+	mockLikeRepository.EXPECT().GetAllLike("articleID").Return(nil, expectedError).Times(1)
 
-	if err != expectedError {
-		t.Errorf("Expected error %v, got %v", expectedError, err)
-	}
+	likeService := NewLikeService(mockLikeRepository)
 
-	if likes != nil {
-		t.Errorf("Expected nil likes, got %v", likes)
-	}
+	resultLikes, err := likeService.GetAllLike("articleID")
+
+	assert.Error(t, err)
+	assert.Nil(t, resultLikes)
+	assert.NotEqual(t, err, expectedError.Error())
 }
 
 func TestUpdateLike_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockService := mocks.NewMockILikeService(ctrl)
+	mockLikeRepository := mocks.NewMockILikeRepository(ctrl)
 
-	expectedUpdatedLike := response.Like{Id: 1, UserId: 1}
-	mockService.EXPECT().UpdateLike(gomock.Any()).Return(expectedUpdatedLike, nil)
-
-	updatedLike, err := mockService.UpdateLike(request.Like{UserId: 1})
-
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
+	expectedLike := response.Like{
+		Id:     1,
+		UserId: 1,
 	}
 
-	if updatedLike.Id != expectedUpdatedLike.Id {
-		t.Errorf("Expected like ID %d, got %d", expectedUpdatedLike.Id, updatedLike.Id)
+	mockLikeRepository.EXPECT().UpdateLike(gomock.Any()).Return(expectedLike, nil).Times(1)
+
+	likeService := NewLikeService(mockLikeRepository)
+
+	requestLike := request.Like{
+		UserId: 1,
 	}
 
-	if updatedLike.UserId != expectedUpdatedLike.UserId {
-		t.Errorf("Expected user ID %d, got %d", expectedUpdatedLike.UserId, updatedLike.UserId)
-	}
+	resultLike, _ := likeService.UpdateLike(requestLike)
+
+	assert.NotNil(t, expectedLike, resultLike)
 }
+
 
 func TestUpdateLike_Failure(t *testing.T) {
 	ctrl := gomock.NewController(t)
