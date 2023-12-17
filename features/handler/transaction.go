@@ -75,16 +75,16 @@ func (ah *TransactionHandler) ConfirmPayment(c echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
+	fmt.Println(paymentPayload)
 	orderId, exists := paymentPayload["order_id"].(string)
-	fmt.Println(orderId)
+	faurdStatus, exists := paymentPayload["fraud_status"].(string)
+	fmt.Println("----test----")
 	if !exists {
-		fmt.Println(paymentPayload)
 		return response.NewErrorResponse(c, errors.ERR_INVALID_PAYLOAD)
 	}
 
-	res, err := ah.transactionService.ConfirmPayment(orderId)
+	res, err := ah.transactionService.ConfirmPayment(orderId, faurdStatus)
 	if err != nil {
-		fmt.Println("cek midtrans")
 		return response.NewErrorResponse(c, err)
 	}
 

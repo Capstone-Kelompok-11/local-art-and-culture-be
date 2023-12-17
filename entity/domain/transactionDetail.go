@@ -52,6 +52,11 @@ func ConvertFromModelsToTransactionDetailRes(data []models.TransactionDetail) *[
 		temp.Fullname = data[i].Fullname
 		temp.Contact = data[i].Contact
 		temp.Email = data[i].Email
+		if data[i].ProductId != nil {
+			temp.Subtotal = int64(data[i].Qty) * int64(data[i].Product.Price)
+		} else {
+			temp.Subtotal = int64(data[i].Qty) * int64(data[i].Ticket.Price)
+		}
 		result = append(result, temp)
 	}
 	return &result
@@ -67,5 +72,7 @@ func ConvertFromModelToTransactionDetailRes(data models.TransactionDetail) *resp
 		Fullname:      data.Fullname,
 		Contact:       data.Contact,
 		Email:         data.Email,
+		Product:       *ConvertFromModelToProductRes(data.Product),
+		Ticket:        *ConvertFromModelToTicketRes(data.Ticket),
 	}
 }

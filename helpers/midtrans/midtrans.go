@@ -1,13 +1,11 @@
 package midtrans
 
 import (
-	"fmt"
 	"lokasani/app/drivers/config"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
 	consts "lokasani/helpers/const"
-	"lokasani/helpers/errors"
 
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/coreapi"
@@ -15,7 +13,7 @@ import (
 )
 
 type IMidtransService interface {
-	Verification(orderId string) (error, response.Transaction)
+	Verification(orderId, fraudStatus string) (error, response.Transaction)
 }
 
 type midtransService struct {
@@ -43,7 +41,7 @@ func Payment(input *response.Transaction) error {
 	return nil
 }
 
-func (m *midtransService) Verification(orderId string) (error, response.Transaction) {
+func (m *midtransService) Verification(orderId, fraudStatus string) (error, response.Transaction) {
 	var client coreapi.Client
 	var transaction request.Transaction
 	_, serverKey := config.MidtransCredential()
@@ -51,43 +49,21 @@ func (m *midtransService) Verification(orderId string) (error, response.Transact
 
 	transaction.Status = consts.OrderStatusPaid
 	transaction.TransactionNumber = orderId
-	fmt.Println("cek order id di midtrans " + orderId)
 	// 4. Check transaction to Midtrans with param orderId
-	transactionStatusResp, e := client.CheckTransaction(orderId)
-	if e != nil {
-		fmt.Println("error di cek transaction")
-		return errors.ERR_PAYMENT_FAILED, response.Transaction{}
-	} else {
-		if transactionStatusResp != nil {
-			// 5. Do set transaction status based on response from check transaction status
-			if transactionStatusResp.TransactionStatus == "capture" {
-				if transactionStatusResp.FraudStatus == "challenge" {
-					// TODO set transaction status on your database to 'challenge'
-					// e.g: 'Payment status challenged. Please take action on your Merchant Administration Portal
-				} else if transactionStatusResp.FraudStatus == "accept" {
-					fmt.Println(1)
-					err, res := m.transactionRepository.UpdateTransaction("", transaction)
-					if err != nil {
-						return err, response.Transaction{}
-					}
-					return nil, res
-				}
-			} else if transactionStatusResp.TransactionStatus == "settlement" {
-				fmt.Println(1)
-				err, res := m.transactionRepository.UpdateTransaction("", transaction)
-				if err != nil {
-					return err, response.Transaction{}
-				}
-				return nil, res
-			} else if transactionStatusResp.TransactionStatus == "deny" {
-				// TODO you can ignore 'deny', because most of the time it allows payment retries
-				// and later can become success
-			} else if transactionStatusResp.TransactionStatus == "cancel" || transactionStatusResp.TransactionStatus == "expire" {
-				// TODO set transaction status on your databaase to 'failure'
-			} else if transactionStatusResp.TransactionStatus == "pending" {
-				// TODO set transaction status on your databaase to 'pending' / waiting payment
-			}
+
+	if fraudStatus == "accept" {
+		err, res := m.transactionRepository.UpdateTransaction("", transaction)
+		if err != nil {
+			return err, response.Transaction{}
 		}
+		return nil, res
+	} else if fraudStatus == "settlement" {
+		err, res := m.transactionRepository.UpdateTransaction("", transaction)
+		if err != nil {
+			return err, response.Transaction{}
+		}
+		return nil, res
 	}
+
 	return nil, response.Transaction{}
 }

@@ -12,7 +12,7 @@ import (
 
 type ITransactionService interface {
 	CreateTransaction(data *request.Transaction) (response.Transaction, error)
-	ConfirmPayment(id string) (response.Transaction, error)
+	ConfirmPayment(id, fraudStatus string) (response.Transaction, error)
 	GetAllTransaction() ([]response.Transaction, error)
 	GetTransaction(id string) (response.Transaction, error)
 	UpdateTransaction(id string, data request.Transaction) (response.Transaction, error)
@@ -47,27 +47,27 @@ func (rs *TransactionService) CreateTransaction(data *request.Transaction) (resp
 		return response.Transaction{}, errors.ERR_CREATE_TRANSACTION_DATABASE
 	}
 
-	// var transactionDetailRes []response.TransactionDetail
-	// for i := range data.TransactionDetail {
-	// 	data.TransactionDetail[i].TransactionId = res.Id
-	// 	result, err := rs.transactionDetailRepository.CreateTransactionDetail(&data.TransactionDetail[i])
-	// 	if err != nil {
-	// 		return res, errors.ERR_CREATE_TRANSACTION_DETAIL
-	// 	}
-	// 	transactionDetailRes = append(transactionDetailRes, result)
-	// }
-	// res.TransactionDetail = transactionDetailRes
-	fmt.Println(res)
-	res.Total = 10000
+	var transactionDetailRes []response.TransactionDetail
+	for i := range data.TransactionDetail {
+		data.TransactionDetail[i].TransactionId = res.Id
+		result, err := rs.transactionDetailRepository.CreateTransactionDetail(&data.TransactionDetail[i])
+		if err != nil {
+			return res, errors.ERR_CREATE_TRANSACTION_DETAIL
+		}
+		if data.TransactionDetail[i].ProductId != nil {
+			result.Subtotal = int64(data.TransactionDetail[i].Qty) * int64(result.Product.Price)
+		} else {
+			result.Subtotal = int64(data.TransactionDetail[i].Qty) * int64(data.TransactionDetail[i].Ticket.Price)
+		}
+
+		transactionDetailRes = append(transactionDetailRes, result)
+	}
+	res.TransactionDetail = transactionDetailRes
+	fmt.Println(transactionDetailRes)
+	res.Total = sumTotal(res.TransactionDetail)
 	midtrans.Payment(&res)
 	return res, nil
 }
-
-// func sumTotal(input []response.TransactionDetail) float64{
-// 	for i := range input {
-// 		input[i].Qty *=
-// 	}
-// }
 
 func (rs *TransactionService) GetAllTransaction() ([]response.Transaction, error) {
 	err, res := rs.transactionRepository.GetAllTransaction()
@@ -122,12 +122,12 @@ func (rs *TransactionService) DeleteTransaction(id string) (response.Transaction
 	return res, nil
 }
 
-func (rs *TransactionService) ConfirmPayment(id string) (response.Transaction, error) {
+func (rs *TransactionService) ConfirmPayment(id, fraudStatus string) (response.Transaction, error) {
 	if id == "" {
 		return response.Transaction{}, errors.ERR_GET_TRANSACTION_BAD_REQUEST_ID
 	}
 	fmt.Println(id)
-	err, res := rs.midtransService.Verification(id)
+	err, res := rs.midtransService.Verification(id, fraudStatus)
 
 	if err != nil {
 		return response.Transaction{}, err
@@ -184,4 +184,12 @@ func (rs *TransactionService) GetPrevPage(currentPage int) int {
 		return currentPage - 1
 	}
 	return 1
+}
+
+func sumTotal(input []response.TransactionDetail) int64 {
+	var total int64
+	for i := range input {
+		total += input[i].Subtotal
+	}
+	return total
 }

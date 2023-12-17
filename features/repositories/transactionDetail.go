@@ -33,7 +33,11 @@ func (ar *transactionDetailRepository) CreateTransactionDetail(data *request.Tra
 	if err != nil {
 		return response.TransactionDetail{}, err
 	}
-
+	if data.ProductId != nil {
+		err = ar.db.Preload("Product").First(&dataTransactionDetail, "id = ?", dataTransactionDetail.ID).Error
+	} else if data.TicketId != nil {
+		err = ar.db.Preload("Ticket").First(&dataTransactionDetail, "id = ?", dataTransactionDetail.ID).Error
+	}
 	return *domain.ConvertFromModelToTransactionDetailRes(*dataTransactionDetail), nil
 }
 
