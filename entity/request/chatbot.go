@@ -1,5 +1,6 @@
 package request
 
 type Chatbot struct {
-	Message string `json:"message"`
+	UserId 	uint	`json:"userId"`	
+	Message string  `json:"message"`
 }

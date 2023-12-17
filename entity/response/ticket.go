@@ -11,8 +11,8 @@ type Ticket struct {
 	Qty         int       `json:"qty" form:"qty"`
 	Name        string    `json:"name" form:"name"`
 	Description string    `json:"description" form:"description"`
-	StartTime   time.Time `json:"startTime" form:"startTime"`
-	EndTime     time.Time `json:"endTime" form:"endTime"`
-	EventId     uint      `json:"eventId" form:"eventId"`
+	StartTime   time.Time `json:"start_time" form:"start_time"`
+	EndTime     time.Time `json:"end_time" form:"end_time"`
+	EventId     uint      `json:"event_id" form:"event_id"`
 	Event       Events     `json:"event"`
 }

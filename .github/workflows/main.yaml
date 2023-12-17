@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - development
+      - master
 jobs:
   build_docker:
     name: build and push to dockerhub

@@ -5,8 +5,7 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
-	"lokasani/helpers/consts"
-	"lokasani/helpers/errors"
+	consts "lokasani/helpers/const"
 
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/coreapi"
@@ -14,7 +13,7 @@ import (
 )
 
 type IMidtransService interface {
-	Verification(data map[string]interface{}) (error, *string)
+	Verification(orderId, fraudStatus string) (error, response.Transaction)
 }
 
 type midtransService struct {
@@ -32,8 +31,8 @@ func Payment(input *response.Transaction) error {
 
 	req := &snap.Request{
 		TransactionDetails: midtrans.TransactionDetails{
-			OrderID:  "LKSNI/" + string(input.Id),
-			GrossAmt: 100000,
+			OrderID:  input.TransactionNumber,
+			GrossAmt: int64(input.Total),
 		},
 	}
 
@@ -42,45 +41,29 @@ func Payment(input *response.Transaction) error {
 	return nil
 }
 
-func (m midtransService) Verification(data map[string]interface{}) (error, *string) {
+func (m *midtransService) Verification(orderId, fraudStatus string) (error, response.Transaction) {
 	var client coreapi.Client
 	var transaction request.Transaction
 	_, serverKey := config.MidtransCredential()
 	client.New(serverKey, midtrans.Sandbox)
 
-	orderId, exists := data["order_id"].(string)
-	if !exists {
-		// do something when key `order_id` not found
-		return errors.ERR_INVALID_PAYLOAD, nil
+	transaction.Status = consts.OrderStatusPaid
+	transaction.TransactionNumber = orderId
+	// 4. Check transaction to Midtrans with param orderId
+
+	if fraudStatus == "accept" {
+		err, res := m.transactionRepository.UpdateTransaction("", transaction)
+		if err != nil {
+			return err, response.Transaction{}
+		}
+		return nil, res
+	} else if fraudStatus == "settlement" {
+		err, res := m.transactionRepository.UpdateTransaction("", transaction)
+		if err != nil {
+			return err, response.Transaction{}
+		}
+		return nil, res
 	}
 
-	// 4. Check transaction to Midtrans with param orderId
-	transactionStatusResp, e := client.CheckTransaction(orderId)
-	if e != nil {
-		return e, nil
-	} else {
-		if transactionStatusResp != nil {
-			// 5. Do set transaction status based on response from check transaction status
-			if transactionStatusResp.TransactionStatus == "capture" {
-				if transactionStatusResp.FraudStatus == "challenge" {
-					// TODO set transaction status on your database to 'challenge'
-					// e.g: 'Payment status challenged. Please take action on your Merchant Administration Portal
-				} else if transactionStatusResp.FraudStatus == "accept" {
-					transaction.Status = consts.OrderStatusPaid
-					m.transactionRepository.UpdateTransaction(orderId, transaction)
-				}
-			} else if transactionStatusResp.TransactionStatus == "settlement" {
-				transaction.Status = consts.OrderStatusPaid
-				m.transactionRepository.UpdateTransaction(orderId, transaction)
-			} else if transactionStatusResp.TransactionStatus == "deny" {
-				// TODO you can ignore 'deny', because most of the time it allows payment retries
-				// and later can become success
-			} else if transactionStatusResp.TransactionStatus == "cancel" || transactionStatusResp.TransactionStatus == "expire" {
-				// TODO set transaction status on your databaase to 'failure'
-			} else if transactionStatusResp.TransactionStatus == "pending" {
-				// TODO set transaction status on your databaase to 'pending' / waiting payment
-			}
-		}
-	}
-	return nil, nil
+	return nil, response.Transaction{}
 }

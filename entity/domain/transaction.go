@@ -18,6 +18,7 @@ func ConvertFromTransactionReqToModel(data request.Transaction) *models.Transact
 		PaymentMethodId:   data.PaymentMethodId,
 		ShippingMethodId:  data.ShippingMethodId,
 		Status:            data.Status,
+		TransactionNumber: data.TransactionNumber,
 		User:              *ConvertFromUserReqToModel(data.User),
 		Payment:           *ConvertFromPaymentReqToModel(data.Payment),
 		Shipping:          *ConvertFromShippingReqToModel(data.Shipping),
@@ -33,9 +34,31 @@ func ConvertFromModelToTransactionRes(data models.Transaction) *response.Transac
 		PaymentMethodId:   data.PaymentMethodId,
 		ShippingMethodId:  data.ShippingMethodId,
 		Status:            data.Status,
+		TransactionNumber: data.TransactionNumber,
 		User:              *ConvertFromModelToUserRes(data.User),
 		Payment:           *ConvertFromModelToPaymentRes(data.Payment),
 		Shipping:          *ConvertFromModelToShippingRes(data.Shipping),
 		TransactionDetail: *ConvertFromModelsToTransactionDetailRes(data.TransactionDetail),
+	}
+}
+
+func ConvertModelTransactionsToResponse(transactions []models.Transaction) []*response.Transaction {
+	list := []*response.Transaction{}
+
+	for _, v := range transactions {
+		res:= ConvertFromModelToTransactionRes(v)
+		list = append(list, res)
+	}
+	return list
+}
+
+func ConvertFromModelToTransactionReport(data models.TransactionReport) *response.TransactionReport {
+	return &response.TransactionReport{
+		Id: 			 data.Id,
+		TransactionDate: data.TransactionDate,
+		Status: 		 data.Status,
+		Qty: 			 data.Qty,
+		Price: 			 data.Price,
+		Nominal: 		 data.Nominal,
 	}
 }

@@ -6,7 +6,6 @@ import (
 	"lokasani/features/repositories"
 	"lokasani/helpers/bcrypt"
 	"lokasani/helpers/errors"
-	"lokasani/helpers/middleware"
 	"math"
 )
 
@@ -43,7 +42,7 @@ func (as *AdminService) RegisterAdmin(data *request.SuperAdmin) (response.SuperA
 	if data.PhoneNumber == "" {
 		return response.SuperAdmin{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
 	}
-	hashPass, err := bcrypt.Hash(data.Password)
+	hashPass, err := bcrypt.HashPassword(data.Password)
 	if err != nil {
 		return response.SuperAdmin{}, errors.ERR_BCRYPT_PASSWORD
 	}
@@ -53,12 +52,6 @@ func (as *AdminService) RegisterAdmin(data *request.SuperAdmin) (response.SuperA
 	if err != nil {
 		return response.SuperAdmin{}, errors.ERR_REGISTER_USER_DATABASE
 	}
-	token, err := middleware.CreateToken(int(data.Id), data.Name)
-
-	if err != nil {
-		return response.SuperAdmin{}, errors.ERR_TOKEN
-	}
-	res.Token = token
 	return res, nil
 }
 
@@ -73,13 +66,6 @@ func (as *AdminService) LoginAdmin(data *request.SuperAdmin) (response.SuperAdmi
 	if err != nil {
 		return response.SuperAdmin{}, err
 	}
-
-	token, err := middleware.CreateToken(int(data.Id), data.Name)
-
-	if err != nil {
-		return response.SuperAdmin{}, errors.ERR_TOKEN
-	}
-	res.Token = token
 	return res, nil
 }
 

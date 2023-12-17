@@ -4,8 +4,10 @@ import (
 	"lokasani/features/handler"
 	"lokasani/features/repositories"
 	"lokasani/features/services"
+	"os"
 
-	"github.com/labstack/echo"
+	echojwt "github.com/labstack/echo-jwt/v4"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
@@ -14,9 +16,12 @@ func PaymentRoute(e *echo.Echo, db *gorm.DB) {
 	service := services.NewPaymentService(repository)
 	handler := handler.NewPaymentHandler(service)
 
-	e.POST("/payment", handler.CreatePayment)
-	e.GET("/payment", handler.GetAllPayment)
-	e.GET("/payment/:id", handler.GetPayment)
-	e.PUT("/payment/:id", handler.UpdatePayment)
-	e.DELETE("/payment/:id", handler.DeletePayment)
+	eJwt := e.Group("")
+	eJwt.Use(echojwt.JWT([]byte(os.Getenv("SECRET_JWT"))))
+
+	eJwt.POST("/payment", handler.CreatePayment)
+	eJwt.GET("/payment", handler.GetAllPayment)
+	eJwt.GET("/payment/:id", handler.GetPayment)
+	eJwt.PUT("/payment/:id", handler.UpdatePayment)
+	eJwt.DELETE("/payment/:id", handler.DeletePayment)
 }

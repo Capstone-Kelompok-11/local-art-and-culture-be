@@ -7,6 +7,7 @@ import (
 )
 
 func InitMigrate(db *gorm.DB) {
+	db.AutoMigrate(&models.Transaction{})
 	db.AutoMigrate(&models.Users{})
 	db.AutoMigrate(&models.Role{})
 	db.AutoMigrate(&models.SuperAdmin{})
@@ -19,7 +20,6 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.Event{})
 	db.AutoMigrate(&models.Comment{})
 	db.AutoMigrate(&models.Payment{})
-	db.AutoMigrate(&models.Transaction{})
 	db.AutoMigrate(&models.TransactionDetail{})
 	db.AutoMigrate(&models.Like{})
 	db.AutoMigrate(&models.Ticket{})
@@ -27,4 +27,8 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.Rating{})
 	db.AutoMigrate(&models.Wishlist{})
 	db.AutoMigrate(&models.Files{})
+	db.AutoMigrate(&models.SaveChatbot{})
+	db.Migrator().AddColumn(&models.Creator{}, "Address")
+	db.Migrator().AddColumn(&models.Product{}, "Stock")
+	db.Migrator().AddColumn(&models.Product{}, "TotalProduct")
 }

@@ -6,7 +6,7 @@ import (
 	"lokasani/features/services"
 	"lokasani/helpers/upload"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type FilesHandler struct {

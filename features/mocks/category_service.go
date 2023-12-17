@@ -91,6 +91,21 @@ func (mr *MockICategoryServiceMockRecorder) GetCategory(arg0 interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategory", reflect.TypeOf((*MockICategoryService)(nil).GetCategory), arg0)        
 }
 
+// GetTypeCategory mocks base method.
+func (m *MockICategoryService) GetTypeCategory(arg0 string) (response.Category, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTypeCategory", arg0)
+	ret0, _ := ret[0].(response.Category)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTypeCategory indicates an expected call of GetTypeCategory.
+func (mr *MockICategoryServiceMockRecorder) GetTypeCategory(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTypeCategory", reflect.TypeOf((*MockICategoryService)(nil).GetTypeCategory), arg0)
+}
+
 // UpdateCategory mocks base method.
 func (m *MockICategoryService) UpdateCategory(arg0 string, arg1 request.Category) (response.Category, error) {
 	m.ctrl.T.Helper()

@@ -14,6 +14,7 @@ type ICategoryRepository interface {
 	CreateCategory(data *request.Category) (response.Category, error)
 	GetAllCategory(nameFilter string) ([]response.Category, error)
 	GetCategory(id string) (response.Category, error)
+	GetTypeCategory(Type string) (response.Category, error)
 	UpdateCategory(id string, input request.Category) (response.Category, error)
 	DeleteCategory(id string) (response.Category, error)
 }
@@ -59,6 +60,15 @@ func (ca *categoryRepository) GetAllCategory(nameFilter string) ([]response.Cate
 func (ca *categoryRepository) GetCategory(id string) (response.Category, error) {
 	var categoryData models.Category
 	err := ca.db.First(&categoryData, "id = ?", id).Error
+	if err != nil {
+		return response.Category{}, err
+	}
+	return *domain.ConvertFromModelToCategoryRes(categoryData), nil
+}
+
+func (ca *categoryRepository) GetTypeCategory(Type string) (response.Category, error) {
+	var categoryData models.Category
+	err := ca.db.First(&categoryData, "type = ?", Type).Error
 	if err != nil {
 		return response.Category{}, err
 	}

@@ -5,8 +5,11 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	consts "lokasani/helpers/const"
+	"lokasani/helpers/middleware"
+	"strconv"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type ProductHandler struct {
@@ -18,6 +21,17 @@ func NewProductHandler(iProductService services.IProductService) *ProductHandler
 }
 
 func (pr *ProductHandler) CreateProduct(c echo.Context) error {
+	_, role, _, err := middleware.ExtractToken(c)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    if role != consts.ProductCreator {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+	// if roleId != 1 {
+	// return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	// }
+
 	var input request.Product
 	c.Bind(&input)
 	file, err := c.FormFile("file")
@@ -40,7 +54,16 @@ func (pr *ProductHandler) CreateProduct(c echo.Context) error {
 
 func (pr *ProductHandler) GetAllProduct(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
-	page, pageSize := 1, 10
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+    pageSize, _ := strconv.Atoi(c.QueryParam("pageSize"))
+
+    if page <= 0 {
+        page = 1
+    }
+
+    if pageSize <= 0 {
+        pageSize = 10
+    }
 
 	res, totalItems, err := pr.productService.GetAllProduct(nameFilter, page, pageSize)
 	if err != nil {
@@ -52,7 +75,7 @@ func (pr *ProductHandler) GetAllProduct(c echo.Context) error {
 	prevPage := pr.productService.GetPrevPage(currentPage)
 
 	responseData := map[string]interface{}{
-		"data": res,
+		"allProduct": res,
 		"pagination": map[string]int{
 			"currentPage": currentPage,
 			"nextPage":    nextPage,
@@ -66,7 +89,16 @@ func (pr *ProductHandler) GetAllProduct(c echo.Context) error {
 
 func (pr *ProductHandler) GetTrendingProduct(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
-	page, pageSize := 1, 10
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+    pageSize, _ := strconv.Atoi(c.QueryParam("pageSize"))
+
+    if page <= 0 {
+        page = 1
+    }
+
+    if pageSize <= 0 {
+        pageSize = 10
+    }
 
 	res, totalItems, err := pr.productService.GetTrendingProduct(nameFilter, page, pageSize)
 	if err != nil {
@@ -78,7 +110,7 @@ func (pr *ProductHandler) GetTrendingProduct(c echo.Context) error {
 	prevPage := pr.productService.GetPrevPage(currentPage)
 
 	responseData := map[string]interface{}{
-		"data": res,
+		"allProduct": res,
 		"pagination": map[string]int{
 			"currentPage": currentPage,
 			"nextPage":    nextPage,
@@ -100,6 +132,14 @@ func (pr *ProductHandler) GetProduct(c echo.Context) error {
 }
 
 func (pr *ProductHandler) UpdateProduct(c echo.Context) error {
+	_, role, _, err := middleware.ExtractToken(c)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    if role != consts.ProductCreator {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+
 	id := c.Param("id")
 	var input request.Product
 	c.Bind(&input)
@@ -112,6 +152,14 @@ func (pr *ProductHandler) UpdateProduct(c echo.Context) error {
 }
 
 func (pr *ProductHandler) DeleteProduct(c echo.Context) error {
+	_, role, _, err := middleware.ExtractToken(c)
+    if err != nil {
+        return response.NewErrorResponse(c, err)
+    }
+    if role != consts.ProductCreator {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+
 	id := c.Param("id")
 	res, err := pr.productService.DeleteProduct(id)
 	if err != nil {

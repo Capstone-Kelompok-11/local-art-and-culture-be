@@ -34,6 +34,10 @@ func (ar *adminRepository) RegisterAdmin(data *request.SuperAdmin) (response.Sup
 	if err != nil {
 		return response.SuperAdmin{}, err
 	}
+	err = ar.db.Preload("Role").First(&dataAdmin, "id = ?", dataAdmin.ID).Error
+	if err != nil {
+		return response.SuperAdmin{}, errors.ERR_LOGIN
+	}
 	return *domain.ConvertFromModelToAdminRes(*dataAdmin), nil
 }
 
@@ -47,6 +51,10 @@ func (ar *adminRepository) LoginAdmin(data *request.SuperAdmin) (response.SuperA
 	err = bcrypt.CheckPassword(data.Password, dataAdmin.Password)
 	if err != nil {
 		return response.SuperAdmin{}, errors.ERR_WRONG_PASSWORD
+	}
+	err = ar.db.Preload("Role").First(&dataAdmin, "id = ?", dataAdmin.ID).Error
+	if err != nil {
+		return response.SuperAdmin{}, errors.ERR_LOGIN
 	}
 	return *domain.ConvertFromModelToAdminRes(*dataAdmin), nil
 }

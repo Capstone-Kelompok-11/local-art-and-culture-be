@@ -4,8 +4,10 @@ import (
 	"lokasani/features/handler"
 	"lokasani/features/repositories"
 	"lokasani/features/services"
+	"os"
 
-	"github.com/labstack/echo"
+	echojwt "github.com/labstack/echo-jwt/v4"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
@@ -14,10 +16,16 @@ func AdminRoute(e *echo.Echo, db *gorm.DB) {
 	service := services.NewAdminService(repository)
 	handler := handler.NewAdminHandler(service)
 
+	eJwt := e.Group("")
+	eJwt.Use(echojwt.JWT([]byte(os.Getenv("SECRET_JWT"))))
+
+	//access without token
 	e.POST("/admin/register", handler.RegisterAdmin)
 	e.POST("/admin/login", handler.LoginAdmin)
-	e.GET("/admin", handler.GetAllAdmin)
-	e.GET("/admin/:id", handler.GetAdmin)
-	e.PUT("/admin/:id", handler.UpdateAdmin)
-	e.DELETE("/admin/:id", handler.DeleteAdmin)
+
+	//access with token
+	eJwt.GET("/admin", handler.GetAllAdmin)
+	eJwt.GET("/admin/:id", handler.GetAdmin)
+	eJwt.PUT("/admin/:id", handler.UpdateAdmin)
+	eJwt.DELETE("/admin/:id", handler.DeleteAdmin)
 }

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/repositories"
@@ -40,7 +41,7 @@ func (as *ArticleService) CreateArticle(data *request.Article) (response.Article
 	if err != nil {
 		return response.Article{}, errors.ERR_CREATE_ARTICLE_DATABASE
 	}
-
+	fmt.Println(data)
 	return res, nil
 }
 
