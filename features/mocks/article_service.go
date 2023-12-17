@@ -148,7 +148,7 @@ func (m *MockIArticleService) GetTrendingArticle(arg0 string, arg1, arg2 int) ([
 // GetTrendingArticle indicates an expected call of GetTrendingArticle.
 func (mr *MockIArticleServiceMockRecorder) GetTrendingArticle(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTrendingArticle", reflect.TypeOf((*MockIArticleService)(nil).GetTrendingArticle), arg0, arg1, arg2)      
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTrendingArticle", reflect.TypeOf((*MockIArticleService)(nil).GetTrendingArticle), arg0, arg1, arg2)
 }
 
 // UpdateArticle mocks base method.

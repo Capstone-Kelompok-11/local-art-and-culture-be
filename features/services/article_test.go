@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateArticle_Success(t *testing.T) {
@@ -423,46 +424,53 @@ func TestCalculatePaginationValues(t *testing.T) {
     ctrl := gomock.NewController(t)
     defer ctrl.Finish()
 
-    mockArticleService := mocks.NewMockIArticleService(ctrl)
+    mockArticleRepository := mocks.NewMockIArticleRepository(ctrl)
 
-    mockArticleService.EXPECT().CalculatePaginationValues(0, 100, 8).Return(1, 13).Times(1)
-    mockArticleService.EXPECT().CalculatePaginationValues(5, 10, 8).Return(6, 2).Times(1)
-    mockArticleService.EXPECT().CalculatePaginationValues(8, 95, 8).Return(1, 12).Times(1)
+    articleService := NewArticleService(mockArticleRepository)
 
-    page1, totalPages1 := mockArticleService.CalculatePaginationValues(0, 100, 8)
-    page2, totalPages2 := mockArticleService.CalculatePaginationValues(5, 10, 8)
-    page3, totalPages3 := mockArticleService.CalculatePaginationValues(8, 95, 8)
+    page1, totalPages1 := articleService.CalculatePaginationValues(0, 100, 8)
+    assert.Equal(t, 1, page1)
+    assert.Equal(t, 1, totalPages1)
 
-    expectedPage1 := 1
-    expectedTotalPages1 := 13
+    page2, totalPages2 := articleService.CalculatePaginationValues(15, 100, 8)
+    assert.Equal(t, 1, page2)
+    assert.Equal(t, 1, totalPages2)
 
-    if page1 != expectedPage1 {
-        t.Errorf("Expected page %d, but got %d", expectedPage1, page1)
-    }
+    page3, totalPages3 := articleService.CalculatePaginationValues(2, 100, 8)
+    assert.Equal(t, 1, page3)
+    assert.Equal(t, 1, totalPages3)
 
-    if totalPages1 != expectedTotalPages1 {
-        t.Errorf("Expected total pages %d, but got %d", expectedTotalPages1, totalPages1)
-    }
+    page4, totalPages4 := articleService.CalculatePaginationValues(1, 95, 8)
+    assert.Equal(t, 1, page4)
+    assert.Equal(t, 1, totalPages4) 
+}
 
-    expectedPage2 := 6
-    expectedTotalPages2 := 2
+func TestGetNextPage(t *testing.T) {
+	ctrl := gomock.NewController(t)
+    defer ctrl.Finish()
 
-    if page2 != expectedPage2 {
-        t.Errorf("Expected page %d, but got %d", expectedPage2, page2)
-    }
+    mockArticleRepository := mocks.NewMockIArticleRepository(ctrl)
 
-    if totalPages2 != expectedTotalPages2 {
-        t.Errorf("Expected total pages %d, but got %d", expectedTotalPages2, totalPages2)
-    }
+    articleService := NewArticleService(mockArticleRepository)
 
-    expectedPage3 := 1
-    expectedTotalPages3 := 12
+    result1 := articleService.GetNextPage(3, 10)
+	assert.Equal(t, 4, result1)
 
-    if page3 != expectedPage3 {
-        t.Errorf("Expected page %d, but got %d", expectedPage3, page3)
-    }
+	result2 := articleService.GetNextPage(10, 10)
+	assert.Equal(t, 10, result2)
+}
 
-    if totalPages3 != expectedTotalPages3 {
-        t.Errorf("Expected total pages %d, but got %d", expectedTotalPages3, totalPages3)
-    }
+func TestGetPrevPage(t *testing.T) {
+	ctrl := gomock.NewController(t)
+    defer ctrl.Finish()
+
+    mockArticleRepository := mocks.NewMockIArticleRepository(ctrl)
+
+    articleService := NewArticleService(mockArticleRepository)
+
+    result1 := articleService.GetPrevPage(5)
+	assert.Equal(t, 4, result1)
+
+	result2 := articleService.GetPrevPage(1)
+	assert.Equal(t, 1, result2)
 }
