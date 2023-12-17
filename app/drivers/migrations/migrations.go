@@ -30,4 +30,5 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.SaveChatbot{})
 	db.Migrator().AddColumn(&models.Creator{}, "Address")
 	db.Migrator().AddColumn(&models.Product{}, "Stock")
+	db.Migrator().AddColumn(&models.Product{}, "TotalProduct")
 }
