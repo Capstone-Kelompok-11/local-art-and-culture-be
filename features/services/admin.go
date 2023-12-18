@@ -6,16 +6,19 @@ import (
 	"lokasani/features/repositories"
 	"lokasani/helpers/bcrypt"
 	"lokasani/helpers/errors"
-	"lokasani/helpers/middleware"
+	"math"
 )
 
 type IAdminService interface {
 	RegisterAdmin(data *request.SuperAdmin) (response.SuperAdmin, error)
 	LoginAdmin(data *request.SuperAdmin) (response.SuperAdmin, error)
-	GetAllAdmin(nameFilter string) ([]response.SuperAdmin, error)
+	GetAllAdmin(nameFilter string, page, pageSize int) ([]response.SuperAdmin, int, error)
 	GetAdmin(id string) (response.SuperAdmin, error)
 	UpdateAdmin(id string, input request.SuperAdmin) (response.SuperAdmin, error)
 	DeleteAdmin(id string) (response.SuperAdmin, error)
+	CalculatePaginationValues(page, pageSize, allItmes int) (int, int)
+	GetNextPage(currentPage, allPages int) int
+	GetPrevPage(currentPage int) int
 }
 
 type AdminService struct {
@@ -39,7 +42,7 @@ func (as *AdminService) RegisterAdmin(data *request.SuperAdmin) (response.SuperA
 	if data.PhoneNumber == "" {
 		return response.SuperAdmin{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
 	}
-	hashPass, err := bcrypt.Hash(data.Password)
+	hashPass, err := bcrypt.HashPassword(data.Password)
 	if err != nil {
 		return response.SuperAdmin{}, errors.ERR_BCRYPT_PASSWORD
 	}
@@ -49,12 +52,6 @@ func (as *AdminService) RegisterAdmin(data *request.SuperAdmin) (response.SuperA
 	if err != nil {
 		return response.SuperAdmin{}, errors.ERR_REGISTER_USER_DATABASE
 	}
-	token, err := middleware.CreateToken(int(data.Id), data.Name)
-
-	if err != nil {
-		return response.SuperAdmin{}, errors.ERR_TOKEN
-	}
-	res.Token = token
 	return res, nil
 }
 
@@ -69,22 +66,15 @@ func (as *AdminService) LoginAdmin(data *request.SuperAdmin) (response.SuperAdmi
 	if err != nil {
 		return response.SuperAdmin{}, err
 	}
-
-	token, err := middleware.CreateToken(int(data.Id), data.Name)
-
-	if err != nil {
-		return response.SuperAdmin{}, errors.ERR_TOKEN
-	}
-	res.Token = token
 	return res, nil
 }
 
-func (as *AdminService) GetAllAdmin(nameFilter string) ([]response.SuperAdmin, error) {
-	res, err := as.adminRepository.GetAllAdmin(nameFilter)
+func (as *AdminService) GetAllAdmin(nameFilter string, page, pageSize int) ([]response.SuperAdmin, int, error) {
+	res, allItems, err := as.adminRepository.GetAllAdmin(nameFilter, page, pageSize)
 	if err != nil {
-		return nil, errors.ERR_GET_DATA
+		return nil, 0, errors.ERR_GET_DATA
 	}
-	return res, nil
+	return res, allItems, nil
 }
 
 func (as *AdminService) GetAdmin(id string) (response.SuperAdmin, error) {
@@ -120,4 +110,33 @@ func (as *AdminService) DeleteAdmin(id string) (response.SuperAdmin, error) {
 	}
 
 	return res, nil
+}
+
+func (pr *AdminService) CalculatePaginationValues(page, pageSize, allItmes int) (int, int) {
+	pageInt := page
+	if pageInt <= 0 {
+		pageInt = 1
+	}
+
+	allPages := int(math.Ceil(float64(allItmes) / float64(pageSize)))
+
+	if pageInt > allPages {
+		pageInt = allPages
+	}
+
+	return pageInt, allPages
+}
+
+func (pr *AdminService) GetNextPage(currentPage, allPages int) int {
+	if currentPage < allPages {
+		return currentPage + 1
+	}
+	return allPages
+}
+
+func (pr *AdminService) GetPrevPage(currentPage int) int {
+	if currentPage > 1 {
+		return currentPage - 1
+	}
+	return 1
 }

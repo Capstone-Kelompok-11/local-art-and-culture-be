@@ -4,19 +4,18 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
 type AppConfig struct {
-	APP_PORT    int
+	APP_PORT   int
 	SECRET_KEY string
 }
 
 func LoadAPP() *AppConfig {
 	var result = new(AppConfig)
 
-	godotenv.Load(".env")
+	// godotenv.Load(".env")
 
 	if v, found := os.LookupEnv("APP_PORT"); found {
 		port, err := strconv.Atoi(v)

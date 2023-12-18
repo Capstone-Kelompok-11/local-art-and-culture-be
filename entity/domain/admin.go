@@ -17,6 +17,7 @@ func ConvertFromAdminReqToModel(data request.SuperAdmin) *models.SuperAdmin {
 		Email:       data.Email,
 		Password:    data.Password,
 		PhoneNumber: data.PhoneNumber,
+		RoleId:		 data.RoleId,
 	}
 }
 
@@ -26,5 +27,7 @@ func ConvertFromModelToAdminRes(data models.SuperAdmin) *response.SuperAdmin {
 		Name:        data.Name,
 		Email:       data.Email,
 		PhoneNumber: data.PhoneNumber,
+		RoleId:		 data.RoleId,
+		Role:		 *ConvertFromModelToRoleRes(data.Role),
 	}
 }

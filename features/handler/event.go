@@ -1,11 +1,18 @@
 package handler
 
 import (
+	"fmt"
+	"log"
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
 
-	"github.com/labstack/echo"
+	//"lokasani/helpers/consts"
+	consts "lokasani/helpers/const"
+	"lokasani/helpers/middleware"
+	"strconv"
+
+	"github.com/labstack/echo/v4"
 )
 
 type EventHandler struct {
@@ -17,21 +24,95 @@ func NewEventHandler(iEventService services.IEventService) *EventHandler {
 }
 
 func (pr *EventHandler) CreateEvent(c echo.Context) error {
-	var input request.Event
-	c.Bind(&input)
-	res, err := pr.eventService.CreateEvent(&input)
-	if err != nil {
-		return response.NewErrorResponse(c, err)
+	_, roleId, _, err := middleware.ExtractToken(c)
+    if err != nil {
+		log.Println("Error extracting token:", err)
+        return response.NewErrorResponse(c, err)
+    }
+    if roleId != consts.EventCreator {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
 	}
-	return response.NewSuccessResponse(c, res)
+
+    var input request.Event
+    c.Bind(&input)
+    res, err := pr.eventService.CreateEvent(&input)
+    if err != nil {
+        fmt.Println(input)
+        return response.NewErrorResponse(c, err)
+    }
+    return response.NewSuccessResponse(c, res)
 }
 
 func (pr *EventHandler) GetAllEvent(c echo.Context) error {
-	res, err := pr.eventService.GetAllEvent()
+	nameFilter := c.QueryParam("name")
+	startDate := c.QueryParam("startDate")
+    endDate := c.QueryParam("endDate")
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+    pageSize, _ := strconv.Atoi(c.QueryParam("pageSize"))
+
+    if page <= 0 {
+        page = 1
+    }
+
+    if pageSize <= 0 {
+        pageSize = 10
+    }
+
+	res, allItems, err := pr.eventService.GetAllEvent(nameFilter, startDate, endDate, page, pageSize)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
-	return response.NewSuccessResponse(c, res)
+
+	currentPage, allPages := pr.eventService.CalculatePaginationValues(page, pageSize, allItems)
+	nextPage := pr.eventService.GetNextPage(currentPage, allPages)
+	prevPage := pr.eventService.GetPrevPage(currentPage)
+
+	responseData := map[string]interface{}{
+		"allEvents": res,
+		"pagination": map[string]int{
+			"currentPage": currentPage,
+			"nextPage":    nextPage,
+			"prevPage":    prevPage,
+			"allPages":    allPages,
+		},
+	}
+
+	return response.NewSuccessResponse(c, responseData)
+}
+
+func (pr *EventHandler) GetAllAvailableEvent(c echo.Context) error {
+	nameFilter := c.QueryParam("name")
+	startDate := c.QueryParam("startDate")
+	endDate := c.QueryParam("endDate")
+	page, err := strconv.Atoi(c.QueryParam("page"))
+	if err != nil {
+	   page = 1
+	}
+	pageSize, err := strconv.Atoi(c.QueryParam("pageSize"))
+	if err != nil {
+	   pageSize = 10
+	}
+
+	res, allItems, err := pr.eventService.GetAllAvailableEvent(nameFilter, startDate, endDate, page, pageSize)
+	if err != nil {
+		return response.NewErrorResponse(c, err)
+	}
+
+	currentPage, allPages := pr.eventService.CalculatePaginationValues(page, pageSize, allItems)
+	nextPage := pr.eventService.GetNextPage(currentPage, allPages)
+	prevPage := pr.eventService.GetPrevPage(currentPage)
+
+	responseData := map[string]interface{}{
+		"allEvents": res,
+		"pagination": map[string]int{
+			"currentPage": currentPage,
+			"nextPage":    nextPage,
+			"prevPage":    prevPage,
+			"allPages":    allPages,
+		},
+	}
+
+	return response.NewSuccessResponse(c, responseData)
 }
 
 func (pr *EventHandler) GetEvent(c echo.Context) error {
@@ -44,6 +125,15 @@ func (pr *EventHandler) GetEvent(c echo.Context) error {
 }
 
 func (pr *EventHandler) UpdateEvent(c echo.Context) error {
+	_, roleId, _, err := middleware.ExtractToken(c)
+    if err != nil {
+		log.Println("Error extracting token:", err)
+        return response.NewErrorResponse(c, err)
+    }
+    if roleId != consts.EventCreator {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+
 	id := c.Param("id")
 	var input request.Event
 	c.Bind(&input)
@@ -56,6 +146,15 @@ func (pr *EventHandler) UpdateEvent(c echo.Context) error {
 }
 
 func (pr *EventHandler) DeleteEvent(c echo.Context) error {
+	_, roleId, _, err := middleware.ExtractToken(c)
+    if err != nil {
+		log.Println("Error extracting token:", err)
+        return response.NewErrorResponse(c, err)
+    }
+    if roleId != consts.EventCreator {
+		return response.NewErrorResponse(c, echo.ErrUnauthorized)
+	}
+	
 	id := c.Param("id")
 	res, err := pr.eventService.DeleteEvent(id)
 	if err != nil {

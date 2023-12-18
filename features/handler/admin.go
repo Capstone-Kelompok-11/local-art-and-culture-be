@@ -4,8 +4,11 @@ import (
 	"lokasani/entity/request"
 	"lokasani/entity/response"
 	"lokasani/features/services"
+	consts "lokasani/helpers/const"
+	"lokasani/helpers/errors"
+	"lokasani/helpers/middleware"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type AdminHandler struct {
@@ -24,6 +27,16 @@ func (ah *AdminHandler) RegisterAdmin(c echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
+
+	// if res.role
+	token, err := middleware.CreateToken(uint(res.Id), consts.AdminRole, 0)
+	if err != nil {
+		return response.NewErrorResponse(c, errors.ERR_TOKEN)
+	}
+	res.Token = token
+
+	middleware.SetTokenCookie(c, token)
+
 	return response.NewSuccessResponse(c, res)
 }
 
@@ -35,16 +48,41 @@ func (ah *AdminHandler) LoginAdmin(c echo.Context) error {
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
+
+	token, err := middleware.CreateToken(0, consts.AdminRole, uint(res.Id))
+    if err != nil {
+        return response.NewErrorResponse(c, errors.ERR_TOKEN)
+    }
+    res.Token = token
+
+	middleware.SetTokenCookie(c, token)
 	return response.NewSuccessResponse(c, res)
 }
 
 func (ah *AdminHandler) GetAllAdmin(c echo.Context) error {
 	nameFilter := c.QueryParam("name")
-	res, err := ah.adminService.GetAllAdmin(nameFilter)
+	page, pageSize := 1, 10
+
+	res, allItems, err := ah.adminService.GetAllAdmin(nameFilter, page, pageSize)
 	if err != nil {
 		return response.NewErrorResponse(c, err)
 	}
-	return response.NewSuccessResponse(c, res)
+
+	currentPage, allPages := ah.adminService.CalculatePaginationValues(page, pageSize, allItems)
+	nextPage := ah.adminService.GetNextPage(currentPage, allPages)
+	prevPage := ah.adminService.GetPrevPage(currentPage)
+
+	responseData := map[string]interface{}{
+		"data": res,
+		"pagination": map[string]int{
+			"currentPage": currentPage,
+			"nextPage":    nextPage,
+			"prevPage":    prevPage,
+			"allPages":  allPages,
+		},
+	}
+
+	return response.NewSuccessResponse(c, responseData)
 }
 
 func (ah *AdminHandler) GetAdmin(c echo.Context) error {

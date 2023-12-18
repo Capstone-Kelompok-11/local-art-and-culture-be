@@ -16,6 +16,7 @@ type IRoleRepository interface {
 	GetRole(id string) (response.Role, error)
 	UpdateRole(id string, input request.Role) (response.Role, error)
 	DeleteRole(id string) (response.Role, error)
+	FindByName(role string) (*models.Role, error)
 }
 
 type roleRepository struct {
@@ -97,4 +98,13 @@ func (rr *roleRepository) DeleteRole(id string) (response.Role, error) {
 		return response.Role{}, err
 	}
 	return res, nil
+}
+
+func (rr *roleRepository) FindByName(role string) (*models.Role, error) {
+	roles := models.Role{}
+	res := rr.db.Where("role = ?", role).First(&roles).Error
+	if res != nil {
+		return nil, res
+	}
+	return &roles, nil
 }

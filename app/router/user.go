@@ -4,8 +4,9 @@ import (
 	"lokasani/features/handler"
 	"lokasani/features/repositories"
 	"lokasani/features/services"
-
-	"github.com/labstack/echo"
+	"lokasani/helpers/middleware"
+	
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
@@ -14,10 +15,16 @@ func UserRoute(e *echo.Echo, db *gorm.DB) {
 	service := services.NewUserService(repository)
 	handler := handler.NewUserHandler(service)
 
+	eJwt := e.Group("")
+	eJwt.Use(middleware.JWTMiddleware())
+
+	//access without token
 	e.POST("/users/register", handler.RegisterUsers)
 	e.POST("/users/login", handler.LoginUsers)
-	e.GET("/users", handler.GetAllUser)
-	e.GET("/users/:id", handler.GetUser)
-	e.PUT("/users/:id", handler.UpdateUser)
-	e.DELETE("/users/:id", handler.DeleteUser)
+
+	// superadmin can access
+	eJwt.GET("/users", handler.GetAllUser)
+	eJwt.GET("/users/:id", handler.GetUser)
+	eJwt.PUT("/users/:id", handler.UpdateUser)
+	eJwt.DELETE("/users/:id", handler.DeleteUser)
 }

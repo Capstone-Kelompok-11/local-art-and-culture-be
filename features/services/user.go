@@ -6,16 +6,20 @@ import (
 	"lokasani/features/repositories"
 	"lokasani/helpers/bcrypt"
 	"lokasani/helpers/errors"
-	"lokasani/helpers/middleware"
+	"math"
 )
 
 type IUserService interface {
 	RegisterUser(data *request.User) (response.User, error)
-	LoginUser(data *request.User) (response.User, error)
-	GetAllUser(nameFilter string) ([]response.User, error)
+	LoginUser(data *request.User) (response.Creators, error)
+	GetAllUser(nameFilter string, page, pageSize int) ([]response.User, map[string]int, error)
 	GetUser(id string) (response.User, error)
 	UpdateUser(id string, input request.User) (response.User, error)
 	DeleteUser(id string) (response.User, error)
+	CalculatePaginationValues(page, pageSize, allItmes int) (int, int)
+	GetNextPage(currentPage, allPages int) int
+	GetPrevPage(currentPage int) int
+	CountUsersByRole(roleId uint) (int, error)
 }
 
 type UserService struct {
@@ -40,7 +44,7 @@ func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
 		return response.User{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
 	}
 
-	hashPass, err := bcrypt.Hash(data.Password)
+	hashPass, err := bcrypt.HashPassword(data.Password)
 	if err != nil {
 		return response.User{}, errors.ERR_BCRYPT_PASSWORD
 	}
@@ -48,45 +52,24 @@ func (u *UserService) RegisterUser(data *request.User) (response.User, error) {
 	data.Password = hashPass
 	res, err := u.UserRepo.RegisterUser(data)
 	if err != nil {
-		return response.User{}, errors.ERR_REGISTER_USER_DATABASE
+		return response.User{}, err
 	}
-
-	token, err := middleware.CreateToken(int(data.Id), data.Email)
-	if err != nil {
-		return response.User{}, errors.ERR_TOKEN
-	}
-
-	res.Token = token
 	return res, nil
 }
 
-func (u *UserService) LoginUser(data *request.User) (response.User, error) {
+func (u *UserService) LoginUser(data *request.User) (response.Creators, error) {
 	if data.Email == "" {
-		return response.User{}, errors.ERR_EMAIL_IS_EMPTY
-	} else if data.Password == "" {
-		return response.User{}, errors.ERR_PASSWORD_IS_EMPTY
+		return response.Creators{}, errors.ERR_EMAIL_IS_EMPTY
+	}
+	if data.Password == "" {
+		return response.Creators{}, errors.ERR_PASSWORD_IS_EMPTY
 	}
 
 	res, err := u.UserRepo.LoginUser(data)
 	if err != nil {
-		return response.User{}, err
+		return response.Creators{}, err
 	}
-
-	token, err := middleware.CreateToken(int(data.Id), data.Email)
-	if err != nil {
-		return response.User{}, errors.ERR_TOKEN
-	}
-
-	res.Token = token
 	return res, nil
-}
-
-func (u *UserService) GetAllUser(nameFilter string) ([]response.User, error) {
-	err, res := u.UserRepo.GetAllUser(nameFilter)
-	if err != nil {
-		return err, nil
-	}
-	return nil, res
 }
 
 func (u *UserService) GetUser(id string) (response.User, error) {
@@ -123,4 +106,70 @@ func (u *UserService) DeleteUser(id string) (response.User, error) {
 		return response.User{}, errors.ERR_DELETE_USER
 	}
 	return res, nil
+}
+
+func (u *UserService) CountUsersByRole(roleId uint) (int, error) {
+	count, err := u.UserRepo.CountUsersByRole(roleId)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (u *UserService) GetAllUser(nameFilter string, page, pageSize int) ([]response.User, map[string]int, error) {
+	allUsers, _, err := u.UserRepo.GetAllUser(nameFilter, page, pageSize)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	productCreators, err := u.CountUsersByRole(1)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	regularUser, err := u.CountUsersByRole(0)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	eventCreators, err := u.CountUsersByRole(3)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	rolesCount := make(map[string]int)
+	rolesCount["RegularUser"] = regularUser
+	rolesCount["EventCreators"] = eventCreators
+	rolesCount["ProductCreators"] = productCreators
+
+	return allUsers, rolesCount, nil
+}
+
+func (u *UserService) CalculatePaginationValues(page, pageSize, allItmes int) (int, int) {
+	pageInt := page
+	if pageInt <= 0 {
+		pageInt = 1
+	}
+
+	allPages := int(math.Ceil(float64(allItmes) / float64(pageSize)))
+
+	if pageInt > allPages {
+		pageInt = allPages
+	}
+
+	return pageInt, allPages
+}
+
+func (u *UserService) GetNextPage(currentPage, allPages int) int {
+	if currentPage < allPages {
+		return currentPage + 1
+	}
+	return allPages
+}
+
+func (u *UserService) GetPrevPage(currentPage int) int {
+	if currentPage > 1 {
+		return currentPage - 1
+	}
+	return 1
 }

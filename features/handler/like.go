@@ -5,7 +5,7 @@ import (
 	"lokasani/entity/response"
 	"lokasani/features/services"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type LikeHandler struct {
@@ -18,7 +18,7 @@ func NewLikeHandler(ilikeService services.ILikeService) *LikeHandler {
 
 
 func (co *LikeHandler) GetAllLike(c echo.Context) error {
-	id := c.Param("articleId")
+	id := c.Param("sourceId")
 	res, err := co.likeService.GetAllLike(id)
 	if err != nil {
 		return response.NewErrorResponse(c, err)

@@ -8,9 +8,10 @@ type Creator struct {
 	Email       string `gorm:"unique;not null"`
 	PhoneNumber string `gorm:"unique;not null"`
 	UserId      uint   `gorm:"not null"`
-	RoleId      uint   `gorm:"not null"`
+	RoleId 		uint   `gorm:"not null"`
 	AddressId   *uint
-	Users       Users    `gorm:"foreignKey:ID;references:UserId"`
-	Roles       Role     `gorm:"foreignKey:ID;references:RoleId"`
-	Addresses   *Address `gorm:"foreignKey:ID;references:AddressId"`
+	Address     string
+	Users       Users    `gorm:"foreignKey:UserId"`
+	Role        Role     `gorm:"foreignKey:RoleId"`
+	Addresses   *Address `gorm:"foreignKey:AddressId"`
 }

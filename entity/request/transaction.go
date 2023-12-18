@@ -5,13 +5,15 @@ import (
 )
 
 type Transaction struct {
-	Id               uint      `json:"id"`
-	TransactionDate  time.Time `json:"transactionDate"`
-	UserId           uint      `json:"userId"`
-	PaymentMethodId  uint      `json:"paymentMethodId"`
-	ShippingMethodId uint      `json:"shippingMethodId"`
-	Status           string    `json:"status"`
-	User             User      `json:"user"`
-	Shipping         Shipping  `json:"shippingMethod"`
-	Payment          Payment   `json:"paymentMethod"`
+	Id                uint                `json:"id"`
+	TransactionDate   time.Time           `json:"transaction_date"`
+	UserId            uint                `json:"user_id"`
+	PaymentMethodId   uint                `json:"payment_method_id"`
+	ShippingMethodId  *uint               `json:"shipping_method_id"`
+	Status            string              `json:"status"`
+	TransactionNumber string              `json:"transactionNumber"`
+	User              User                `json:"user"`
+	Shipping          Shipping            `json:"shipping_method"`
+	Payment           Payment             `json:"payment_method"`
+	TransactionDetail []TransactionDetail `json:"transaction_detail"`
 }

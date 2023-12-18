@@ -8,6 +8,18 @@ func GetCodeError(err error) int {
 	switch err {
 	case ERR_EMAIL_IS_EMPTY:
 		return http.StatusBadRequest
+	case ERR_LOGIN:
+		return http.StatusBadRequest
+	case ERR_MESSAGE_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_RESPONSE_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_IMAGE_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_RATING_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_ULASAN_IS_EMPTY:
+		return http.StatusBadRequest
 	case ERR_COMMENT_IS_EMPTY:
 		return http.StatusBadRequest
 	case ERR_PRICE_IS_EMPTY:
@@ -33,6 +45,8 @@ func GetCodeError(err error) int {
 	case ERR_DELETE_USER:
 		return http.StatusInternalServerError
 	case ERR_GET_ADMIN_BAD_REQUEST_ID:
+		return http.StatusNotFound
+	case ERR_GET_CATEGORY_BAD_REQUEST_TYPE:
 		return http.StatusNotFound
 	case ERR_GET_USER_BAD_REQUEST_ID:
 		return http.StatusBadRequest
@@ -92,6 +106,8 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_CREATE_TICKET_DATABASE:
 		return http.StatusInternalServerError
+	case ERR_CREATE_GUEST_DATABASE:
+		return http.StatusInternalServerError
 	case ERR_CREATE_ARTICLE_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_CREATE_CATEGORY_DATABASE:
@@ -99,6 +115,8 @@ func GetCodeError(err error) int {
 	case ERR_CREATE_PRODUCT_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_CREATE_COMMENT_DATABASE:
+		return http.StatusInternalServerError
+	case ERR_CREATE_RATING_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_GET_SHIPPING_BAD_REQUEST_ID:
 		return http.StatusBadRequest
@@ -108,9 +126,13 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_CREATE_WISHLIST_DATABASE:
 		return http.StatusInternalServerError
+	case ERR_CREATE_SAVE_DATABASE:
+		return http.StatusInternalServerError
 	case ERR_CREATE_EVENT_DATABASE:
 		return http.StatusInternalServerError
 	case ERR_GET_COMMENT_BAD_REQUEST_ID:
+		return http.StatusBadRequest
+	case ERR_GET_SAVE_BAD_REQUEST_ID:
 		return http.StatusBadRequest
 	case ERR_QTY_IS_EMPTY:
 		return http.StatusBadRequest
@@ -120,6 +142,24 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_DELETE_TRANSACTION:
 		return http.StatusInternalServerError
+	case ERR_CREATE_TRANSACTION_DETAIL:
+		return http.StatusInternalServerError
+	case ERR_GET_TRANSACTION_DETAIL_BAD_REQUEST_ID:
+		return http.StatusBadRequest
+	case ERR_GET_FILES_BAD_REQUEST_ID:
+		return http.StatusBadRequest
+	case ERR_CREATE_FILES_DATABASE:
+		return http.StatusInternalServerError
+	case ERR_SOURCE_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_CATEGORY_NOT_FOUND:
+		return http.StatusNotFound
+	case ERR_INVALID_PAYLOAD:
+		return http.StatusBadRequest
+	case ERR_TRANSACTION_DETAIL_EMPTY:
+		return http.StatusBadRequest
+	case ERR_PAYMENT_FAILED:
+		return http.StatusFailedDependency
 	default:
 		return http.StatusInternalServerError
 	}

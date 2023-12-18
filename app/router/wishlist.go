@@ -4,8 +4,10 @@ import (
 	"lokasani/features/handler"
 	"lokasani/features/repositories"
 	"lokasani/features/services"
+	"os"
 
-	"github.com/labstack/echo"
+	echojwt "github.com/labstack/echo-jwt/v4"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
@@ -14,9 +16,13 @@ func WishlistRoute(e *echo.Echo, db *gorm.DB) {
 	service := services.NewWishlistService(repository)
 	handler := handler.NewWishlistHandler(service)
 
-	e.POST("/wishlist", handler.CreateWishlist)
-	e.GET("/wishlist", handler.GetAllWishlist)
-	e.GET("/wishlist/:id", handler.GetWishlist)
-	e.PUT("/wishlist/:id", handler.UpdateWishlist)
-	e.DELETE("/wishlist/:id", handler.DeleteWishlist)
+	
+	eJwt := e.Group("")
+	eJwt.Use(echojwt.JWT([]byte(os.Getenv("SECRET_JWT"))))
+
+	eJwt.POST("/wishlist", handler.CreateWishlist)
+	eJwt.GET("/wishlist", handler.GetAllWishlist)
+	eJwt.GET("/wishlist/:id", handler.GetWishlist)
+	eJwt.PUT("/wishlist/:id", handler.UpdateWishlist)
+	eJwt.DELETE("/wishlist/:id", handler.DeleteWishlist)
 }
